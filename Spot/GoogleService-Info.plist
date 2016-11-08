@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>78200485035-dsermdo6e2092ardv3vjrmr4ma5rk883.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.78200485035-dsermdo6e2092ardv3vjrmr4ma5rk883</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAVW8--fTtp83J7TOx2p6GgNbs5SFoTlCE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>78200485035</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>safari.digital.Spot</string>
+	<key>PROJECT_ID</key>
+	<string>safaridigitalapp</string>
+	<key>STORAGE_BUCKET</key>
+	<string>safaridigitalapp.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:78200485035:ios:7f03ce0431ef065f</string>
+	<key>DATABASE_URL</key>
+	<string>https://safaridigitalapp.firebaseio.com</string>
+</dict>
+</plist>
