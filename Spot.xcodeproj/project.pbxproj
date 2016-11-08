@@ -10,6 +10,9 @@
 		28F4702ADC50BC6E0BA84954 /* Pods_SpotTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EFE6AC580ABC3BDB36D5FA1 /* Pods_SpotTests.framework */; };
 		3FC6BFE43A7EFEA4EDDFBB53 /* Pods_Spot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D9B94D45B8F5276C01DEA28 /* Pods_Spot.framework */; };
 		68F7505CAD00059C815E1A07 /* Pods_SpotUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7932AC7FAB0E4D4A016EF0BF /* Pods_SpotUITests.framework */; };
+		D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */; };
+		D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */; };
+		D14D8D371DD25945009AC39B /* Park.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D361DD25945009AC39B /* Park.swift */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
 		D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */; };
 		D1AFD85B1DCF8B4C0082A6EF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1AFD85A1DCF8B4C0082A6EF /* Assets.xcassets */; };
@@ -48,6 +51,10 @@
 		7D9B94D45B8F5276C01DEA28 /* Pods_Spot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACF4558DAF74D45964183273 /* Pods-SpotTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpotTests/Pods-SpotTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B47C30E572AAB91468E4563A /* Pods-Spot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Spot/Pods-Spot.debug.xcconfig"; sourceTree = "<group>"; };
+		D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemASCellNode.swift; sourceTree = "<group>"; };
+		D10A7F7E1DD282C100741BF0 /* Spot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spot.entitlements; sourceTree = "<group>"; };
+		D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkASCellNode.swift; sourceTree = "<group>"; };
+		D14D8D361DD25945009AC39B /* Park.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Park.swift; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D1AFD8581DCF8B4C0082A6EF /* Spot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Spot.xcdatamodel; sourceTree = "<group>"; };
@@ -106,15 +113,33 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		D14D8D321DD25420009AC39B /* Park */ = {
+			isa = PBXGroup;
+			children = (
+				D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */,
+				D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */,
+				D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */,
+			);
+			path = Park;
+			sourceTree = "<group>";
+		};
+		D14D8D351DD25934009AC39B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D14D8D361DD25945009AC39B /* Park.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		D1AFD8441DCF8B4C0082A6EF = {
 			isa = PBXGroup;
 			children = (
+				DDA65F846428B1631ABE11B3 /* Frameworks */,
+				460F9C23519C54D102A8F871 /* Pods */,
+				D1AFD84E1DCF8B4C0082A6EF /* Products */,
 				D1AFD84F1DCF8B4C0082A6EF /* Spot */,
 				D1AFD8671DCF8B4C0082A6EF /* SpotTests */,
 				D1AFD8721DCF8B4C0082A6EF /* SpotUITests */,
-				D1AFD84E1DCF8B4C0082A6EF /* Products */,
-				460F9C23519C54D102A8F871 /* Pods */,
-				DDA65F846428B1631ABE11B3 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -131,14 +156,16 @@
 		D1AFD84F1DCF8B4C0082A6EF /* Spot */ = {
 			isa = PBXGroup;
 			children = (
+				D10A7F7E1DD282C100741BF0 /* Spot.entitlements */,
 				D1AFD8851DCF90A90082A6EF /* Extension */,
-				D1AFD85F1DCF8B4C0082A6EF /* Info.plist */,
-				D1AFD8811DCF8CBC0082A6EF /* GoogleService-Info.plist */,
+				D14D8D351DD25934009AC39B /* Model */,
+				D14D8D321DD25420009AC39B /* Park */,
 				D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */,
 				D1AFD85A1DCF8B4C0082A6EF /* Assets.xcassets */,
+				D1AFD8811DCF8CBC0082A6EF /* GoogleService-Info.plist */,
+				D1AFD85F1DCF8B4C0082A6EF /* Info.plist */,
 				D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */,
 				D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */,
-				D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */,
 			);
 			path = Spot;
 			sourceTree = "<group>";
@@ -146,8 +173,8 @@
 		D1AFD8671DCF8B4C0082A6EF /* SpotTests */ = {
 			isa = PBXGroup;
 			children = (
-				D1AFD8681DCF8B4C0082A6EF /* SpotTests.swift */,
 				D1AFD86A1DCF8B4C0082A6EF /* Info.plist */,
+				D1AFD8681DCF8B4C0082A6EF /* SpotTests.swift */,
 			);
 			path = SpotTests;
 			sourceTree = "<group>";
@@ -155,8 +182,8 @@
 		D1AFD8721DCF8B4C0082A6EF /* SpotUITests */ = {
 			isa = PBXGroup;
 			children = (
-				D1AFD8731DCF8B4C0082A6EF /* SpotUITests.swift */,
 				D1AFD8751DCF8B4C0082A6EF /* Info.plist */,
+				D1AFD8731DCF8B4C0082A6EF /* SpotUITests.swift */,
 			);
 			path = SpotUITests;
 			sourceTree = "<group>";
@@ -166,7 +193,7 @@
 			children = (
 				D1AFD8861DCF90BE0082A6EF /* ImageExtension.swift */,
 			);
-			name = Extension;
+			path = Extension;
 			sourceTree = "<group>";
 		};
 		DDA65F846428B1631ABE11B3 /* Frameworks */ = {
@@ -258,6 +285,11 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = ZQ2XB9365U;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 					D1AFD8631DCF8B4C0082A6EF = {
 						CreatedOnToolsVersion = 8.0;
@@ -464,7 +496,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */,
+				D14D8D371DD25945009AC39B /* Park.swift in Sources */,
+				D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */,
 				D1AFD8841DCF8D6B0082A6EF /* ParkASViewController.swift in Sources */,
+				D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */,
 				D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */,
 				D1AFD8871DCF90BE0082A6EF /* ImageExtension.swift in Sources */,
 			);
@@ -508,6 +543,7 @@
 				D1AFD85D1DCF8B4C0082A6EF /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -609,6 +645,7 @@
 			baseConfigurationReference = B47C30E572AAB91468E4563A /* Pods-Spot.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Spot/Spot.entitlements;
 				DEVELOPMENT_TEAM = ZQ2XB9365U;
 				INFOPLIST_FILE = Spot/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -623,6 +660,7 @@
 			baseConfigurationReference = 744550C5882D4DB26D8C2A33 /* Pods-Spot.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Spot/Spot.entitlements;
 				DEVELOPMENT_TEAM = ZQ2XB9365U;
 				INFOPLIST_FILE = Spot/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

@@ -1,5 +1,13 @@
 #ifdef __OBJC__
 #import <UIKit/UIKit.h>
+#else
+#ifndef FOUNDATION_EXPORT
+#if defined(__cplusplus)
+#define FOUNDATION_EXPORT extern "C"
+#else
+#define FOUNDATION_EXPORT extern
+#endif
+#endif
 #endif
 
 #import "NSData+ImageDetectors.h"
@@ -10,7 +18,6 @@
 #import "PINAlternateRepresentationProvider.h"
 #import "PINAnimatedImage.h"
 #import "PINAnimatedImageManager.h"
-#import "PINCache+PINRemoteImageCaching.h"
 #import "PINDataTaskOperation.h"
 #import "PINProgressiveImage.h"
 #import "PINRemoteImage.h"
@@ -27,6 +34,7 @@
 #import "PINRemoteImageTask.h"
 #import "PINRemoteLock.h"
 #import "PINURLSessionManager.h"
+#import "PINCache+PINRemoteImageCaching.h"
 
 FOUNDATION_EXPORT double PINRemoteImageVersionNumber;
 FOUNDATION_EXPORT const unsigned char PINRemoteImageVersionString[];

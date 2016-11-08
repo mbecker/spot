@@ -29,16 +29,9 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     /**
      * Data
      */
-    let tableData: [Dictionary<String, String>] = [
-        [
-            "name"  :   "Attractions",
-            "path"  :   "park/addo/attractions"
-        ]
-        ,
-        [
-            "name"  :   "Animals",
-            "path"  :   "park/addo/animals"
-        ]
+    let parkData: [Park] = [
+        Park(name: "Attraction", path: "park/addo/attractions"),
+        Park(name: "Animals", path: "park/addo/animals")
     ]
     
     init() {
@@ -77,7 +70,6 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.showsVerticalScrollIndicator = false
         self.tableNode.backgroundColor = UIColor.white
         self.tableNode.view.separatorColor = UIColor.clear
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -142,11 +134,11 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return self.tableData.count
+        return self.parkData.count
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return sectionHeaderView(text: tableData[section]["name"]!)
+        return sectionHeaderView(text: parkData[section].name)
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -162,9 +154,7 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
-        let node = ASTextCellNode()
-        node.text = String(format: "Name: %ld\nPath: %ld", tableData[indexPath.section]["name"]!, tableData[indexPath.section]["path"]!)
-        node.backgroundColor = UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00)
+        let node = ParkASCellNode(park: parkData[indexPath.section])
         return node
     }
 }

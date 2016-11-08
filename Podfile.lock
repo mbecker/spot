@@ -6,19 +6,20 @@ PODS:
     - AsyncDisplayKit/ASDealloc2MainObject
   - AsyncDisplayKit/PINRemoteImage (2.0-beta.1):
     - AsyncDisplayKit/Core
-    - PINRemoteImage/iOS (= 3.0.0-beta.5)
-  - Firebase (3.8.0):
-    - Firebase/Core (= 3.8.0)
-  - Firebase/Auth (3.8.0):
+    - PINRemoteImage/iOS (= 3.0.0-beta.6)
+    - PINRemoteImage/PINCache
+  - Firebase (3.9.0):
+    - Firebase/Core (= 3.9.0)
+  - Firebase/Auth (3.9.0):
     - Firebase/Core
     - FirebaseAuth (= 3.0.6)
-  - Firebase/Core (3.8.0):
+  - Firebase/Core (3.9.0):
     - FirebaseAnalytics (= 3.5.1)
     - FirebaseCore (= 3.4.4)
-  - Firebase/Database (3.8.0):
+  - Firebase/Database (3.9.0):
     - Firebase/Core
     - FirebaseDatabase (= 3.1.0)
-  - Firebase/Storage (3.8.0):
+  - Firebase/Storage (3.9.0):
     - Firebase/Core
     - FirebaseStorage (= 1.0.4)
   - FirebaseAnalytics (3.5.1):
@@ -54,11 +55,18 @@ PODS:
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.0)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.0)
   - GTMSessionFetcher/Core (1.1.7)
-  - Kingfisher (3.1.4)
-  - PINCache (3.0.1-beta)
-  - PINRemoteImage/Core (3.0.0-beta.5):
-    - PINCache (= 3.0.1-beta)
-  - PINRemoteImage/iOS (3.0.0-beta.5):
+  - Kingfisher (3.2.0)
+  - PINCache (3.0.1-beta.2):
+    - PINCache/Arc-exception-safe (= 3.0.1-beta.2)
+    - PINCache/Core (= 3.0.1-beta.2)
+  - PINCache/Arc-exception-safe (3.0.1-beta.2):
+    - PINCache/Core
+  - PINCache/Core (3.0.1-beta.2)
+  - PINRemoteImage/Core (3.0.0-beta.6)
+  - PINRemoteImage/iOS (3.0.0-beta.6):
+    - PINRemoteImage/Core
+  - PINRemoteImage/PINCache (3.0.0-beta.6):
+    - PINCache (= 3.0.1-beta.2)
     - PINRemoteImage/Core
 
 DEPENDENCIES:
@@ -75,12 +83,12 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AsyncDisplayKit:
-    :commit: 735d1411d2ed680b43d11369b01efcefa270d06c
+    :commit: f9a96d58b8155e8cc2b9b323e87f562bedf76e3e
     :git: https://github.com/facebook/AsyncDisplayKit
 
 SPEC CHECKSUMS:
-  AsyncDisplayKit: 92297f0797f282ffe8860516783124e79b86c37f
-  Firebase: fdbecadb7b5cbef2774852d4fa659b9daf11f2af
+  AsyncDisplayKit: 4d4403eb61b2b667866e98ca8b7fab6cec497b68
+  Firebase: ff77ffb77b317c3720fef57a60e9335cebf962e6
   FirebaseAnalytics: 6e58fc9b397664369ac7617fb0ba93fab6ba7b5b
   FirebaseAuth: 96e9674ff31d6e1f826d53e26aa003a57cab0295
   FirebaseCore: d0ed25f27b6f9158eccc439f1be6f92e81207e28
@@ -91,10 +99,10 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
-  Kingfisher: 6c67e3e57f2d81a9cfdfa25052cd86f33ceac9bb
-  PINCache: 6911fe422a633e18b3d3ddf2bd4f0e55e36e2892
-  PINRemoteImage: 20ca800843e5fb326bc33fa6eb528c3b861d8bd6
+  Kingfisher: 50407d1d5dbc34965009d425a286342ff36a84ea
+  PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
+  PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
 
 PODFILE CHECKSUM: f4749ef31998f1152d218e8e0d7a3790f37e86c3
 
-COCOAPODS: 1.1.0.rc.3
+COCOAPODS: 1.2.0.beta.1
