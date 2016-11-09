@@ -56,6 +56,7 @@ PODS:
   - GoogleToolboxForMac/NSString+URLArguments (2.1.0)
   - GTMSessionFetcher/Core (1.1.7)
   - Kingfisher (3.2.0)
+  - MXParallaxHeader (0.6.0)
   - PINCache (3.0.1-beta.2):
     - PINCache/Arc-exception-safe (= 3.0.1-beta.2)
     - PINCache/Core (= 3.0.1-beta.2)
@@ -76,6 +77,7 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Storage
   - Kingfisher (~> 3.0)
+  - MXParallaxHeader
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
@@ -83,7 +85,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AsyncDisplayKit:
-    :commit: f9a96d58b8155e8cc2b9b323e87f562bedf76e3e
+    :commit: d3e942acf79c4a7e806fefbea133e2d18fb1b5b2
     :git: https://github.com/facebook/AsyncDisplayKit
 
 SPEC CHECKSUMS:
@@ -100,9 +102,10 @@ SPEC CHECKSUMS:
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
   Kingfisher: 50407d1d5dbc34965009d425a286342ff36a84ea
+  MXParallaxHeader: 2997592b8349baf8557ae0e4346f6b17e141de39
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
 
-PODFILE CHECKSUM: f4749ef31998f1152d218e8e0d7a3790f37e86c3
+PODFILE CHECKSUM: 4e844d579524741c54cb2707ab0309e2ce2c4d7c
 
 COCOAPODS: 1.2.0.beta.1

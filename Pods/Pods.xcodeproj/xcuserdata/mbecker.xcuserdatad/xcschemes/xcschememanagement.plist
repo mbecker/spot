@@ -24,6 +24,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>MXParallaxHeader.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>PINCache.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -72,6 +77,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>7BD05117621932DF6E6B592A4BE27C99</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>AA776B4566BF9B835A4373F0A916EBFF</key>
 		<dict>
 			<key>primary</key>
@@ -87,12 +97,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E43FB970827522C9D7F9346CC6C56AAD</key>
+		<key>E55D893B14D8E4D0B358457BE22ABF35</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E55D893B14D8E4D0B358457BE22ABF35</key>
+		<key>E75E5BAC0FE6E4C6A5E5F95EA6807F8A</key>
 		<dict>
 			<key>primary</key>
 			<true/>

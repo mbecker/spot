@@ -68,7 +68,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         
         // TableView
         self.tableNode.view.showsVerticalScrollIndicator = false
-        self.tableNode.backgroundColor = UIColor.white
+        self.tableNode.backgroundColor = UIColor.clear
         self.tableNode.view.separatorColor = UIColor.clear
     }
 
@@ -77,51 +77,81 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         // Dispose of any resources that can be recreated.
     }
     
-    lazy var tableHeaderView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 28))
-        view.backgroundColor = UIColor.red
-        return view
-    }()
-    
     func navHeaderView(park: String) -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: (self.navigationController?.navigationBar.frame.size.height)!))
-        let title = UILabel()
-        title.attributedText = NSAttributedString(
+        
+        let titleButton = UIButton()
+        titleButton.setAttributedTitle(NSAttributedString(
             string: park,
             attributes: [
                 NSFontAttributeName: UIFont(name: "AvenirNext-DemiBold", size: 16)!,
                 NSForegroundColorAttributeName: UIColor.black
-                ])
-        title.translatesAutoresizingMaskIntoConstraints = false
+            ])
+            , for: .normal)
+        titleButton.setAttributedTitle(NSAttributedString(
+            string: park,
+            attributes: [
+                NSFontAttributeName: UIFont(name: "AvenirNext-DemiBold", size: 16)!,
+                NSForegroundColorAttributeName: UIColor.black.withAlphaComponent(0.6)
+            ])
+            , for: .highlighted)
+        titleButton.setImage(UIImage(named: "ic_expand_more_36pt")!.withRenderingMode(.alwaysTemplate), for: .normal)
+        titleButton.setImage(UIImage(named: "ic_expand_more_36pt")!.imageWithAlpha(alpha: 0.6), for: .highlighted)
+        titleButton.tintColor = UIColor.black
+        titleButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0);
+        titleButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0);
+        titleButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0);
+        titleButton.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(title)
-        title.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        title.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        view.addSubview(titleButton)
+        titleButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        titleButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         return view
     }
     
+    lazy var tableHeaderView: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 28))
+        view.backgroundColor = UIColor.clear
+        return view
+    }()
+    
     func sectionHeaderView(text: String) -> UIView {
         let view = UIView(frame: CGRect.zero)
-        view.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:1.00)
+        view.backgroundColor = UIColor.clear
         
         let title = UILabel()
         title.attributedText = NSAttributedString(
             string: text,
             attributes: [
-                NSFontAttributeName: UIFont.boldSystemFont(ofSize: 21),
+                NSFontAttributeName: UIFont(name: "AvenirNext-DemiBold", size: 21)!,
                 NSForegroundColorAttributeName: UIColor(red:0.24, green:0.24, blue:0.24, alpha:1.00), // Baltic sea
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.0,
                 ])
         title.translatesAutoresizingMaskIntoConstraints = false
         
+        let detail = UILabel()
+        detail.attributedText = NSAttributedString(
+            string: "See all",
+            attributes: [
+                NSFontAttributeName: UIFont(name: "AvenirNext-Medium", size: 14)!,
+                NSForegroundColorAttributeName: UIColor(red:0.24, green:0.24, blue:0.24, alpha:1.00), // Baltic sea
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.0,
+                ])
+        detail.translatesAutoresizingMaskIntoConstraints = false
+        
         view.addSubview(title)
+        view.addSubview(detail)
         
         let constraintLeftTitle = NSLayoutConstraint(item: title, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: 20)
         let constraintCenterYTitle = NSLayoutConstraint(item: title, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1, constant: 0)
         
         view.addConstraint(constraintLeftTitle)
         view.addConstraint(constraintCenterYTitle)
+        
+        detail.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+        detail.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
         return view
     }
@@ -142,7 +172,7 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 44
+        return 45
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -150,11 +180,12 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 28
+        return 0
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
         let node = ParkASCellNode(park: parkData[indexPath.section])
+        node.delegate = self
         return node
     }
 }
@@ -162,11 +193,18 @@ extension ParkASViewController : ASTableDataSource {
 extension ParkASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
-        return ASSizeRange.init(min: CGSize(width: 0, height: 180), max: CGSize(width: 0, height: 180))
+        return ASSizeRange.init(min: CGSize(width: 0, height: 188), max: CGSize(width: 0, height: 188))
     }
     
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at: \(indexPath)")
+    }
+}
+
+extension ParkASViewController : ParkASCellNodeDelegate {
+    func didSelectPark(_ item: ParkItem) {
+        let itemViewController = ItemViewController(parkItem: item)
+        self.navigationController?.pushViewController(itemViewController, animated: true)
     }
 }

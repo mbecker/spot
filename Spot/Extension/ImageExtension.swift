@@ -38,6 +38,14 @@ extension UIImage {
         return textToImage(drawText: "\(newSize.width)x\(newSize.height)" as NSString, inImage: resized, atPoint: CGPoint(x: 20, y: 20))
     }
     
+    func imageWithAlpha(alpha: CGFloat) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        draw(at: CGPoint.zero, blendMode: .normal, alpha: alpha)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage!
+    }
+    
 }
 
 func textToImage(drawText: NSString, inImage: UIImage, atPoint: CGPoint) -> UIImage{
