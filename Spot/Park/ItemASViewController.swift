@@ -12,6 +12,8 @@ import MXParallaxHeader
 
 class ItemViewController: UIViewController {
     
+    let extendedNavBarHeight: CGFloat = 40
+    
     var _scrollView: MXScrollView!
     var _parkItem: ParkItem!
     
@@ -35,18 +37,33 @@ class ItemViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        self.navigationController?.navigationBar.isHidden = true
+        self.navigationItem.title = self._parkItem.name
+        self.navigationController?.navigationBar.isHidden = false
+        // Translucency of the navigation bar is disabled so that it matches with
+        // the non-translucent background of the extension view.
+        navigationController!.navigationBar.isTranslucent = false
+        
+        // The navigation bar's shadowImage is set to a transparent image.  In
+        // addition to providing a custom background image, this removes
+        // the grey hairline at the bottom of the navigation bar.  The
+        // ExtendedNavBarView will draw its own hairline.
+        navigationController!.navigationBar.shadowImage = #imageLiteral(resourceName: "TransparentPixel")
+        // "Pixel" is a solid white 1x1 image.
+        navigationController!.navigationBar.setBackgroundImage(#imageLiteral(resourceName: "Pixel"), for: .default)
         
         self.view.backgroundColor = UIColor.clear
-        self._pagerNode.backgroundColor = UIColor.clear
         
         self._scrollView.parallaxHeader.view = headerView
         self._scrollView.parallaxHeader.height = 300
         self._scrollView.parallaxHeader.minimumHeight = 80
         self._scrollView.parallaxHeader.mode = MXParallaxHeaderMode.fill
-        self._scrollView.addSubnode(self._pagerNode)
-        self.view.addSubview(self._scrollView)
-//        self.view.addSubnode(self._pagerNode)
+        
+        self._pagerNode.backgroundColor = UIColor.clear
+        
+        self.view.addSubview(extendedNavBarView)
+//        self._scrollView.addSubnode(self._pagerNode)
+//        self.view.addSubview(self._scrollView)
+        self.view.addSubnode(self._pagerNode)
     }
     
     override func viewWillLayoutSubviews() {
@@ -55,17 +72,48 @@ class ItemViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-//        self._pagerNode.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height)
+        self._pagerNode.frame = CGRect(x: 0, y: self.extendedNavBarHeight, width: self.view.bounds.width, height: self.view.bounds.height)
         
-        var frame = self.view.frame
+        var frame = self.view.frame //CGRect(x: 0, y: 120, width: self.view.bounds.width, height: self.view.bounds.height - 120)
+        frame.origin.y = 120
         self._scrollView.frame = frame
         self._scrollView.contentSize = frame.size
         
         frame.size.height -= self._scrollView.parallaxHeader.minimumHeight
         
-        self._pagerNode.frame = frame
+//        self._pagerNode.frame = frame
         
     }
+    
+    lazy var extendedNavBarView: UIView = {
+       let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.extendedNavBarHeight))
+        // Use the layer shadow to draw a one pixel hairline under this view.
+        view.layer.shadowOffset = CGSize(width: 0, height: CGFloat(1) / UIScreen.main.scale)
+        view.layer.shadowRadius = 0
+        
+        // UINavigationBar's hairline is adaptive, its properties change with
+        // the contents it overlies.  You may need to experiment with these
+        // values to best match your content.
+        view.layer.shadowColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1).cgColor
+        view.layer.shadowOpacity = 0.25
+        
+        view.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        view.hairlineBottomWidth = 1
+        
+        let controls = UISegmentedControl(items: ["Spot", "Media", "Map"])
+        controls.selectedSegmentIndex = 0
+        controls.addTarget(self, action: #selector(self.segmentedControlValueChanged(_:)), for: .valueChanged)
+        controls.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(controls)
+        
+        controls.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        controls.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 0).isActive = true
+        controls.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+        controls.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+        
+        return view
+    }()
     
     lazy var headerView: UIView = {
         let view = UIView()
@@ -81,14 +129,6 @@ class ItemViewController: UIViewController {
                 ])
         text.frame = CGRect(x: 100, y: 100, width: 100, height: 100)
         
-        let button = UIButton()
-        button.setTitle("Scroll to 1", for: UIControlState.normal)
-        button.addTarget(self, action: #selector(self.scrollTo1), for: UIControlEvents.touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        let button2 = UIButton()
-        button2.setTitle("Scroll to 2", for: UIControlState.normal)
-        button2.addTarget(self, action: #selector(self.scrollTo2), for: UIControlEvents.touchUpInside)
-        button2.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(text)
         
         let controls = UISegmentedControl(items: ["Scroll1", "Scroll2"])
@@ -100,20 +140,14 @@ class ItemViewController: UIViewController {
         
         controls.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         controls.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -5).isActive = true
+        controls.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+        controls.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
 
         return view
     }()
     
     func segmentedControlValueChanged(_ segment: UISegmentedControl) {
-        if segment.selectedSegmentIndex == 0 {
-        }
         self._pagerNode.scrollToPage(at: segment.selectedSegmentIndex, animated: false)
-    }
-    func scrollTo1(){
-        self._pagerNode.scrollToPage(at: 0, animated: false)
-    }
-    func scrollTo2(){
-        self._pagerNode.scrollToPage(at: 1, animated: true)
     }
 }
 

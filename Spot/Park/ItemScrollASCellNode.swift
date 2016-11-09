@@ -30,15 +30,11 @@ class ItemScrollASCellNode: ASCellNode {
     
     override func didLoad() {
         super.didLoad()
-        if self._number == 1 {
-            self.view.backgroundColor = UIColor(red:0.10, green:0.71, blue:0.57, alpha:1.00)
-        } else {
-            self.view.backgroundColor = UIColor(red:0.19, green:0.26, blue:0.35, alpha:1.00)
-        }
-        
+        self.view.backgroundColor = UIColor.clear
         self._tableNode.backgroundColor = UIColor.clear
-        
-        
+        self._tableNode.view.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        self._tableNode.view.contentOffset = CGPoint(x: 0, y: 0)
+        self._tableNode.view.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         
         self.addSubnode(self._tableNode)
     }
@@ -47,17 +43,6 @@ class ItemScrollASCellNode: ASCellNode {
         self._tableNode.frame = self.frame
     }
     
-    override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        self._tableNode.style.flexGrow      = 1
-        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0), child: self._tableNode)
-    }
-    
-    lazy var headerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.yellow
-        
-        return view
-    }()
 
 }
 
@@ -68,22 +53,6 @@ extension ItemScrollASCellNode : ASTableDataSource {
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
         return 1
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return UIView()
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
-    }
-    
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        return UIView()
-    }
-    
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
