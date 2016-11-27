@@ -108,7 +108,7 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
                     NSKernAttributeName: 0.0,
                     ])
             node._detail.attributedText = NSAttributedString(
-                string: String(self.items[indexPath.row].location["latitude"]!),
+                string: String(describing: self.items[indexPath.row].location?["latitude"]!),
                 attributes: [
                     NSFontAttributeName: UIFont(name: "Avenir-Book", size: 12)!,
                     NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00),
