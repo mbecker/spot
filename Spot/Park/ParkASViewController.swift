@@ -10,6 +10,7 @@ import UIKit
 import AsyncDisplayKit
 import Firebase
 import FirebaseDatabase
+import FirebaseMessaging
 
 class ParkASViewController: ASViewController<ASDisplayNode> {
     
@@ -48,7 +49,11 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         super.viewDidLoad()
         self.tableNode.view.tableHeaderView = tableHeaderView
         
-        // Firebase
+        // Firebase Messaging
+        print("-- FIREBASE -- subscribe toTopic topics/addo")
+        FIRMessaging.messaging().subscribe(toTopic: "/topics/addo")
+        
+        // Firebase Databse
         ref = FIRDatabase.database().reference()
         ref.child("sections").observeSingleEvent(of: .value, with: { (snapshot) in
             let snaps = snapshot.value as! [String : NSDictionary]

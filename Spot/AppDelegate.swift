@@ -21,6 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
+        // set badge count to 0
+        UIApplication.shared.applicationIconBadgeNumber = 0
+        
         // [START register_for_notifications]
         if #available(iOS 10.0, *) {
             
@@ -160,16 +163,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // this callback will not be fired till the user taps on the notification launching the application.
         // TODO: Handle data of notification
         // Print message ID.
+        print("--- didReceiveRemoteNotification ---")
         print("Message ID: \(userInfo["gcm.message_id"]!)")
         // Print full message.
         print(userInfo)
     }
+    
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         // If you are receiving a notification message while your app is in the background,
         // this callback will not be fired till the user taps on the notification launching the application.
         // TODO: Handle data of notification
         // Print message ID.
+        print("--- didReceiveRemoteNotification: fetchCompletionHandler ---")
         print("Message ID: \(userInfo["gcm.message_id"]!)")
         // Print full message.
         print(userInfo)
@@ -178,6 +184,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // [START refresh_token]
     func tokenRefreshNotification(_ notification: Notification) {
+        print("--- tokenRefreshNotification ---")
         if let refreshedToken = FIRInstanceID.instanceID().token() {
             print("InstanceID token: \(refreshedToken)")
         }
@@ -188,6 +195,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // [START connect_to_fcm]
     func connectToFcm() {
+        print("--- connectToFcm ---")
         FIRMessaging.messaging().connect { (error) in
             if error != nil {
                 print("Unable to connect with FCM. \(error)")
@@ -196,6 +204,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
+        print("--- tokenRefreshNotification ---")
         if let refreshedToken = FIRInstanceID.instanceID().token() {
             print("InstanceID token: \(refreshedToken)")
         }
@@ -203,6 +212,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // [END connect_to_fcm]
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("--- didFailToRegisterForRemoteNotificationsWithError ---")
         print("Unable to register for remote notifications: \(error.localizedDescription)")
     }
     
@@ -210,34 +220,82 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // If swizzling is disabled then this function must be implemented so that the APNs token can be paired to
     // the InstanceID token.
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("--- didRegisterForRemoteNotificationsWithDeviceToken ---")
         print("APNs token retrieved: \(deviceToken)")
         // With swizzling disabled you must set the APNs token here.
-        // FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: FIRInstanceIDAPNSTokenType.sandbox)
+        FIRInstanceID.instanceID().setAPNSToken(deviceToken, type: FIRInstanceIDAPNSTokenType.sandbox)
     }
 
 }
 
 // [START ios_10_message_handling]
+// Receive displayed notifications for iOS 10 devices.
 @available(iOS 10, *)
 extension AppDelegate : UNUserNotificationCenterDelegate {
-    // Receive displayed notifications for iOS 10 devices.
+    
+    // Foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        print("--- userNotificationCenter - willPresent notification ---")
         let userInfo = notification.request.content.userInfo
         // Print message ID.
         print("Message ID: \(userInfo["gcm.message_id"]!)")
         // Print full message.
+        let content: UNNotificationContent = notification.request.content
+        print("...userInfo - apps ...")
+        print("content.title: " + content.title)
+        print("content.body: " + content.body)
+        print("----")
+        if let aps = userInfo["aps"] as? [String: Any] {
+            if let notification = aps["alert"] as? [String: Any] {
+                // access nested dictionary values by key
+                print("aps.alert.body: \(notification["body"]!)")
+                print("aps.alert.title: \(notification["title"]!)")
+            }
+        }
+        print("-- Animal")
+        if let animal = userInfo["animalid"] as? String {
+            print("Animal id: \(animal)")
+        }
+        
+        print("----")
         print(userInfo)
+        
+        print("-- response content.categoryIdentifier ---")
+        print(content.categoryIdentifier)
     }
+    
+    // background
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-        let userInfo = response.notification.request.content.userInfo
+        print("--- userNotificationCenter - didReceive ---")
+        let userInfo = response.notification.request.content.userInfo as NSDictionary
         // Print message ID.
         print("Message ID: \(userInfo["gcm.message_id"]!)")
         // Print full message.
+        print("...userInfo - apps ...")
         print(userInfo)
+        
+        switch response.actionIdentifier {
+        case UNNotificationDefaultActionIdentifier:
+            // user clicked on notification
+            // user swiped to unlock
+            print("...Default identifier...")
+            
+        case "show":
+            // the user tapped our "show more info…" button
+            print("...Show more information…")
+            
+            break
+            
+        default:
+            break
+        }
+        
+        print("-- response ---")
+        print(response)
     }
     
 }
@@ -246,7 +304,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
 extension AppDelegate : FIRMessagingDelegate {
     // Receive data message on iOS 10 devices while app is in the foreground.
     func applicationReceivedRemoteMessage(_ remoteMessage: FIRMessagingRemoteMessage) {
-        print("FIRMessagingDelegate - applicationReceivedRemoteMessage")
+        print("--- FIRMessagingDelegate - applicationReceivedRemoteMessage ---")
         print(remoteMessage.appData)
     }
 }
