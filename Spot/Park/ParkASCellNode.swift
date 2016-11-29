@@ -24,6 +24,7 @@ class ParkASCellNode: ASCellNode {
     var collectionNode: ASCollectionNode!
     let park: Park!
     var items: [ParkItem] = [ParkItem]()
+    var nodes = [ItemASCellNode]()
     weak var delegate:ParkASCellNodeDelegate?
     
     /**
@@ -43,8 +44,8 @@ class ParkASCellNode: ASCellNode {
         layout.minimumInteritemSpacing = CGFloat(16) // The minimum spacing to use between items in the same row (here: spacing after all items)
         layout.minimumLineSpacing = CGFloat(16) // The minimum spacing to use between lines of items in the grid (here: spacing between items)
         layout.sectionInset = UIEdgeInsetsMake(0, 20, 0, 186/2)
-        layout.itemSize = CGSize(width: 186, height: 188)
-        layout.estimatedItemSize = CGSize(width: 186, height: 188)
+        layout.itemSize = CGSize(width: 186, height: 144)
+        layout.estimatedItemSize = CGSize(width: 186, height: 144)
         
         // Ccollection view node: ASCollectionDelegate, ASCollectionDataSource
         self.collectionNode = ASCollectionNode(collectionViewLayout: layout)
@@ -62,8 +63,8 @@ class ParkASCellNode: ASCellNode {
     override func didLoad() {
         super.didLoad()
         
-        self.view.backgroundColor = UIColor.clear
-        self.collectionNode.backgroundColor = UIColor.clear
+        self.view.backgroundColor = UIColor.white
+        self.collectionNode.backgroundColor = UIColor.white
         
         self.addSubnode(self.collectionNode)
         
@@ -91,6 +92,9 @@ class ParkASCellNode: ASCellNode {
 }
 
 extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
+    
+    
+    
     func collectionNode(_ collectionNode: ASCollectionNode, numberOfItemsInSection section: Int) -> Int {
         return self.items.count
     }
@@ -102,7 +106,7 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
             node._title.attributedText = NSAttributedString(
                 string: self.items[indexPath.row].name,
                 attributes: [
-                    NSFontAttributeName: UIFont(name: "Avenir-Heavy", size: 12)!,
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
                     NSForegroundColorAttributeName: UIColor.black,
                     NSBackgroundColorAttributeName: UIColor.clear,
                     NSKernAttributeName: 0.0,
@@ -110,19 +114,18 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
             node._detail.attributedText = NSAttributedString(
                 string: String(describing: self.items[indexPath.row].location?["latitude"]!),
                 attributes: [
-                    NSFontAttributeName: UIFont(name: "Avenir-Book", size: 12)!,
-                    NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00),
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
+                    NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
                     NSBackgroundColorAttributeName: UIColor.clear,
                     NSKernAttributeName: 0.0,
                     ])
-
+            self.nodes.append(node)
             return node
         }
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, didSelectItemAt indexPath: IndexPath) {
         print("Selected item: \(indexPath.row)")
-        delegate?.didSelectPark(self.items[indexPath.row])
     }
 
 }
