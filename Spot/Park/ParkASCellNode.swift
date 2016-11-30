@@ -44,8 +44,8 @@ class ParkASCellNode: ASCellNode {
         layout.minimumInteritemSpacing = CGFloat(16) // The minimum spacing to use between items in the same row (here: spacing after all items)
         layout.minimumLineSpacing = CGFloat(16) // The minimum spacing to use between lines of items in the grid (here: spacing between items)
         layout.sectionInset = UIEdgeInsetsMake(0, 20, 0, 186/2)
-        layout.itemSize = CGSize(width: 186, height: 144)
-        layout.estimatedItemSize = CGSize(width: 186, height: 144)
+        layout.itemSize = CGSize(width: 186, height: 188)
+        layout.estimatedItemSize = CGSize(width: 186, height: 188)
         
         // Ccollection view node: ASCollectionDelegate, ASCollectionDataSource
         self.collectionNode = ASCollectionNode(collectionViewLayout: layout)
@@ -112,7 +112,7 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
                     NSKernAttributeName: 0.0,
                     ])
             node._detail.attributedText = NSAttributedString(
-                string: String(describing: self.items[indexPath.row].location?["latitude"]!),
+                string: "Latitude: " + String(describing: self.items[indexPath.row].latitude!) + " - Longitude: " + String(describing: self.items[indexPath.row].longitude!),
                 attributes: [
                     NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
                     NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey

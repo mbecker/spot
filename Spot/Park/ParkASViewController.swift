@@ -36,8 +36,6 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         Park(name: "Animals", path: "park/addo/animals")
     ]
     
-    let mapView = UIImageView(frame: CGRect.zero)
-    
     init() {
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
@@ -54,7 +52,8 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.showsVerticalScrollIndicator = false
         self.tableNode.view.backgroundColor = UIColor.white
         self.tableNode.view.separatorColor = UIColor.clear
-        self.tableNode.view.tableHeaderView = tableHeaderView
+        self.tableNode.view.tableHeaderView = ParkTableHeaderUIView.init(park: "addo", parkTitle: "Addo Elephant National Park")
+        self.tableNode.view.tableFooterView = tableFooterView
         
         self.view.backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
         
@@ -62,27 +61,19 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         print("-- FIREBASE -- subscribe toTopic topics/addo")
         FIRMessaging.messaging().subscribe(toTopic: "/topics/addo")
         
-        // Firebase Databse: Set park image from firebase database
-        ref = FIRDatabase.database().reference()
-        ref.child("park/addo/image").observeSingleEvent(of: .value, with: { (snapshot) in
-            if let image = snapshot.value as? String {
-             print(image)
-                let url = URL(string: image)!
-                let processor = RoundCornerImageProcessor(cornerRadius: 10)
-                self.mapView.kf.setImage(with: url, placeholder: nil, options: [.processor(processor)])
-            }
-        }) { (error) in
-            print(error.localizedDescription)
-        }
         
+        
+    }
+    
+    func mapViewTouched(_ sender:UITapGestureRecognizer){
+        // self.mapView touched
+        let touch = sender.location(in: self.view)
+        print(touch)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         self.navigationController?.navigationBar.isHidden = true
-        
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -90,52 +81,10 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         // Dispose of any resources that can be recreated.
     }
     
-    lazy var tableHeaderView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 82))
-        view.backgroundColor = UIColor.clear
-        
-        let parkTitle = UILabel()
-        parkTitle.attributedText = NSAttributedString(
-            string: "Addo Elephant Park",
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 26, weight: UIFontWeightBlack),
-                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.0,
-                ])
-        parkTitle.translatesAutoresizingMaskIntoConstraints = false
-        
-        let borderLine = UIView(frame: CGRect(x: 20, y: 82, width: self.view.bounds.width, height: 1))
-        borderLine.backgroundColor = UIColor(red:0.80, green:0.80, blue:0.80, alpha:1.00) // iron
-        
-        view.addSubview(parkTitle)
-        view.addSubview(borderLine)
-        
-        parkTitle.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
-        parkTitle.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 82 + 82 + 82 + 82))
-        headerView.backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
-        
-        
-        
-        self.mapView.contentMode = .scaleAspectFill
-        self.mapView.backgroundColor = UIColor.clear
-        self.mapView.cornerRadius = 0
-        self.mapView.translatesAutoresizingMaskIntoConstraints = false
-        self.mapView.kf.indicatorType = .activity
-        
-        
-        
-        headerView.addSubview(view)
-        headerView.addSubview(self.mapView)
-        
-        self.mapView.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20).isActive = true
-        self.mapView.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -20).isActive = true
-        self.mapView.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -20).isActive = true
-        self.mapView.topAnchor.constraint(equalTo: view.bottomAnchor, constant: 20).isActive = true
-            
-        return headerView
+    lazy var tableFooterView: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 240))
+        view.backgroundColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
+        return view
     }()
     
     func sectionHeaderView(text: String) -> UIView {
@@ -213,11 +162,17 @@ extension ParkASViewController : ASTableDataSource {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footer = UIView()
         footer.backgroundColor = UIColor.white
+        if section < parkData.count - 1 {
+            // Show not border line for last section
+            let borderLine = UIView(frame: CGRect(x: 20, y: 14, width: self.view.bounds.width - 40, height: 1))
+            borderLine.backgroundColor = UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00) // Bonjour
+            footer.addSubview(borderLine)
+        }
         return footer
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 8
+        return 18
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
@@ -230,7 +185,7 @@ extension ParkASViewController : ASTableDataSource {
 extension ParkASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
-        return ASSizeRange.init(min: CGSize(width: 0, height: 144), max: CGSize(width: 0, height: 144))
+        return ASSizeRange.init(min: CGSize(width: 0, height: 144), max: CGSize(width: 0, height: 188))
     }
     
     

@@ -27,6 +27,8 @@ struct ParkItem {
     let url:  String?
     let tags: [String]?
     let location: [String: Double]?
+    let latitude: Double?
+    let longitude: Double?
     let images: [String: String]?
     var imagesRef = [String: URL]()
     let storage:            FIRStorage
@@ -45,14 +47,14 @@ struct ParkItem {
         
         if let location = snapshotValue["location"] as? [String: Double] {
             self.location = location
+            self.latitude = location["latitude"]
+            self.longitude = location["longitude"]
         } else {
             self.location = nil
+            self.latitude = nil
+            self.longitude = nil
         }
         
-        /*
-         image375x300
-         image337x218
-         */
     }
     
 }

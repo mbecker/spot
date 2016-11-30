@@ -121,6 +121,14 @@ extension UIView {
             addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[line(==lineWidth)]|", options: [], metrics: metrics, views: views))
         }
     }
-
+    
+    func roundCorners(corner: UIRectCorner, radii: CGFloat) {
+        let maskLayer = CAShapeLayer()
+        maskLayer.frame = self.layer.bounds
+        maskLayer.path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corner, cornerRadii: CGSize(width: radii, height: radii)).cgPath
+        
+        self.layer.mask = maskLayer
+        layer.masksToBounds = true
+    }
     
 }

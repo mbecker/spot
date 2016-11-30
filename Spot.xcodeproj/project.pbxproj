@@ -15,6 +15,8 @@
 		D1079F0B1DD320B8007CCE07 /* ItemASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1079F0A1DD320B8007CCE07 /* ItemASViewController.swift */; };
 		D1079F0E1DD34E28007CCE07 /* ItemScrollASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1079F0D1DD34E28007CCE07 /* ItemScrollASCellNode.swift */; };
 		D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */; };
+		D12D64F51DEF44CA0096A847 /* ParkTableHeaderUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */; };
+		D12D64F71DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */; };
 		D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */; };
 		D14D8D371DD25945009AC39B /* Park.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D361DD25945009AC39B /* Park.swift */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
@@ -62,6 +64,8 @@
 		D1079F0D1DD34E28007CCE07 /* ItemScrollASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemScrollASCellNode.swift; sourceTree = "<group>"; };
 		D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemASCellNode.swift; sourceTree = "<group>"; };
 		D10A7F7E1DD282C100741BF0 /* Spot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spot.entitlements; sourceTree = "<group>"; };
+		D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkTableHeaderUIView.swift; sourceTree = "<group>"; };
+		D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkTableHeaderMapUIImageView.swift; sourceTree = "<group>"; };
 		D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkASCellNode.swift; sourceTree = "<group>"; };
 		D14D8D361DD25945009AC39B /* Park.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Park.swift; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,6 +143,8 @@
 				D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */,
 				D1079F0A1DD320B8007CCE07 /* ItemASViewController.swift */,
 				D1079F0D1DD34E28007CCE07 /* ItemScrollASCellNode.swift */,
+				D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */,
+				D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */,
 			);
 			path = Park;
 			sourceTree = "<group>";
@@ -527,10 +533,12 @@
 				D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */,
 				D14D8D371DD25945009AC39B /* Park.swift in Sources */,
 				D1079F091DD2A754007CCE07 /* SpinnerNode.swift in Sources */,
+				D12D64F71DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift in Sources */,
 				D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */,
 				D1AFD8841DCF8D6B0082A6EF /* ParkASViewController.swift in Sources */,
 				D1079F0E1DD34E28007CCE07 /* ItemScrollASCellNode.swift in Sources */,
 				D1D7813D1DD3AA390024B2A9 /* UIViewExtension.swift in Sources */,
+				D12D64F51DEF44CA0096A847 /* ParkTableHeaderUIView.swift in Sources */,
 				D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */,
 				D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */,
 				D1079F061DD2A637007CCE07 /* KingfisherCache.swift in Sources */,
