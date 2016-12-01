@@ -106,12 +106,14 @@ class ParkItem2 {
     let name        :   String
     let url         :   String
     var urlPublic   :   URL?
-    let tags        :   [String]?
     let location    :   [String: Double]?
     let latitude    :   Double?
     let longitude   :   Double?
     let images      :   [String: String]?
+    
     var imagesPublic:[String: URL] =   [String: URL]()
+    var tags        =   [String]()
+    var spottedBy   =   [String]()
     
     init(snapshot: FIRDataSnapshot) {
         self.storage      = FIRStorage.storage()
@@ -121,8 +123,28 @@ class ParkItem2 {
         let snapshotValue = snapshot.value as! [String: AnyObject]
         self.name         = snapshotValue["name"] as! String
         
-        self.tags           =   snapshotValue["tags"] as? [String]
         
+        /**
+         * Tags
+         */
+        if let tags: [String:String] = snapshotValue["tags"] as? [String:String] {
+            for (_, tag) in tags {
+                self.tags.append(tag)
+            }
+        }
+        
+        /**
+         * Sotted By
+         */
+        if let spotted: [String:String] = snapshotValue["spottedby"] as? [String:String] {
+            for (_, name) in spotted {
+                self.spottedBy.append(name)
+            }
+        }
+        
+        /**
+         * Location
+         */
         if let location = snapshotValue["location"] as? [String: Double] {
             self.location = location
             self.latitude = location["latitude"]

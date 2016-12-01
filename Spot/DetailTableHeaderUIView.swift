@@ -24,49 +24,19 @@ class DetailTableHeaderUIView: UIView {
         // addTitleView()
         addSlideShow()
         
-        let borderLine = UIView(frame: CGRect(x: 20, y: self.bounds.height, width: self.bounds.width - 20, height: 1))
-        borderLine.backgroundColor = UIColor(red:0.78, green:0.78, blue:0.80, alpha:1.00) // Lavender grey
-        self.addSubview(borderLine)
+//        let borderLine = UIView(frame: CGRect(x: 20, y: self.bounds.height, width: self.bounds.width - 20, height: 1))
+//        borderLine.backgroundColor = UIColor(red:0.78, green:0.78, blue:0.80, alpha:1.00) // Lavender grey
+//        self.addSubview(borderLine)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func addTitleView() -> () {
-        let titleView = UIView(frame: CGRect(x: 0, y: 0, width: self.bounds.width, height: 82))
-        titleView.backgroundColor = UIColor.clear
-        
-        let parkTitle = UILabel()
-        parkTitle.attributedText = NSAttributedString(
-            string: self._title,
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightBlack),
-                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.0,
-                ])
-        
-        parkTitle.translatesAutoresizingMaskIntoConstraints = false
-        
-        titleView.addSubview(parkTitle)
-        
-        self.addSubview(titleView)
-        
-        
-        parkTitle.leadingAnchor.constraint(equalTo: titleView.leadingAnchor, constant: 20).isActive = true
-        parkTitle.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
-        
-        let borderLine = UIView(frame: CGRect(x: 20, y: 82, width: self.bounds.width - 20, height: 1))
-        borderLine.backgroundColor = UIColor(red:0.80, green:0.80, blue:0.80, alpha:1.00) // iron
-        
-        self.addSubview(borderLine)
-    }
-    
     func addSlideShow() -> () {
-        let slideShow: ImageSlideshow = ImageSlideshow(frame: CGRect(x: 20, y: 20, width: self.bounds.width - 40, height: self.bounds.height - 20 - 20))
+        let slideShow: ImageSlideshow = ImageSlideshow(frame: CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height))
         slideShow.backgroundColor = UIColor.white
-        slideShow.cornerRadius = 10
+        slideShow.cornerRadius = 0
         slideShow.slideshowInterval = 5.0
         slideShow.pageControlPosition = PageControlPosition.insideScrollView
         slideShow.pageControl.currentPageIndicatorTintColor = UIColor.white

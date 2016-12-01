@@ -19,9 +19,9 @@
 		D12D64FD1DEF72D60096A847 /* DB.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64FC1DEF72D60096A847 /* DB.swift */; };
 		D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */; };
 		D14D8D371DD25945009AC39B /* Park.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D361DD25945009AC39B /* Park.swift */; };
+		D1A051DD1DF0BED800D9F59A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1A051DC1DF0BED800D9F59A /* Assets.xcassets */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
 		D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */; };
-		D1AFD85B1DCF8B4C0082A6EF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1AFD85A1DCF8B4C0082A6EF /* Assets.xcassets */; };
 		D1AFD85E1DCF8B4C0082A6EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */; };
 		D1AFD8691DCF8B4C0082A6EF /* SpotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8681DCF8B4C0082A6EF /* SpotTests.swift */; };
 		D1AFD8741DCF8B4C0082A6EF /* SpotUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8731DCF8B4C0082A6EF /* SpotUITests.swift */; };
@@ -71,10 +71,10 @@
 		D12D64FC1DEF72D60096A847 /* DB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DB.swift; sourceTree = "<group>"; };
 		D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkASCellNode.swift; sourceTree = "<group>"; };
 		D14D8D361DD25945009AC39B /* Park.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Park.swift; sourceTree = "<group>"; };
+		D1A051DC1DF0BED800D9F59A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D1AFD8581DCF8B4C0082A6EF /* Spot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Spot.xcdatamodel; sourceTree = "<group>"; };
-		D1AFD85A1DCF8B4C0082A6EF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D1AFD85D1DCF8B4C0082A6EF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D1AFD85F1DCF8B4C0082A6EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D1AFD8641DCF8B4C0082A6EF /* SpotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -195,9 +195,9 @@
 				D14D8D351DD25934009AC39B /* Model */,
 				D14D8D321DD25420009AC39B /* Park */,
 				D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */,
-				D1AFD85A1DCF8B4C0082A6EF /* Assets.xcassets */,
 				D1AFD8811DCF8CBC0082A6EF /* GoogleService-Info.plist */,
 				D1AFD85F1DCF8B4C0082A6EF /* Info.plist */,
+				D1A051DC1DF0BED800D9F59A /* Assets.xcassets */,
 				D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */,
 				D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */,
 			);
@@ -383,7 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1AFD85E1DCF8B4C0082A6EF /* LaunchScreen.storyboard in Resources */,
-				D1AFD85B1DCF8B4C0082A6EF /* Assets.xcassets in Resources */,
+				D1A051DD1DF0BED800D9F59A /* Assets.xcassets in Resources */,
 				D1AFD8821DCF8CBC0082A6EF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -30,7 +30,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
     
     init(parkItem: ParkItem2) {
         self._parkItem = parkItem
-        self._tableData.append("Addo Elephant national Park")
+        self._tableData.append("Addo Elephant National Park")
         self._tableData.append("2km away")
         self._tableData.append("10mins ago")
         self._tableData.append("mbecker")
@@ -59,8 +59,13 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
         self.navigationController?.navigationBar.backIndicatorImage = backImage
         self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+//        let barButton = UIBarButtonItem(image: backImage, style: .plain, target: nil, action: nil)
+//        barButton.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+//        barButton.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
+//        self.navigationItem.leftBarButtonItem = barButton
+//        self.navigationController?.navigationBar.backItem?.backBarButtonItem = barButton
         self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
-        self.navigationController!.navigationBar.topItem?.title = ""
+        self.navigationController!.navigationBar.topItem?.title = "Park"
     }
     
     override func viewDidLoad() {
@@ -125,7 +130,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         title.attributedText = NSAttributedString(
             string: text,
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 18, weight: UIFontWeightRegular),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 26, weight: UIFontWeightBold),
                 NSForegroundColorAttributeName: UIColor.black,
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.6,
@@ -146,7 +151,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
 
 extension DetailASViewController : ASTableDataSource {
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
-        return self._tableData.count
+        return 4
     }
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
@@ -159,7 +164,7 @@ extension DetailASViewController : ASTableDataSource {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         // From header text to immage horizinta slider
-        return 42
+        return 64
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -174,30 +179,26 @@ extension DetailASViewController : ASTableDataSource {
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
         let item = self._tableData[indexPath.row]
+        let row = indexPath.row
         let node = ASCellNode { () -> UIView in
-            let view = UIView()
-            view.backgroundColor = UIColor.white
-            let label = UILabel(frame: CGRect(x: 20, y: 2, width: UIScreen.main.bounds.width - 20, height: 20))
-            label.textColor = UIColor(red:0.16, green:0.20, blue:0.32, alpha:1.00)
-            label.attributedText = NSAttributedString(
-                string: item,
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular),
-                    NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
-                    NSBackgroundColorAttributeName: UIColor.clear,
-                    NSKernAttributeName: 0.6,
-                    ])
-
-            label.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(label)
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-            label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
-            return view
+            switch row {
+            case 0:
+                return CountryNode.init(_item: self._parkItem)
+            case 1:
+                return ItemsNode.init(parkItem: self._parkItem)
+            case 2:
+                return SpootedByNode.init(parkItem: self._parkItem)
+            default:
+                let view = UIView()
+                view.backgroundColor = UIColor.white
+                return view
+            }
+            
         }
         if item == "mbecker" {
-            node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 32)
+            node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 86)
         } else {
-            node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 32)
+            node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 86)
         }
         
         return node
@@ -207,11 +208,220 @@ extension DetailASViewController : ASTableDataSource {
 extension DetailASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
-        return ASSizeRange.init(min: CGSize(width: 0, height: 20), max: CGSize(width: 0, height: 32))
+        return ASSizeRange.init(min: CGSize(width: 0, height: 20), max: CGSize(width: 0, height: 86))
     }
     
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at: \(indexPath)")
+    }
+}
+
+class CountryNode: UIView {
+    init(_item: ParkItem2) {
+        super.init(frame: CGRect.zero)
+        backgroundColor = UIColor.white
+        
+        let label = UILabel()
+        label.attributedText = NSAttributedString(
+            string: "Addo Elephant National Park",
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular),
+                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.6,
+                ])
+        
+        label.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(label)
+        label.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+        
+        let info = UILabel()
+        info.attributedText = NSAttributedString(
+            string: "Cape Town, South Africa • 2km away",
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
+                NSForegroundColorAttributeName: UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.00), // Charcoal
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.6,
+                ])
+        info.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(info)
+        info.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 4).isActive = true
+        info.leadingAnchor.constraint(equalTo: label.leadingAnchor).isActive = true
+        
+        /**
+         * Images
+         */
+        let countryLogo = UIImageView()
+        countryLogo.image = #imageLiteral(resourceName: "southafrica")
+        countryLogo.layer.cornerRadius = 16
+        countryLogo.clipsToBounds = true
+        countryLogo.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(countryLogo)
+        countryLogo.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        countryLogo.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        countryLogo.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -36).isActive = true
+        countryLogo.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        
+        let parkLogo = UIImageView()
+        parkLogo.image = #imageLiteral(resourceName: "southafricannationalparks")
+        parkLogo.layer.cornerRadius = 16
+        parkLogo.clipsToBounds = true
+        parkLogo.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(parkLogo)
+        parkLogo.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        parkLogo.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        parkLogo.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
+        parkLogo.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        
+        
+        let borderBottomView = UIView()
+        borderBottomView.backgroundColor = UIColor(red:0.92, green:0.92, blue:0.92, alpha:1.00) // Lilly White
+        borderBottomView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(borderBottomView)
+        
+        borderBottomView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+        borderBottomView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
+        borderBottomView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -1).isActive = true
+        borderBottomView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class ItemsNode: UIView {
+    init(parkItem: ParkItem2){
+        super.init(frame: CGRect.zero)
+        backgroundColor = UIColor.white
+        
+        if parkItem.tags.count == 0 {
+            let info = UILabel()
+            info.attributedText = NSAttributedString(
+                string: "No tags",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
+                    NSForegroundColorAttributeName: UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.00), // Charcoal
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.6,
+                    ])
+            info.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(info)
+            info.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+            info.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+        } else {
+            var i = 0
+            for tag in parkItem.tags {
+                let tagImageView = UIImageView(frame: CGRect(x: 20 + i, y: 86 / 2 - 24, width: 48, height: 48))
+                tagImageView.cornerRadius = 24
+                tagImageView.clipsToBounds = true
+                tagImageView.borderColor = UIColor.black
+                tagImageView.borderWidth = 1.0
+                tagImageView.contentMode = .center
+                var imageTag : UIImage = UIImage()
+                if tag == "Elephant" {
+                    imageTag = #imageLiteral(resourceName: "elephant64")
+                } else if tag == "Ape" {
+                    imageTag = #imageLiteral(resourceName: "gorilla64")
+                } else {
+                    imageTag = #imageLiteral(resourceName: "giraffe64")
+                }
+                
+                tagImageView.image = imageTag.resizedImage(newSize: CGSize(width: 32, height: 32))
+                
+                addSubview(tagImageView)
+                i = i + 48 + 14
+            }
+        }
+        
+        
+        let borderBottomView = UIView()
+        borderBottomView.backgroundColor = UIColor(red:0.92, green:0.92, blue:0.92, alpha:1.00) // Lilly White
+        borderBottomView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(borderBottomView)
+        
+        borderBottomView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+        borderBottomView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
+        borderBottomView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -1).isActive = true
+        borderBottomView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class SpootedByNode: UIView {
+    init(parkItem: ParkItem2){
+        super.init(frame: CGRect.zero)
+        backgroundColor = UIColor.white
+        
+        if parkItem.spottedBy.count == 0 {
+            let info = UILabel()
+            info.attributedText = NSAttributedString(
+                string: "Not yet spotted ...",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
+                    NSForegroundColorAttributeName: UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.00), // Charcoal
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.6,
+                    ])
+            info.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(info)
+            info.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+            info.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+        } else {
+            
+            var count = 4
+            if parkItem.spottedBy.count < 4 {
+                count = parkItem.spottedBy.count
+            }
+            
+            for i in 0...count {
+                let tagImageView = UIImageView(frame: CGRect(x: 20 + (i * 32), y: 86 / 2 - 24, width: 48, height: 48))
+                tagImageView.cornerRadius = 24
+                tagImageView.clipsToBounds = true
+                tagImageView.borderColor = UIColor.black
+                tagImageView.borderWidth = 1.0
+                tagImageView.image = UIImage(named: "lego" + String(arc4random_uniform(9) + 1))
+                
+                addSubview(tagImageView)
+                self.sendSubview(toBack: tagImageView)
+            }
+            
+            let info = UILabel()
+            info.attributedText = NSAttributedString(
+                string: "+ \(parkItem.spottedBy.count) user",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
+                    NSForegroundColorAttributeName: UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.00), // Charcoal
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.6,
+                    ])
+            info.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(info)
+            let leadingConstant: Int = Int(32) * (Int(count) + 1) + 20 + 24
+            info.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+            info.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: CGFloat(leadingConstant)).isActive = true
+            
+        }
+        
+        let borderBottomView = UIView()
+        borderBottomView.backgroundColor = UIColor(red:0.92, green:0.92, blue:0.92, alpha:1.00) // Lilly White
+        borderBottomView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(borderBottomView)
+        
+        borderBottomView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+        borderBottomView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
+        borderBottomView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -1).isActive = true
+        borderBottomView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
