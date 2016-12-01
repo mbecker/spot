@@ -12,12 +12,14 @@ import FirebaseStorage
 
 class ItemASCellNode: ASCellNode {
     
-    let _parkItem:              ParkItem!
-    var _title =                ASTextNode()
-    var _detail                 = ASTextNode()
-    var _image:                 ASNetworkImageNode
-    var _loadingIndicator =     SpinnerNode()
-    var storage:                FIRStorage
+    let _parkItem   :   ParkItem!
+    var storage     :   FIRStorage
+    var _image      :   ASNetworkImageNode
+    
+    var _title              =   ASTextNode()
+    var _detail             =   ASTextNode()
+    var _loadingIndicator   =   BallPulse()
+    
     
     init(parkItem: ParkItem){
         self._parkItem = parkItem
@@ -26,7 +28,8 @@ class ItemASCellNode: ASCellNode {
         self._image                     = ASNetworkImageNode(cache: cache, downloader: cache)
         
         self._image.placeholderEnabled  = true
-        self._image.defaultImage        = UIImage(named: "imagebackgrounddefault")
+        // self._image.defaultImage        = UIImage(named: "imagebackgrounddefault")
+        self._image.backgroundColor     = UIColor(red:0.89, green:0.89, blue:0.89, alpha:0.30)
         self._image.contentMode         = .scaleAspectFill
         
         super.init()
@@ -63,10 +66,12 @@ class ItemASCellNode: ASCellNode {
         self._loadingIndicator.style.width  = ASDimension(unit: .points, value: 44)
         self._loadingIndicator.style.height = ASDimension(unit: .points, value: 44)
         
+        let loadingIndicatorInsetSpec       = ASInsetLayoutSpec(insets: UIEdgeInsets(top: 140 / 2 - 22, left: 156 / 2 - 22, bottom: 0, right: 0), child: self._loadingIndicator)
+        
         self._image.style.width             = ASDimension(unit: .points, value: 186)
         self._image.style.height            = ASDimension(unit: .points, value: 140)
         
-        let loadingIndicatorOverlaySpec     = ASOverlayLayoutSpec(child: self._image, overlay: self._loadingIndicator)
+        let loadingIndicatorOverlaySpec     = ASOverlayLayoutSpec(child: self._image, overlay: loadingIndicatorInsetSpec)
         
         self._title.style.flexGrow          = 1 // 	If the sum of childrens' stack dimensions is less than the minimum size, should this object grow?
         self._detail.style.flexGrow         = 1

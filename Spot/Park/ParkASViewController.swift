@@ -16,12 +16,6 @@ import Kingfisher
 class ParkASViewController: ASViewController<ASDisplayNode> {
     
     /**
-     * Firebase
-     */
-    var ref: FIRDatabaseReference!
-    var refs: [FIRDatabaseReference] = [FIRDatabaseReference]()
-    
-    /**
     * AsyncDisplayKit
     */
     var tableNode: ASTableNode {
@@ -32,7 +26,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
      * Data
      */
     let parkData: [Park] = [
-        Park(name: "Attraction", path: "park/addo/attractions"),
+        Park(name: "Attractions", path: "park/addo/attractions"),
         Park(name: "Animals", path: "park/addo/animals")
     ]
     
@@ -60,9 +54,6 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         // Firebase Messaging
         print("-- FIREBASE -- subscribe toTopic topics/addo")
         FIRMessaging.messaging().subscribe(toTopic: "/topics/addo")
-        
-        
-        
     }
     
     func mapViewTouched(_ sender:UITapGestureRecognizer){
@@ -84,8 +75,35 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     lazy var tableFooterView: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 240))
         view.backgroundColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
+        
+        let buttonClearCache = UIButton(frame: CGRect(x: 20, y: 20, width: 150, height: 50))
+        buttonClearCache.setBackgroundColor(color: UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00), forState: .normal)
+        buttonClearCache.setBackgroundColor(color: UIColor(red:0.83, green:0.29, blue:0.31, alpha:1.00), forState: .highlighted)
+        buttonClearCache.setTitle("Clear Cache", for: .normal)
+        buttonClearCache.addTarget(self, action: #selector(didTapClearCache), for: .touchUpInside)
+        
+        view.addSubview(buttonClearCache)
+        
         return view
     }()
+    
+    @objc fileprivate func didTapClearCache() {
+        ImageCache.default.calculateDiskCacheSize { size in
+            let alert = UIAlertController(title: "Cache", message: "Used disk size: \(size / 1024 / 1024) MB", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Clear cache", style: UIAlertActionStyle.destructive, handler: { action in
+                // Clear memory cache right away.
+                ImageCache.default.clearMemoryCache()
+                
+                // Clear disk cache. This is an async operation.
+                ImageCache.default.clearDiskCache()
+            }))
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
+            
+            self.present(alert, animated: true, completion: nil)
+            
+        }
+    }
     
     func sectionHeaderView(text: String) -> UIView {
         let view = UIView(frame: CGRect.zero)
@@ -102,7 +120,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
                 ])
         title.translatesAutoresizingMaskIntoConstraints = false
         
-        let detailButton = UIButton()
+        let detailButton = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 20 - 42.5947265625 - 20 - 20, y: 42 / 2 - 16.70703125, width: 20 + 42.5947265625 + 20, height: 16.70703125 * 2))
         detailButton.setAttributedTitle(NSAttributedString(
             string: "See all",
             attributes: [
@@ -122,7 +140,18 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
             ])
             , for: .highlighted)
         
-        detailButton.translatesAutoresizingMaskIntoConstraints = false
+        detailButton.setImage(UIImage(named: "next48")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        detailButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
+        detailButton.tintColor = UIColor(red:1.00, green:0.22, blue:0.22, alpha:1.00)
+        detailButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        detailButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        detailButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        if text == "Attractions" {
+            detailButton.tag = 0
+        } else if text == "Animals" {
+            detailButton.tag = 1
+        }
+        detailButton.addTarget(self, action: #selector(self.pushDetail(sender:)), for: UIControlEvents.touchUpInside)
         
         view.addSubview(title)
         view.addSubview(detailButton)
@@ -133,11 +162,14 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         view.addConstraint(constraintLeftTitle)
         view.addConstraint(constraintCenterYTitle)
         
-        detailButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-        detailButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
         return view
     }
+    
+    @objc func pushDetail(sender: UIButton) {
+        print(sender.tag)
+    }
+    
+
 
 }
 
@@ -195,9 +227,10 @@ extension ParkASViewController : ASTableDelegate {
 }
 
 extension ParkASViewController : ParkASCellNodeDelegate {
-    func didSelectPark(_ item: ParkItem) {
-        let itemViewController = ItemViewController(parkItem: item)
-        self.navigationController?.pushViewController(itemViewController, animated: true)
+    func didSelectPark(_ item: ParkItem2) {
+        let detailViewController = DetailViewController(parkItem: item)
+        let detailTableViewConroller = DetailASViewController(parkItem: item)
+        self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
     }
 }
 

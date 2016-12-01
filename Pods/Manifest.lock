@@ -66,8 +66,15 @@ PODS:
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.0)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.0)
   - GTMSessionFetcher/Core (1.1.7)
+  - ImageSlideshow (1.0.0-beta.1):
+    - ImageSlideshow/Core (= 1.0.0-beta.1)
+  - ImageSlideshow/Core (1.0.0-beta.1)
+  - ImageSlideshow/Kingfisher (1.0.0-beta.1):
+    - ImageSlideshow/Core
+    - Kingfisher (~> 3.0)
   - Kingfisher (3.2.0)
   - MXParallaxHeader (0.6.0)
+  - NVActivityIndicatorView (3.0)
   - PINCache (3.0.1-beta.2):
     - PINCache/Arc-exception-safe (= 3.0.1-beta.2)
     - PINCache/Core (= 3.0.1-beta.2)
@@ -88,8 +95,11 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Messaging
   - Firebase/Storage
+  - ImageSlideshow (~> 1.0.0-beta.1)
+  - ImageSlideshow/Kingfisher
   - Kingfisher (~> 3.0)
   - MXParallaxHeader
+  - NVActivityIndicatorView
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
@@ -114,11 +124,13 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
+  ImageSlideshow: adf31cd12d65c1e78c15d024b9227d56fc46208c
   Kingfisher: 50407d1d5dbc34965009d425a286342ff36a84ea
   MXParallaxHeader: 2997592b8349baf8557ae0e4346f6b17e141de39
+  NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
 
-PODFILE CHECKSUM: 2c9fd46883358020f3c2d42b297d7c939317619c
+PODFILE CHECKSUM: 8bb9c03d10f5371edb6658723f8ad174c6932e70
 
 COCOAPODS: 1.2.0.beta.1

@@ -10,10 +10,11 @@ import UIKit
 import Firebase
 import FirebaseDatabase
 import Kingfisher
+import NVActivityIndicatorView
 
 class ParkTableHeaderMapUIImageView: UIImageView {
 
-    var ref: FIRDatabaseReference!    
+    var ref: FIRDatabaseReference!
     var park: String
     
     init(frame: CGRect, park: String) {
@@ -46,7 +47,7 @@ class ParkTableHeaderMapUIImageView: UIImageView {
                     print(image)
                     let url = URL(string: image)!
                     let processor = RoundCornerImageProcessor(cornerRadius: 10)
-                    self.kf.setImage(with: url, placeholder: UIImage(named: "imagebackgrounddefault"), options: [.processor(processor)])
+                    self.kf.setImage(with: url, placeholder: nil, options: [.processor(processor)])
                 }
                 
                 // informationView
@@ -61,7 +62,7 @@ class ParkTableHeaderMapUIImageView: UIImageView {
                 
                 if let country = snapshotValue["country"] as? String {
                     let countryImage = UIImageView(frame: CGRect(x: 8, y: marginTop, width: 12, height: 12))
-                    countryImage.image = UIImage(named: "markerfilled")
+                    countryImage.image = UIImage(named: "marker")
                     let countryLabel = UILabel()
                     countryLabel.attributedText = NSAttributedString(
                         string: country,

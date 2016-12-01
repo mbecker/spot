@@ -14,6 +14,9 @@ target 'Spot' do
   pod 'Firebase/Messaging'
   pod 'Kingfisher', '~> 3.0'
   pod 'MXParallaxHeader'
+  pod 'NVActivityIndicatorView'
+  pod 'ImageSlideshow', '~> 1.0.0-beta.1'
+  pod 'ImageSlideshow/Kingfisher'
 
   target 'SpotTests' do
     inherit! :search_paths

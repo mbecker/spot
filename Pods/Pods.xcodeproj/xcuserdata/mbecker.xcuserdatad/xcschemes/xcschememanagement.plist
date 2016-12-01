@@ -19,12 +19,27 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>ImageSlideshow-ImageSlideshow.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ImageSlideshow.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Kingfisher.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
 		<key>MXParallaxHeader.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>NVActivityIndicatorView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -57,7 +72,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>08578E7A37CB69E274DF82474E709617</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>08EBC23F8F2F5B2AFDE5E6057911BE18</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3EDFE4052B5DE7D509935AC0774CB135</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -77,7 +102,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>7BD05117621932DF6E6B592A4BE27C99</key>
+		<key>94CDCE75F6653305B3F663802AEAFFA5</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -92,7 +117,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C4944FEC314D1A66588651D006273ADE</key>
+		<key>C0D8D185036014A5380851EA9E3BF4BF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -103,6 +128,11 @@
 			<true/>
 		</dict>
 		<key>E75E5BAC0FE6E4C6A5E5F95EA6807F8A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E83D72EE0336E9831509503ECD4154EA</key>
 		<dict>
 			<key>primary</key>
 			<true/>

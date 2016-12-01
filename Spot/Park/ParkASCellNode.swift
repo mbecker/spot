@@ -10,6 +10,7 @@ import UIKit
 import AsyncDisplayKit
 import FirebaseDatabase
 import FirebaseStorage
+import NVActivityIndicatorView
 
 let airBnbImageFooterHeight: CGFloat = 58
 let airBnbHeight: CGFloat = 218 + airBnbImageFooterHeight
@@ -17,13 +18,14 @@ let airBnbInset = UIEdgeInsetsMake(0, 24, 0, 24)
 let airbnbSpacing = 12
 
 protocol ParkASCellNodeDelegate: class {
-    func didSelectPark(_ item: ParkItem)
+    func didSelectPark(_ item: ParkItem2)
 }
 class ParkASCellNode: ASCellNode {
     
     var collectionNode: ASCollectionNode!
     let park: Park!
-    var items: [ParkItem] = [ParkItem]()
+    var items: [ParkItem]   = [ParkItem]()
+    var items2: [ParkItem2] = [ParkItem2]()
     var nodes = [ItemASCellNode]()
     weak var delegate:ParkASCellNodeDelegate?
     
@@ -32,6 +34,8 @@ class ParkASCellNode: ASCellNode {
      */
     var ref: FIRDatabaseReference = FIRDatabaseReference()
     var storage: FIRStorage!
+    
+    let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
     
     init(park: Park) {
         self.park = park
@@ -66,13 +70,19 @@ class ParkASCellNode: ASCellNode {
         self.view.backgroundColor = UIColor.white
         self.collectionNode.backgroundColor = UIColor.white
         
+        self.loadingIndicatorView.frame = CGRect(x: self.view.bounds.width / 2 - 22, y: 188 / 2 - 22, width: 44, height: 44)
+        self.loadingIndicatorView.startAnimating()
+        self.collectionNode.view.addSubview(self.loadingIndicatorView)
+        
         self.addSubnode(self.collectionNode)
         
         // Listen for added snapshots
         self.ref.child(self.park.path).observe(.childAdded, with: { (snapshot) -> Void in
             let item = ParkItem(snapshot: snapshot)
+            let item2 = ParkItem2(snapshot: snapshot)
             OperationQueue.main.addOperation({
                 self.items.insert(item, at: 0)
+                self.items2.insert(item2, at: 0)
                 let indexPath = IndexPath(item: 0, section: 0)
                 self.collectionNode.insertItems(at: [indexPath])
                 self.collectionNode.reloadItems(at: [indexPath])
@@ -96,6 +106,9 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
     
     
     func collectionNode(_ collectionNode: ASCollectionNode, numberOfItemsInSection section: Int) -> Int {
+        if self.items.count > 0 {
+            self.loadingIndicatorView.removeFromSuperview()
+        }
         return self.items.count
     }
     
@@ -125,7 +138,7 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, didSelectItemAt indexPath: IndexPath) {
-        print("Selected item: \(indexPath.row)")
+        self.delegate?.didSelectPark(self.items2[indexPath.row])
     }
 
 }

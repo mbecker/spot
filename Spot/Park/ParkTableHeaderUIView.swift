@@ -27,6 +27,7 @@ class ParkTableHeaderUIView: UIView {
         // addMapView()
         let mapView = ParkTableHeaderMapUIImageView.init(frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: self.bounds.height - 82 - 20 - 20), park: self.park)
         addSubview(mapView)
+        
     }
     
     func addTitleView() -> () {
@@ -43,6 +44,7 @@ class ParkTableHeaderUIView: UIView {
                 NSKernAttributeName: 0.0,
                 ])
             , for: .normal)
+        // ToDo: Remove
         parkTitle.setAttributedTitle(NSAttributedString(
             string: self.parkTitle,
             attributes: [
