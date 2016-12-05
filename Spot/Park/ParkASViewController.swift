@@ -25,12 +25,14 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     /**
      * Data
      */
-    let parkData: [Park] = [
-        Park(name: "Attractions", path: "park/addo/attractions"),
-        Park(name: "Animals", path: "park/addo/animals")
+    let parkSections: [ParkSection] = [
+        ParkSection(name: "Attractions", path: "park/addo/attractions"),
+        ParkSection(name: "Animals", path: "park/addo/animals")
     ]
+    let parkData: Park
     
     init() {
+        parkData = Park(name: "Addo Elephant National Park", path: "parkinfo/addo", sections: parkSections)
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -46,7 +48,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.showsVerticalScrollIndicator = false
         self.tableNode.view.backgroundColor = UIColor.white
         self.tableNode.view.separatorColor = UIColor.clear
-        self.tableNode.view.tableHeaderView = ParkTableHeaderUIView.init(park: "addo", parkTitle: "Addo Elephant National Park")
+        self.tableNode.view.tableHeaderView = ParkTableHeaderUIView.init(park: self.parkData)
         self.tableNode.view.tableFooterView = tableFooterView
         
         self.view.backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
@@ -179,11 +181,11 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return self.parkData.count
+        return self.parkData.sections.count
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return sectionHeaderView(text: parkData[section].name)
+        return sectionHeaderView(text: (parkData.sections[section].name))
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -194,7 +196,7 @@ extension ParkASViewController : ASTableDataSource {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footer = UIView()
         footer.backgroundColor = UIColor.white
-        if section < parkData.count - 1 {
+        if section < parkData.sections.count - 1 {
             // Show not border line for last section
             let borderLine = UIView(frame: CGRect(x: 20, y: 14, width: self.view.bounds.width - 40, height: 1))
             borderLine.backgroundColor = UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00) // Bonjour
@@ -208,7 +210,7 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
-        let node = ParkASCellNode(park: parkData[indexPath.section])
+        let node = ParkASCellNode(park: self.parkData, section: indexPath.section)
         node.delegate = self
         return node
     }
@@ -228,7 +230,6 @@ extension ParkASViewController : ASTableDelegate {
 
 extension ParkASViewController : ParkASCellNodeDelegate {
     func didSelectPark(_ item: ParkItem2) {
-        let detailViewController = DetailViewController(parkItem: item)
         let detailTableViewConroller = DetailASViewController(parkItem: item)
         self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
     }

@@ -23,6 +23,7 @@ protocol ParkASCellNodeDelegate: class {
 class ParkASCellNode: ASCellNode {
     
     var collectionNode: ASCollectionNode!
+    let parkSection: ParkSection!
     let park: Park!
     var items: [ParkItem]   = [ParkItem]()
     var items2: [ParkItem2] = [ParkItem2]()
@@ -37,10 +38,11 @@ class ParkASCellNode: ASCellNode {
     
     let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
     
-    init(park: Park) {
-        self.park = park
-        self.ref           = FIRDatabase.database().reference()
-        self.storage       = FIRStorage.storage()
+    init(park: Park, section: Int) {
+        self.parkSection    = park.sections[section]
+        self.park       = park
+        self.ref            = FIRDatabase.database().reference()
+        self.storage        = FIRStorage.storage()
         
         // Layout
         let layout = UICollectionViewFlowLayout()
@@ -77,9 +79,9 @@ class ParkASCellNode: ASCellNode {
         self.addSubnode(self.collectionNode)
         
         // Listen for added snapshots
-        self.ref.child(self.park.path).observe(.childAdded, with: { (snapshot) -> Void in
+        self.ref.child(self.parkSection.path).observe(.childAdded, with: { (snapshot) -> Void in
             let item = ParkItem(snapshot: snapshot)
-            let item2 = ParkItem2(snapshot: snapshot)
+            let item2 = ParkItem2(snapshot: snapshot, park: self.park)
             OperationQueue.main.addOperation({
                 self.items.insert(item, at: 0)
                 self.items2.insert(item2, at: 0)

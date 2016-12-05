@@ -16,7 +16,7 @@ target 'Spot' do
   pod 'MXParallaxHeader'
   pod 'NVActivityIndicatorView'
   pod 'ImageSlideshow', '~> 1.0.0-beta.1'
-  pod 'ImageSlideshow/Kingfisher'
+  pod 'MapboxStatic.swift', :git => 'https://github.com/mapbox/MapboxStatic.swift.git', :branch => 'swift-3'
 
   target 'SpotTests' do
     inherit! :search_paths

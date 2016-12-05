@@ -15,9 +15,9 @@ import NVActivityIndicatorView
 class ParkTableHeaderMapUIImageView: UIImageView {
 
     var ref: FIRDatabaseReference!
-    var park: String
+    var park: Park
     
-    init(frame: CGRect, park: String) {
+    init(park: Park, frame: CGRect) {
         self.park = park
         self.ref = FIRDatabase.database().reference() // Firebase Databse: Set park image from firebase database
         
@@ -40,12 +40,21 @@ class ParkTableHeaderMapUIImageView: UIImageView {
     }
     
     func addInfo() -> () {
-        self.ref.child("parkinfo/" + self.park).observeSingleEvent(of: .value, with: { (snapshot) in
+        
+        if let mapImage: String = self.park.mapImage {
+            let url = URL(string: mapImage)!
+            let processor = RoundCornerImageProcessor(cornerRadius: 10)
+            self.kf.setImage(with: url, placeholder: nil, options: [.processor(processor)])
+        }
+        
+        // ToDo: Check for each parameter if exists in model; if not request data from firebase
+        
+        self.ref.child(self.park.path).observeSingleEvent(of: .value, with: { (snapshot) in
             
             if let snapshotValue = snapshot.value as? [String: AnyObject] {
-                if let image = snapshotValue["image"]  as? String {
-                    print(image)
-                    let url = URL(string: image)!
+                if let mapImage = snapshotValue["mapimage"]  as? String {
+                    self.park.mapImage = mapImage
+                    let url = URL(string: mapImage)!
                     let processor = RoundCornerImageProcessor(cornerRadius: 10)
                     self.kf.setImage(with: url, placeholder: nil, options: [.processor(processor)])
                 }
@@ -61,6 +70,7 @@ class ParkTableHeaderMapUIImageView: UIImageView {
                 var marginTop: CGFloat = 8
                 
                 if let country = snapshotValue["country"] as? String {
+                    self.park.country = country
                     let countryImage = UIImageView(frame: CGRect(x: 8, y: marginTop, width: 12, height: 12))
                     countryImage.image = UIImage(named: "marker")
                     let countryLabel = UILabel()
@@ -83,9 +93,10 @@ class ParkTableHeaderMapUIImageView: UIImageView {
                     marginTop = marginTop + 14.3203125 + 8
                 }
                 
-                // margint is now > 8 && < 30.32
+                // margin is now > 8 && < 30.32
                 
                 if let info = snapshotValue["info"] as? String {
+                    self.park.info = info
                     let infoImage = UIImageView(frame: CGRect(x: 8, y: marginTop , width: 12, height: 12)) // font size 12 = height 14.3203125
                     infoImage.image = UIImage(named: "info")
                     

@@ -69,10 +69,8 @@ PODS:
   - ImageSlideshow (1.0.0-beta.1):
     - ImageSlideshow/Core (= 1.0.0-beta.1)
   - ImageSlideshow/Core (1.0.0-beta.1)
-  - ImageSlideshow/Kingfisher (1.0.0-beta.1):
-    - ImageSlideshow/Core
-    - Kingfisher (~> 3.0)
   - Kingfisher (3.2.0)
+  - MapboxStatic.swift (0.6.1)
   - MXParallaxHeader (0.6.0)
   - NVActivityIndicatorView (3.0)
   - PINCache (3.0.1-beta.2):
@@ -96,19 +94,25 @@ DEPENDENCIES:
   - Firebase/Messaging
   - Firebase/Storage
   - ImageSlideshow (~> 1.0.0-beta.1)
-  - ImageSlideshow/Kingfisher
   - Kingfisher (~> 3.0)
+  - MapboxStatic.swift (from `https://github.com/mapbox/MapboxStatic.swift.git`, branch `swift-3`)
   - MXParallaxHeader
   - NVActivityIndicatorView
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
     :git: https://github.com/facebook/AsyncDisplayKit
+  MapboxStatic.swift:
+    :branch: swift-3
+    :git: https://github.com/mapbox/MapboxStatic.swift.git
 
 CHECKOUT OPTIONS:
   AsyncDisplayKit:
     :commit: d3e942acf79c4a7e806fefbea133e2d18fb1b5b2
     :git: https://github.com/facebook/AsyncDisplayKit
+  MapboxStatic.swift:
+    :commit: 05025a85ecab42f4816fe8bf2881eebe7905bddb
+    :git: https://github.com/mapbox/MapboxStatic.swift.git
 
 SPEC CHECKSUMS:
   AsyncDisplayKit: 4d4403eb61b2b667866e98ca8b7fab6cec497b68
@@ -126,11 +130,12 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
   ImageSlideshow: adf31cd12d65c1e78c15d024b9227d56fc46208c
   Kingfisher: 50407d1d5dbc34965009d425a286342ff36a84ea
+  MapboxStatic.swift: a3ad6eb4a535718e354ee1928158d921ae59cb1f
   MXParallaxHeader: 2997592b8349baf8557ae0e4346f6b17e141de39
   NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
 
-PODFILE CHECKSUM: 8bb9c03d10f5371edb6658723f8ad174c6932e70
+PODFILE CHECKSUM: 70adb3a4fd09e3f15cce3597db3671eece8f5f59
 
 COCOAPODS: 1.2.0.beta.1

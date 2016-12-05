@@ -194,7 +194,6 @@ open class ImageSlideshow: UIView {
         for image in scrollViewImages {
             let item = ImageSlideshowItem(image: image, zoomEnabled: self.zoomEnabled)
             item.imageView.contentMode = self.contentScaleMode
-//            item.imageView.layer.cornerRadius = 10
             slideshowItems.append(item)
             scrollView.addSubview(item)
             i += 1

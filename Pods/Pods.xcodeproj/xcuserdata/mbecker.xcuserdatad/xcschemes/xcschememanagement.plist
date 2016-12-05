@@ -39,6 +39,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>MapboxStatic.swift.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>NVActivityIndicatorView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -72,11 +77,6 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>08578E7A37CB69E274DF82474E709617</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>08EBC23F8F2F5B2AFDE5E6057911BE18</key>
 		<dict>
 			<key>primary</key>
@@ -92,6 +92,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>505A6E3C28CDD43B1C952A08ED17CFCF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>6CED1C12397973FD0BC11DCF237CF51E</key>
 		<dict>
 			<key>primary</key>
@@ -102,7 +107,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>94CDCE75F6653305B3F663802AEAFFA5</key>
+		<key>854A358F694791FC141F75E15F82BB64</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -112,12 +117,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>BD45DA1BFEB6D55C912AAD797BC373F8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>C052BEBFBD0AB5218CC64BA3450F6547</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C0D8D185036014A5380851EA9E3BF4BF</key>
+		<key>C4944FEC314D1A66588651D006273ADE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -132,7 +142,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E83D72EE0336E9831509503ECD4154EA</key>
+		<key>F1883A945C236CDCF166DE672D76F89C</key>
 		<dict>
 			<key>primary</key>
 			<true/>

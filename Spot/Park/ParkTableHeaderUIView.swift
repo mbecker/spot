@@ -7,25 +7,21 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseDatabase
 import Kingfisher
 
 class ParkTableHeaderUIView: UIView {
 
-    var park: String
-    var parkTitle: String
+    var park: Park
     
-    init(park: String, parkTitle: String) {
+    init(park: Park) {
         self.park = park
-        self.parkTitle = parkTitle
         
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82 + 82 + 82 + 82))
         backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
         
         addTitleView()
         // addMapView()
-        let mapView = ParkTableHeaderMapUIImageView.init(frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: self.bounds.height - 82 - 20 - 20), park: self.park)
+        let mapView = ParkTableHeaderMapUIImageView.init(park: self.park, frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: self.bounds.height - 82 - 20 - 20))
         addSubview(mapView)
         
     }
@@ -36,7 +32,7 @@ class ParkTableHeaderUIView: UIView {
         
         let parkTitle = UIButton()
         parkTitle.setAttributedTitle(NSAttributedString(
-            string: self.parkTitle,
+            string: self.park.name,
             attributes: [
                 NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightBlack),
                 NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
@@ -44,16 +40,6 @@ class ParkTableHeaderUIView: UIView {
                 NSKernAttributeName: 0.0,
                 ])
             , for: .normal)
-        // ToDo: Remove
-        parkTitle.setAttributedTitle(NSAttributedString(
-            string: self.parkTitle,
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightBlack),
-                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.0,
-                ])
-            , for: .highlighted)
         parkTitle.translatesAutoresizingMaskIntoConstraints = false
         
         let chooseButton = UIButton()
