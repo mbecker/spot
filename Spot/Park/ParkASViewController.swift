@@ -12,8 +12,19 @@ import Firebase
 import FirebaseDatabase
 import FirebaseMessaging
 import Kingfisher
+import EZAlertController
+
+protocol SelectParkDelegate {
+    func selectPark()
+    func selectPark(park: String, name: String)
+}
 
 class ParkASViewController: ASViewController<ASDisplayNode> {
+    
+    /**
+     * Firebase
+     */
+    let ref         :   FIRDatabaseReference
     
     /**
     * AsyncDisplayKit
@@ -25,14 +36,25 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     /**
      * Data
      */
-    let parkSections: [ParkSection] = [
-        ParkSection(name: "Attractions", path: "park/addo/attractions"),
-        ParkSection(name: "Animals", path: "park/addo/animals")
-    ]
-    let parkData: Park
+    var parkData: Park
+    var delegate: SelectParkDelegate?
     
     init() {
-        parkData = Park(name: "Addo Elephant National Park", path: "parkinfo/addo", sections: parkSections)
+        let park: String = UserDefaults.standard.object(forKey: UserDefaultTypes.parkpath.rawValue) as? String ?? "addo"
+        self.ref = FIRDatabase.database().reference()
+        let parkSections = [
+            ParkSection(name: "Attractions", path: "park/\(park)/attractions"),
+            ParkSection(name: "Animals", path: "park/\(park)/animals")
+        ]
+        parkData = Park(name: "Addo Elephant National Park", path: "parkinfo/\(park)", sections: parkSections)
+        super.init(node: ASTableNode(style: UITableViewStyle.grouped))
+        tableNode.delegate = self
+        tableNode.dataSource = self
+    }
+    
+    init(park: String, parkName: String, parkSections: [ParkSection]){
+        self.ref = FIRDatabase.database().reference()
+        self.parkData = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -44,18 +66,52 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // View
+        self.view.backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
         // TableView
         self.tableNode.view.showsVerticalScrollIndicator = false
         self.tableNode.view.backgroundColor = UIColor.white
         self.tableNode.view.separatorColor = UIColor.clear
-        self.tableNode.view.tableHeaderView = ParkTableHeaderUIView.init(park: self.parkData)
-        self.tableNode.view.tableFooterView = tableFooterView
+        let parkTableHeader = ParkTableHeaderUIView(parkName: self.parkData.name)
+        parkTableHeader.delegate = self
+        self.tableNode.view.tableHeaderView = parkTableHeader
         
-        self.view.backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
+        /**
+         * SETUP DATA
+         */
+        subscribeMessaging(toTopic: "/topics/addo")
+        loadDataFromDB()
         
+    }
+    
+    func loadPark(park: String, parkName: String, parkSections: [ParkSection]){
+        self.parkData = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
+        self.tableNode.reloadData()
+        loadDataFromDB()        
+    }
+    
+    func subscribeMessaging(toTopic: String){
         // Firebase Messaging
-        print("-- FIREBASE -- subscribe toTopic topics/addo")
+        print("-- FIREBASE -- subscribe toTopic \(toTopic)")
+        // "/topics/addo"
         FIRMessaging.messaging().subscribe(toTopic: "/topics/addo")
+    }
+    
+    func loadDataFromDB(){
+        let parkTableHeader = ParkTableHeaderUIView(parkName: self.parkData.name)
+        self.tableNode.view.tableHeaderView = parkTableHeader
+        self.ref.child(self.parkData.path).observeSingleEvent(of: .value, with: { (snapshot) in
+            // Get park value
+            if let value = snapshot.value as? NSDictionary {
+                self.parkData.loadDB(value: value)
+                let parkTableHeader = ParkTableHeaderUIView.init(park: self.parkData)
+                parkTableHeader.delegate = self
+                self.tableNode.view.tableHeaderView = parkTableHeader
+            }
+            
+        }) { (error) in
+            print(error.localizedDescription)
+        }
     }
     
     func mapViewTouched(_ sender:UITapGestureRecognizer){
@@ -66,9 +122,24 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         self.navigationController?.navigationBar.isHidden = true
+        
+        //Status bar style and visibility
+        UIApplication.shared.isStatusBarHidden = false
+        UIApplication.shared.statusBarStyle = .lightContent
+        
+        //Change status bar color
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        if statusBar.responds(to: #selector(setter: ASDisplayProperties.backgroundColor)) {
+            statusBar.backgroundColor = UIColor.white
+        }
     }
-
+    
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return .lightContent
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -107,7 +178,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         }
     }
     
-    func sectionHeaderView(text: String) -> UIView {
+    func sectionHeaderView(text: String, sectionId: Int = 0) -> UIView {
         let view = UIView(frame: CGRect.zero)
         view.backgroundColor = UIColor.white
         
@@ -148,11 +219,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         detailButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
         detailButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
         detailButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-        if text == "Attractions" {
-            detailButton.tag = 0
-        } else if text == "Animals" {
-            detailButton.tag = 1
-        }
+        detailButton.tag = sectionId
         detailButton.addTarget(self, action: #selector(self.pushDetail(sender:)), for: UIControlEvents.touchUpInside)
         
         view.addSubview(title)
@@ -168,7 +235,26 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     }
     
     @objc func pushDetail(sender: UIButton) {
+        // Post notification
+        let nc = NotificationCenter.default
+        nc.post(name:Notification.Name(rawValue:"MyNotification"),
+                object: nil,
+                userInfo: ["message":"Hello there!", "date":Date()])
+        
+        // self.tabBarController?.selectedIndex = 1
+        print("-- TAGS --")
         print(sender.tag)
+        
+        if let vc = self.tabBarController!.viewControllers![1] as? ASNavigationController {
+            vc.popToRootViewController(animated: false)
+            if let view = vc.topViewController as? ChangePage {
+                print("CHANGE TAB")
+                view.changePage(tab: sender.tag, showSelectedPage: true)
+            }
+        }
+        
+        
+        self.tabBarController?.selectedIndex = 1
     }
     
 
@@ -185,7 +271,11 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return sectionHeaderView(text: (parkData.sections[section].name))
+        if parkData.sections.indices.contains(section) {
+            return sectionHeaderView(text: parkData.sections[section].name, sectionId: section)
+        }
+        return sectionHeaderView(text: "Section: \(section)")
+        
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -232,6 +322,32 @@ extension ParkASViewController : ParkASCellNodeDelegate {
     func didSelectPark(_ item: ParkItem2) {
         let detailTableViewConroller = DetailASViewController(parkItem: item)
         self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
+    }
+}
+
+extension ParkASViewController: SelectParkDelegate {
+    func selectPark() {
+        EZAlertController.alert("Park", message: "Select park", buttons: ["Addo", "Kruger"], tapBlock: { (alertAction, position) -> Void in
+            var park: String!
+            var parkName: String!
+            switch position {
+            case 0:
+                park = "addo"
+                parkName = "Addo Elephant National Park"
+            case 1:
+                park = "kruger"
+                parkName = "Kruger National Park"
+            default:
+                park = "addo"
+                parkName = "Addo Elephant National Park"
+            }
+            self.delegate?.selectPark(park: park, name: parkName)
+        })
+        
+    }
+    
+    func selectPark(park: String, name: String) {
+        
     }
 }
 

@@ -17,6 +17,8 @@ target 'Spot' do
   pod 'NVActivityIndicatorView'
   pod 'ImageSlideshow', '~> 1.0.0-beta.1'
   pod 'MapboxStatic.swift', :git => 'https://github.com/mapbox/MapboxStatic.swift.git', :branch => 'swift-3'
+  pod 'SMSegmentView', :git => 'https://github.com/sima-11/SMSegmentView.git'
+  pod 'EZAlertController', '3.2'
 
   target 'SpotTests' do
     inherit! :search_paths

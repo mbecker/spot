@@ -31,7 +31,7 @@ extension KingfisherCache: ASImageDownloaderProtocol {
         
         let identifier: String = URL.lastPathComponent
         let resource = ImageResource(downloadURL: URL, cacheKey: identifier)
-        
+        KingfisherManager.shared.downloader.downloadTimeout = 10.0
         let request = KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, url) in
             
             guard let downloadedImage = image else {

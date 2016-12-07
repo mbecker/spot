@@ -10,6 +10,21 @@ import FirebaseDatabase
 import FirebaseStorage
 import UIKit
 
+enum UserDefaultTypes: String {
+    case parkpath   = "parkpath"
+    case parkname   = "parkname"
+}
+
+enum Databasepaths: String {
+    case attractions    = "attractions"
+    case animals        = "animals"
+}
+
+enum ItemType {
+    case Attraction
+    case Animal
+}
+
 class Park {
     let ref         :   FIRDatabaseReference
     var name        :   String!
@@ -22,7 +37,7 @@ class Park {
     var info        :   String?
     
     init(name: String, path: String, sections: [ParkSection]) {
-        self.ref        = FIRDatabaseReference()
+        self.ref        = FIRDatabase.database().reference()
         self.name       = name
         self.path       = path
         self.sections   = sections
@@ -51,7 +66,7 @@ class Park {
             } else {
                 self.countryIcon    =   nil
             }
-            if let parkIconValue    =   value?["parkicon"]      as? String, let parkIconName: String = countries[parkIconValue] {
+            if let parkIconValue    =   value?["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
                 self.parkIcon       =   AssetManager.getImage(parkIconName)
             } else {
                 self.parkIcon       = nil
@@ -59,6 +74,24 @@ class Park {
             
         }) { (error) in
             print(error.localizedDescription)
+        }
+    }
+    
+    func loadDB(value: NSDictionary){
+        self.country            =   value["country"]       as? String ?? nil
+        self.mapImage           =   value["mapimage"]      as? String ?? nil
+        self.name               =   value["name"]          as? String ?? nil
+        self.info               =   value["info"]          as? String ?? nil
+        
+        if let countryIconValue =   value["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
+            self.countryIcon    =   AssetManager.getImage(countryIconName)
+        } else {
+            self.countryIcon    =   nil
+        }
+        if let parkIconValue    =   value["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
+            self.parkIcon       =   AssetManager.getImage(parkIconName)
+        } else {
+            self.parkIcon       = nil
         }
     }
 
@@ -73,84 +106,6 @@ class ParkSection {
     }
 }
 
-
-struct ParkItem {
-    let ref         :   FIRDatabaseReference
-    let storage     :   FIRStorage
-    
-    let key         :   String
-    let name        :   String
-    let url         :   String
-    var urlPublic   :   URL?
-    let tags        :   [String]?
-    let location    :   [String: Double]?
-    let latitude    :   Double?
-    let longitude   :   Double?
-    let images      :   [String: String]?
-    var imagesPublic:[String: URL] =   [String: URL]()
-    
-    
-    init(snapshot: FIRDataSnapshot) {
-        self.storage      = FIRStorage.storage()
-        self.key          = snapshot.key
-        self.ref          = snapshot.ref
-        
-        let snapshotValue = snapshot.value as! [String: AnyObject]
-        self.name         = snapshotValue["name"] as! String
-        
-        self.tags           =   snapshotValue["tags"] as? [String]
-        
-        if let location = snapshotValue["location"] as? [String: Double] {
-            self.location = location
-            self.latitude = location["latitude"]
-            self.longitude = location["longitude"]
-        } else {
-            self.location = nil
-            self.latitude = nil
-            self.longitude = nil
-        }
-        
-        self.url            = snapshotValue["url"] as! String
-        self.urlPublic      = nil
-        
-        /*
-         * Images: Load google storage and public images reference
-         */
-        if let images =  snapshotValue["images"] as? [String: String] {
-            self.images = images
-            for (name, url) in images {
-                let imgStorageReference = self.storage.reference(forURL: url)
-                loadPublicImage(name: name, imgStorageReference: imgStorageReference)
-            }
-        } else {
-            self.images = nil
-        }
-        
-        loadPublicUrl(url: self.url)
-        
-    }
-    
-    mutating func loadPublicImage(name: String, imgStorageReference: FIRStorageReference){
-        var copy = self
-        imgStorageReference.downloadURL(completion: { (storageURL, error) -> Void in
-            if error == nil {
-                copy.imagesPublic[name] = storageURL!
-            }
-        })
-    }
-    
-    mutating func loadPublicUrl(url: String) {
-        let imgStorageReference = self.storage.reference(forURL: url)
-        var copy = self
-        imgStorageReference.downloadURL(completion: { (storageURL, error) -> Void in
-            if error == nil {
-                copy.urlPublic = storageURL!
-            }
-        })
-        self = copy
-    }
-}
-
 class ParkItem2 {
     
     let ref         :   FIRDatabaseReference
@@ -158,7 +113,7 @@ class ParkItem2 {
     
     let key         :   String
     let name        :   String
-    let url         :   String
+    let url         :   String?
     var urlPublic   :   URL?
     let location    :   [String: Double]?
     let latitude    :   Double?
@@ -190,6 +145,9 @@ class ParkItem2 {
         /**
          * Tags
          */
+        if(self.name == "Vacation animal") {
+            print("VACATION ANIMAL");
+        }
         if let tags: [String:String] = snapshotValue["tags"] as? [String:String] {
             for (_, tag) in tags {
                 self.tags.append(tag)
@@ -229,8 +187,7 @@ class ParkItem2 {
             self.longitude = nil
         }
         
-        self.url        = snapshotValue["url"] as! String
-        self.urlPublic  = nil
+        self.url        = snapshotValue["url"] as? String ?? nil
         
         /*
          * Images: Load google storage and public images reference
@@ -245,15 +202,19 @@ class ParkItem2 {
             self.images = nil
         }
         
+        if let url: String = self.url, url.characters.count > 0, let imgStorageReference: FIRStorageReference = self.storage.reference(forURL: url) {
+            imgStorageReference.downloadURL(completion: { (storageURL, error) -> Void in
+                if error == nil {
+                    self.urlPublic = storageURL!
+                } else {
+                    self.urlPublic = nil
+                }
+            })
+        } else {
+            self.urlPublic = nil
+        }
         
-        let imgStorageReference = self.storage.reference(forURL: url)
-        imgStorageReference.downloadURL(completion: { (storageURL, error) -> Void in
-            if error == nil {
-                self.urlPublic = storageURL!
-            } else {
-                self.urlPublic = nil
-            }
-        })
+        
         
     }
     

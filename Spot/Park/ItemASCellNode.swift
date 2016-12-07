@@ -12,16 +12,17 @@ import FirebaseStorage
 
 class ItemASCellNode: ASCellNode {
     
-    let _parkItem   :   ParkItem!
+    let _parkItem   :   ParkItem2!
     var storage     :   FIRStorage
     var _image      :   ASNetworkImageNode
     
     var _title              =   ASTextNode()
     var _detail             =   ASTextNode()
+    var _errorText          =   ASTextNode()
     var _loadingIndicator   =   BallPulse()
     
     
-    init(parkItem: ParkItem){
+    init(parkItem: ParkItem2){
         self._parkItem = parkItem
         self.storage                    = FIRStorage.storage()
         let cache                       = KingfisherCache.sharedManager
@@ -38,6 +39,7 @@ class ItemASCellNode: ASCellNode {
         self._image.delegate            = self
         
         self.addSubnode(self._image)
+        self.addSubnode(self._errorText)
         self.addSubnode(self._detail)
         self.addSubnode(self._title)
         self.addSubnode(self._loadingIndicator)
@@ -71,7 +73,19 @@ class ItemASCellNode: ASCellNode {
         self._image.style.width             = ASDimension(unit: .points, value: 186)
         self._image.style.height            = ASDimension(unit: .points, value: 140)
         
-        let loadingIndicatorOverlaySpec     = ASOverlayLayoutSpec(child: self._image, overlay: loadingIndicatorInsetSpec)
+        self._errorText.style.alignSelf     = .center
+        self._errorText.style.width         = ASDimension(unit: .points, value: 186 * 2 / 3)
+        self._errorText.style.height        = ASDimension(unit: .points, value: 28.640625)
+        self._errorText.backgroundColor     = UIColor.clear
+        
+        let errorCenterLayout               = ASCenterLayoutSpec(centeringOptions: .XY, sizingOptions: .minimumXY, child: self._errorText)
+        errorCenterLayout.style.width       = ASDimension(unit: .points, value: 186 / 2)
+        errorCenterLayout.style.height      = ASDimension(unit: .points, value: 140)
+        
+        
+        let errorTextOverlaySpec            = ASOverlayLayoutSpec(child: self._image, overlay: errorCenterLayout)
+        
+        let loadingIndicatorOverlaySpec     = ASOverlayLayoutSpec(child: errorTextOverlaySpec, overlay: loadingIndicatorInsetSpec)
         
         self._title.style.flexGrow          = 1 // 	If the sum of childrens' stack dimensions is less than the minimum size, should this object grow?
         self._detail.style.flexGrow         = 1
@@ -96,7 +110,20 @@ class ItemASCellNode: ASCellNode {
             loadImageURL(imgRef: imgRef)
         } else {
             // Show error
-            self._image.url = URL(string: "https://error.com")
+            // self._image.url = URL(string: "https://error.com")
+            self._loadingIndicator.removeFromSupernode()
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.alignment = .center
+            self._errorText.attributedText = NSAttributedString(
+                string: "No image uploaded.",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+                    NSForegroundColorAttributeName: UIColor.black,
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.0,
+                    NSParagraphStyleAttributeName: paragraph,
+                    ])
+
         }
         
         
@@ -105,7 +132,18 @@ class ItemASCellNode: ASCellNode {
     func loadImageURL(imgRef: FIRStorageReference){
         imgRef.downloadURL(completion: { (storageURL, error) -> Void in
             if error != nil {
-                self._image.url = URL(string: "https://error.com")
+                self._loadingIndicator.removeFromSupernode()
+                let paragraph = NSMutableParagraphStyle()
+                paragraph.alignment = .center
+                self._errorText.attributedText = NSAttributedString(
+                    string: (error?.localizedDescription)!,
+                    attributes: [
+                        NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+                        NSForegroundColorAttributeName: UIColor.black,
+                        NSBackgroundColorAttributeName: UIColor.clear,
+                        NSKernAttributeName: 0.0,
+                        NSParagraphStyleAttributeName: paragraph,
+                        ])
             } else {
                 self._image.url = storageURL
             }
@@ -126,6 +164,17 @@ extension ItemASCellNode: ASNetworkImageNodeDelegate {
         // ToDo: Show error text
         print(":: IMAGE DID FAIL WITH ERROR ::")
         print(error)
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        self._errorText.attributedText = NSAttributedString(
+            string: error.localizedDescription,
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+                NSForegroundColorAttributeName: UIColor.black,
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.0,
+                NSParagraphStyleAttributeName: paragraph,
+                ])
         
         self._loadingIndicator.removeFromSupernode()
     }

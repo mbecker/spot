@@ -1,0 +1,22 @@
+{
+  "name": "SMSegmentView",
+  "version": "0.0.2",
+  "summary": "Custom segmented control for iOS 7 and above",
+  "description": "Written in Swift.\nSupport both images and text.\nSupport vertically organise segments\nMore customisible than UISegmentedControl and easier to expand with new style.",
+  "homepage": "https://github.com/allenbryan11/SMSegmentView",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE.md"
+  },
+  "authors": "allenbryan11",
+  "platforms": {
+    "ios": "7.0"
+  },
+  "source": {
+    "git": "https://github.com/allenbryan11/SMSegmentView.git",
+    "branch": "master"
+  },
+  "source_files": "SMSegmentViewController/SMSegmentView/*.swift",
+  "requires_arc": true,
+  "frameworks": "UIKit"
+}

@@ -57,21 +57,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                name: .firInstanceIDTokenRefresh,
                                                object: nil)
         
-        let navController = ASNavigationController(rootViewController: ParkASViewController())
-        navController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
-        navController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "logoTabBar"), tag: 0)
-        navController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
         
-        
-        let tabBarController = ASTabBarController()
-        tabBarController.setViewControllers([navController], animated: false)
-        tabBarController.tabBarController?.tabBar.backgroundImage = UIImage.colorForNavBar(color: UIColor.white)
-        tabBarController.tabBar.unselectedItemTintColor = UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00) // Jumbo
-        tabBarController.tabBar.tintColor = UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00) // Alizarin Crimson
+        let tabBar = MainASTabBarController()
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white
-        window.rootViewController = tabBarController
+        window.rootViewController = tabBar
         window.makeKeyAndVisible()
         self.window = window
         return true

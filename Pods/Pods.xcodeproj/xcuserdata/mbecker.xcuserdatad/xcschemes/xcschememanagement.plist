@@ -9,6 +9,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>EZAlertController.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>GTMSessionFetcher.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -74,10 +79,30 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>SMSegmentView.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>024EE761C19C027DAFB37AE453EFB1E6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>08C305BD6F725C123F0B8CD7903A20BF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>08EBC23F8F2F5B2AFDE5E6057911BE18</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>2B185DE38D111B8E253DC224A8E60F03</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -113,11 +138,6 @@
 			<true/>
 		</dict>
 		<key>AA776B4566BF9B835A4373F0A916EBFF</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>BD45DA1BFEB6D55C912AAD797BC373F8</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -8,6 +8,7 @@ PODS:
     - AsyncDisplayKit/Core
     - PINRemoteImage/iOS (= 3.0.0-beta.6)
     - PINRemoteImage/PINCache
+  - EZAlertController (3.2)
   - Firebase (3.9.0):
     - Firebase/Core (= 3.9.0)
   - Firebase/Auth (3.9.0):
@@ -85,9 +86,11 @@ PODS:
   - PINRemoteImage/PINCache (3.0.0-beta.6):
     - PINCache (= 3.0.1-beta.2)
     - PINRemoteImage/Core
+  - SMSegmentView (0.0.2)
 
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/facebook/AsyncDisplayKit`)
+  - EZAlertController (= 3.2)
   - Firebase
   - Firebase/Auth
   - Firebase/Database
@@ -98,6 +101,7 @@ DEPENDENCIES:
   - MapboxStatic.swift (from `https://github.com/mapbox/MapboxStatic.swift.git`, branch `swift-3`)
   - MXParallaxHeader
   - NVActivityIndicatorView
+  - SMSegmentView (from `https://github.com/sima-11/SMSegmentView.git`)
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
@@ -105,6 +109,8 @@ EXTERNAL SOURCES:
   MapboxStatic.swift:
     :branch: swift-3
     :git: https://github.com/mapbox/MapboxStatic.swift.git
+  SMSegmentView:
+    :git: https://github.com/sima-11/SMSegmentView.git
 
 CHECKOUT OPTIONS:
   AsyncDisplayKit:
@@ -113,9 +119,13 @@ CHECKOUT OPTIONS:
   MapboxStatic.swift:
     :commit: 05025a85ecab42f4816fe8bf2881eebe7905bddb
     :git: https://github.com/mapbox/MapboxStatic.swift.git
+  SMSegmentView:
+    :commit: 3d0ed978ef10e802e2352ed9d0ff34d74e1b7fdf
+    :git: https://github.com/sima-11/SMSegmentView.git
 
 SPEC CHECKSUMS:
   AsyncDisplayKit: 4d4403eb61b2b667866e98ca8b7fab6cec497b68
+  EZAlertController: 633be01320bed47720be54054df47667d61c2481
   Firebase: ff77ffb77b317c3720fef57a60e9335cebf962e6
   FirebaseAnalytics: 6e58fc9b397664369ac7617fb0ba93fab6ba7b5b
   FirebaseAuth: 96e9674ff31d6e1f826d53e26aa003a57cab0295
@@ -135,7 +145,8 @@ SPEC CHECKSUMS:
   NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
+  SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
 
-PODFILE CHECKSUM: 70adb3a4fd09e3f15cce3597db3671eece8f5f59
+PODFILE CHECKSUM: 7eb8fca27ef59d5ef3fc78eecb0453d9951e4abe
 
 COCOAPODS: 1.2.0.beta.1

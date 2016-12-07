@@ -25,7 +25,7 @@ class ParkASCellNode: ASCellNode {
     var collectionNode: ASCollectionNode!
     let parkSection: ParkSection!
     let park: Park!
-    var items: [ParkItem]   = [ParkItem]()
+    // var items: [ParkItem]   = [ParkItem]()
     var items2: [ParkItem2] = [ParkItem2]()
     var nodes = [ItemASCellNode]()
     weak var delegate:ParkASCellNodeDelegate?
@@ -80,10 +80,10 @@ class ParkASCellNode: ASCellNode {
         
         // Listen for added snapshots
         self.ref.child(self.parkSection.path).observe(.childAdded, with: { (snapshot) -> Void in
-            let item = ParkItem(snapshot: snapshot)
+            // let item = ParkItem2(snapshot: snapshot)
             let item2 = ParkItem2(snapshot: snapshot, park: self.park)
             OperationQueue.main.addOperation({
-                self.items.insert(item, at: 0)
+                // self.items.insert(item, at: 0)
                 self.items2.insert(item2, at: 0)
                 let indexPath = IndexPath(item: 0, section: 0)
                 self.collectionNode.insertItems(at: [indexPath])
@@ -108,18 +108,18 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
     
     
     func collectionNode(_ collectionNode: ASCollectionNode, numberOfItemsInSection section: Int) -> Int {
-        if self.items.count > 0 {
+        if self.items2.count > 0 {
             self.loadingIndicatorView.removeFromSuperview()
         }
-        return self.items.count
+        return self.items2.count
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {
         // Use the node block that the collection node is able to prepare and display all of it's cell concurrently
         return {
-            let node = ItemASCellNode(parkItem: self.items[indexPath.row])
+            let node = ItemASCellNode(parkItem: self.items2[indexPath.row])
             node._title.attributedText = NSAttributedString(
-                string: self.items[indexPath.row].name,
+                string: self.items2[indexPath.row].name,
                 attributes: [
                     NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
                     NSForegroundColorAttributeName: UIColor.black,
@@ -127,7 +127,7 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
                     NSKernAttributeName: 0.0,
                     ])
             node._detail.attributedText = NSAttributedString(
-                string: "Latitude: " + String(describing: self.items[indexPath.row].latitude!) + " - Longitude: " + String(describing: self.items[indexPath.row].longitude!),
+                string: "Latitude: \(self.items2[indexPath.row].latitude) - Longitude \(self.items2[indexPath.row].longitude)",
                 attributes: [
                     NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
                     NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey

@@ -54,17 +54,22 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
         self.navigationController?.navigationBar.backIndicatorImage = backImage
         self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
-//        let barButton = UIBarButtonItem(image: backImage, style: .plain, target: nil, action: nil)
-//        barButton.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-//        barButton.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
-//        self.navigationItem.leftBarButtonItem = barButton
-//        self.navigationController?.navigationBar.backItem?.backBarButtonItem = barButton
         self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
-        self.navigationController!.navigationBar.topItem?.title = "Park"
+        // self.navigationController!.navigationBar.topItem?.title = "Park"
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let add = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: nil)
+        let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: nil)
+        let camera = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: nil)
+        let play = UIBarButtonItem(title: "Play", style: .plain, target: self, action: nil)
+        let tag = UIBarButtonItem(image: #imageLiteral(resourceName: "pricetag66"), style: .plain, target: self, action: nil)
+        let like = UIBarButtonItem(image: #imageLiteral(resourceName: "like66"), style: .plain, target: self, action: nil)
+        
+        self.navigationItem.rightBarButtonItems = [share, camera]
         
         var urls = [URL]()
         if let publicURL: URL = self._parkItem.urlPublic {
@@ -84,9 +89,13 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.showsVerticalScrollIndicator = false
         self.tableNode.view.backgroundColor = UIColor.white
         self.tableNode.view.separatorColor = UIColor.clear
-        self.tableNode.view.tableHeaderView = DetailTableHeaderUIView.init(title: self._parkItem.name, urls: urls)
         self.tableNode.view.tableFooterView = tableFooterView
         self.tableNode.view.allowsSelection = true
+        if(urls.count > 0){
+            self.tableNode.view.tableHeaderView = DetailTableHeaderUIView.init(title: self._parkItem.name, urls: urls, viewController: self)
+        } else {
+            self.tableNode.view.tableHeaderView = tableFooterView
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -113,8 +122,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
     }
     
     lazy var tableFooterView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 0))
-        view.backgroundColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 0.00000000000000000000000001))
         return view
     }()
     
@@ -181,9 +189,9 @@ extension DetailASViewController : ASTableDataSource {
             case 0:
                 return CountryNode.init(_parkItem: self._parkItem)
             case 1:
-                return ItemsNode.init(parkItem: self._parkItem)
+                return TagsNode.init(parkItem: self._parkItem)
             case 2:
-                return SpootedByNode.init(parkItem: self._parkItem)
+                return SpottedByNode.init(parkItem: self._parkItem)
             case 3:
                 return MapNode.init(parkItem: self._parkItem)
             default:
@@ -194,7 +202,7 @@ extension DetailASViewController : ASTableDataSource {
             
         }
         
-        if row == 3 {
+        if row == 3 && self._parkItem.latitude != nil && self._parkItem.longitude != nil {
             node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 86 + UIScreen.main.bounds.width * 2 / 3)
             node.selectionStyle = .blue
         } else {
@@ -239,22 +247,18 @@ class CountryNode: UIView {
         
         view.addSubview(label)
         
-        if let parkCountry: String = _parkItem.park.country {
-            let info = UILabel(frame: CGRect(x: 0, y: label.bounds.height + 4, width: view.bounds.width, height: 14.3203125))
+        let info = UILabel(frame: CGRect(x: 0, y: label.bounds.height + 4, width: view.bounds.width, height: 14.3203125))
+        if _parkItem.park.country != nil {
             info.attributedText = NSAttributedString(
-                string: parkCountry,
+                string: (_parkItem.park.country ?? "").isEmpty ? "No country defined" : _parkItem.park.country!,
                 attributes: [
                     NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
                     NSForegroundColorAttributeName: UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.00), // Charcoal
                     NSBackgroundColorAttributeName: UIColor.clear,
                     NSKernAttributeName: 0.6,
                     ])
-            
-            view.addSubview(info)
-            
         }
-        
-        
+        view.addSubview(info)
         
         /**
          * Images for country and park
@@ -286,25 +290,25 @@ class CountryNode: UIView {
     }
 }
 
-class ItemsNode: UIView {
+class TagsNode: UIView {
     init(parkItem: ParkItem2){
         super.init(frame: CGRect.zero)
         backgroundColor = UIColor.white
         
         if parkItem.tags.count == 0 {
-            let info = UILabel()
-            info.attributedText = NSAttributedString(
-                string: "No tags ...",
+            let noTags = UILabel()
+            noTags.attributedText = NSAttributedString(
+                string: "Not yet tagged ...",
                 attributes: [
                     NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
                     NSForegroundColorAttributeName: UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.00), // Charcoal
                     NSBackgroundColorAttributeName: UIColor.clear,
                     NSKernAttributeName: 0.6,
                     ])
-            info.translatesAutoresizingMaskIntoConstraints = false
-            addSubview(info)
-            info.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-            info.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+            noTags.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(noTags)
+            noTags.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+            noTags.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
         } else {
             
             let height: CGFloat = 48
@@ -323,7 +327,9 @@ class ItemsNode: UIView {
             
             var count = 4 // == 5 icon images
             if parkItem.tags.count < count {
-                count = parkItem.spottedBy.count - 1
+                count = parkItem.tags.count - 1
+            } else {
+                count = count - 1
             }
             
             
@@ -360,11 +366,7 @@ class ItemsNode: UIView {
     }
 }
 
-/**
- * Spotted By
- */
-
-class SpootedByNode: UIView {
+class SpottedByNode: UIView {
     init(parkItem: ParkItem2){
         super.init(frame: CGRect.zero)
         backgroundColor = UIColor.white
@@ -372,7 +374,7 @@ class SpootedByNode: UIView {
         if parkItem.spottedBy.count == 0 {
             let info = UILabel()
             info.attributedText = NSAttributedString(
-                string: "Not yet spotted by anyone ...",
+                string: "Not yet spotted ...",
                 attributes: [
                     NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
                     NSForegroundColorAttributeName: UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.00), // Charcoal
@@ -406,6 +408,8 @@ class SpootedByNode: UIView {
             var count = 4 // == 5 user profile images
             if parkItem.spottedBy.count < count {
                 count = parkItem.spottedBy.count - 1
+            } else {
+                count = count - 1
             }
             
             for i in 0...count {
@@ -446,26 +450,26 @@ class MapNode: UIView {
         super.init(frame: CGRect.zero)
         backgroundColor = UIColor.white
         
-        let label = UILabel(frame: CGRect(x: 20, y: 86 / 2 - 19.09375 / 2, width: 100, height: 19.09375))
-        label.attributedText = NSAttributedString(
-            string: "Map",
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular),
-                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.6,
-                ])
-        addSubview(label)
-        
-        let view = UIImageView(frame: CGRect(x: 0, y: 86, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 2 / 3))
-        view.backgroundColor = UIColor.white
-        addSubview(view)
-        
         if parkItem.latitude != nil, parkItem.longitude != nil {
+            let label = UILabel(frame: CGRect(x: 20, y: 86 / 2 - 19.09375 / 2, width: 100, height: 19.09375))
+            label.attributedText = NSAttributedString(
+                string: "Spotted at",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular),
+                    NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.6,
+                    ])
+            addSubview(label)
+            
+            let view = UIImageView(frame: CGRect(x: 0, y: 86, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 2 / 3))
+            view.backgroundColor = UIColor.white
+            addSubview(view)
+            
             let options = SnapshotOptions(
                 mapIdentifiers: ["mapbox.streets"],
                 centerCoordinate: CLLocationCoordinate2D(latitude: parkItem.latitude!, longitude: parkItem.longitude!),
-                zoomLevel: 9,
+                zoomLevel: 11,
                 size: view.bounds.size)
             let customMarker = CustomMarker(
                 coordinate: CLLocationCoordinate2D(latitude: parkItem.latitude!, longitude: parkItem.longitude!),
@@ -487,6 +491,20 @@ class MapNode: UIView {
             let i = BallPulseIndicator(frame: CGRect(x: view.bounds.width / 2 - 88 / 2, y: view.bounds.height / 2 - CGFloat(44 / 2), width: CGFloat(88), height: CGFloat(44)))
             view.kf.indicatorType = .custom(indicator: i)
             view.kf.setImage(with: imageURL)
+        } else {
+            let info = UILabel()
+            info.attributedText = NSAttributedString(
+                string: "Not yet located ...",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
+                    NSForegroundColorAttributeName: UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.00), // Charcoal
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.6,
+                    ])
+            info.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(info)
+            info.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+            info.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
         }
         
         
