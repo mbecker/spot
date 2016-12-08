@@ -659,11 +659,11 @@
 		D14D8D321DD25420009AC39B /* Park */ = {
 			isa = PBXGroup;
 			children = (
-				D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */,
-				D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */,
 				D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */,
-				D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */,
+				D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */,
+				D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */,
 				D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */,
+				D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */,
 			);
 			path = Park;
 			sourceTree = "<group>";
@@ -685,6 +685,7 @@
 				D15405A71DF8111E00EAE971 /* TableAsViewController.swift */,
 			);
 			name = List;
+			path = List;
 			sourceTree = "<group>";
 		};
 		D1AFD8441DCF8B4C0082A6EF = {
@@ -713,18 +714,18 @@
 		D1AFD84F1DCF8B4C0082A6EF /* Spot */ = {
 			isa = PBXGroup;
 			children = (
-				D14D8D351DD25934009AC39B /* Model */,
-				D1079F071DD2A747007CCE07 /* Extras */,
-				D1AFD8851DCF90A90082A6EF /* Extension */,
-				D15405A41DF8051500EAE971 /* List */,
 				D1C757941DF00B0E0029E882 /* Detail */,
+				D1AFD8851DCF90A90082A6EF /* Extension */,
+				D1079F071DD2A747007CCE07 /* Extras */,
+				D15405A41DF8051500EAE971 /* List */,
+				D14D8D351DD25934009AC39B /* Model */,
 				D14D8D321DD25420009AC39B /* Park */,
 				D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */,
-				D15405A91DF8745600EAE971 /* MainASTabBarController.swift */,
 				D1A051DC1DF0BED800D9F59A /* Assets.xcassets */,
 				D1AFD8811DCF8CBC0082A6EF /* GoogleService-Info.plist */,
 				D1AFD85F1DCF8B4C0082A6EF /* Info.plist */,
 				D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */,
+				D15405A91DF8745600EAE971 /* MainASTabBarController.swift */,
 				D10A7F7E1DD282C100741BF0 /* Spot.entitlements */,
 				D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */,
 			);
@@ -776,7 +777,7 @@
 				D1FB281A1DF413B70023F0F2 /* Parks */,
 			);
 			name = Data;
-			path = ../Data;
+			path = Data;
 			sourceTree = "<group>";
 		};
 		D1FB21F01DF2BA0A0023F0F2 /* Icons */ = {
