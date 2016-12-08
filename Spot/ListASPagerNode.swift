@@ -8,6 +8,8 @@
 
 import UIKit
 import AsyncDisplayKit
+import Firebase
+import FirebaseDatabase
 import SMSegmentView
 
 protocol ChangePage {
@@ -24,16 +26,24 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         return node as! ASPagerNode
     }
     
+    /**
+     * Firebase
+     */
+    let ref         :   FIRDatabaseReference
+    
     var segmentView: SMSegmentView!
     var margin: CGFloat = 10.0
     
     var selectedPage: Int = 0
     var showSelectedPage: Bool = false
     
+    var park: Park
     var parkSections: [ParkSection]
     
-    init(parkSections: [ParkSection]){
-        self.parkSections = parkSections
+    init(park: String, parkName: String, parkSections: [ParkSection]){
+        self.park           = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
+        self.parkSections   = parkSections
+        self.ref = FIRDatabase.database().reference()
         
         let appearance = SMSegmentAppearance()
         appearance.segmentOnSelectionColour = UIColor(red: 245.0/255.0, green: 174.0/255.0, blue: 63.0/255.0, alpha: 1.0)
@@ -56,8 +66,9 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         self.pagerNode.dataSource = self
     }
     
-    func updateParkSections(parkSections: [ParkSection]){
-        self.parkSections = parkSections
+    func updateParkSections(park: String, parkName: String, parkSections: [ParkSection]){
+        self.park           = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
+        self.parkSections   = parkSections
         self.pagerNode.reloadData()
         
         let appearance = SMSegmentAppearance()
@@ -83,7 +94,7 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         self.segmentView.layer.borderColor = UIColor(white: 0.85, alpha: 1.0).cgColor
         self.segmentView.layer.borderWidth = 0.0
         self.segmentView.addTarget(self, action: #selector(selectSegmentInSegmentView(segmentView:)), for: .valueChanged)
-        self.navigationController!.navigationBar.addSubview(self.segmentView)
+        
 
     }
     
@@ -117,6 +128,7 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         shadowImageView?.isHidden = false
+        self.segmentView.removeFromSuperview()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -136,6 +148,7 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
             }
         }
         
+        self.navigationController!.navigationBar.addSubview(self.segmentView)
         
     }
     
@@ -164,6 +177,18 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         
         self.navigationController!.navigationBar.addSubview(self.segmentView)
         
+        /**
+         * Load data from firebase
+         */
+        self.ref.child(self.park.path).observeSingleEvent(of: .value, with: { (snapshot) in
+            // Get park value
+            if let value = snapshot.value as? NSDictionary {
+                self.park.loadDB(value: value)
+            }
+            
+        }) { (error) in
+            print(error.localizedDescription)
+        }
         
     }
     
@@ -206,19 +231,12 @@ extension ListASPagerNode: ASPagerDataSource {
     }
     
     func pagerNode(_ pagerNode: ASPagerNode, nodeAt index: Int) -> ASCellNode {
-        let page = index
+        let parkSection = self.parkSections[index]
+        let page        = index
+        print(parkSection.name)
         let node = ASCellNode(viewControllerBlock: { () -> UIViewController in
-            var type: String!
-            switch page {
-            case 0:
-                type = Databasepaths.attractions.rawValue
-            case 1:
-                type = Databasepaths.animals.rawValue
-            default:
-                type = Databasepaths.attractions.rawValue
-            }
-            
-            let view = TableAsViewController(page: page, type: type, footerHeight: self.tabBarController!.tabBar.bounds.height)
+            let view = TableAsViewController(page: page, park: self.park, parkSection: parkSection)
+            view.delegate = self
             return view
         }, didLoad: nil)
         
@@ -257,5 +275,12 @@ extension ListASPagerNode: ASCollectionDataSource {
             
             return node
         }
+    }
+}
+
+extension ListASPagerNode : ParkASCellNodeDelegate {
+    func didSelectPark(_ item: ParkItem2) {
+        let detailTableViewConroller = DetailASViewController(parkItem: item)
+        self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
     }
 }

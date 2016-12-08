@@ -35,7 +35,7 @@ class MainASTabBarController: ASTabBarController {
          * Initialize ViewControllers for TabBar
          */
         self.parkController             = ParkASViewController(park: self.selectedPark, parkName: self.selectedParkName, parkSections: parkSections)
-        self.listController             = ListASPagerNode(parkSections: parkSections)
+        self.listController             = ListASPagerNode(park: self.selectedPark, parkName: self.selectedParkName, parkSections: parkSections)
         
         let parkNavgationController = ASNavigationController(rootViewController: self.parkController)
         parkNavgationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
@@ -92,6 +92,6 @@ extension MainASTabBarController: SelectParkDelegate {
             parkSections.append(ParkSection(name: "Animals", path: "park/\(park)/animals"))
         }
         self.parkController.loadPark(park: selectedPark, parkName: selectedParkName, parkSections: parkSections)
-        self.listController.updateParkSections(parkSections: parkSections)
+        self.listController.updateParkSections(park: selectedPark, parkName: selectedParkName, parkSections: parkSections)
     }
 }
