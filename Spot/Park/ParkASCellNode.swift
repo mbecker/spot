@@ -77,8 +77,10 @@ class ParkASCellNode: ASCellNode {
         
         self.addSubnode(self.collectionNode)
         
-        // Listen for added snapshots; automatically reconnects
-        self.ref.child(self.parkSection.path).observe(.childAdded, with: { (snapshot) -> Void in
+        /**
+         * FIREBASE
+         */
+        self.ref.child(self.parkSection.path).queryLimited(toLast: 20).observe(.childAdded, with: { (snapshot) -> Void in
             
             if self.parkSection.name == "Animals" {
                 print(snapshot)
