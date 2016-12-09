@@ -34,8 +34,10 @@ open class SMSegmentAppearance {
     open var titleOnSelectionColour: UIColor
     open var titleOffSelectionColour: UIColor
     
-    open var titleOnSelectionFont: UIFont
-    open var titleOffSelectionFont: UIFont
+    open var titleOnSelectionFont       : UIFont
+    open var titleOffSelectionFont      : UIFont
+    open var tileOnSelectionAttributes  : [String: Any]?
+    open var tileOffSelectionAttributes : [String: Any]?
     
     open var contentVerticalMargin: CGFloat
     
@@ -50,11 +52,12 @@ open class SMSegmentAppearance {
         self.titleOffSelectionColour = UIColor.darkGray
         self.titleOnSelectionFont = UIFont.systemFont(ofSize: 17.0)
         self.titleOffSelectionFont = UIFont.systemFont(ofSize: 17.0)
-        
+        self.tileOnSelectionAttributes  = nil
+        self.tileOffSelectionAttributes = nil
         self.contentVerticalMargin = 5.0
     }
     
-    public init(contentVerticalMargin: CGFloat, segmentOnSelectionColour: UIColor, segmentOffSelectionColour: UIColor, titleOnSelectionColour: UIColor, titleOffSelectionColour: UIColor, titleOnSelectionFont: UIFont, titleOffSelectionFont: UIFont) {
+    public init(contentVerticalMargin: CGFloat, segmentOnSelectionColour: UIColor, segmentOffSelectionColour: UIColor, titleOnSelectionColour: UIColor, titleOffSelectionColour: UIColor, titleOnSelectionFont: UIFont, titleOffSelectionFont: UIFont, tileOnSelectionAttributes  : [String: Any], tileOffSelectionAttributes : [String: Any]) {
         
         self.contentVerticalMargin = contentVerticalMargin
         
@@ -65,5 +68,7 @@ open class SMSegmentAppearance {
         self.titleOffSelectionColour = titleOffSelectionColour
         self.titleOnSelectionFont = titleOnSelectionFont
         self.titleOffSelectionFont = titleOffSelectionFont
+        self.tileOnSelectionAttributes  = tileOnSelectionAttributes
+        self.tileOffSelectionAttributes = tileOffSelectionAttributes
     }
 }

@@ -48,7 +48,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         if shadowImageView == nil {
             shadowImageView = findShadowImage(under: navigationController!.navigationBar)
         }
-        shadowImageView?.isHidden = true
+        shadowImageView?.isHidden = false
         
         // Hide text "Back"
         let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
@@ -72,7 +72,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         self.navigationItem.rightBarButtonItems = [share, camera]
         
         var urls = [URL]()
-        if let publicURL: URL = self._parkItem.urlPublic {
+        if let publicURL: URL = self._parkItem.urlPublic as URL! {
             urls.append(publicURL)
         }
         

@@ -33,9 +33,10 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     
     var segmentView: SMSegmentView!
     var margin: CGFloat = 10.0
-    
+    var seletionBar: UIView = UIView()
     var selectedPage: Int = 0
     var showSelectedPage: Bool = false
+    var dataLoaded: Bool = false
     
     var park: Park
     var parkSections: [ParkSection]
@@ -46,11 +47,27 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         self.ref = FIRDatabase.database().reference()
         
         let appearance = SMSegmentAppearance()
-        appearance.segmentOnSelectionColour = UIColor(red: 245.0/255.0, green: 174.0/255.0, blue: 63.0/255.0, alpha: 1.0)
+        appearance.segmentOnSelectionColour = UIColor.white
         appearance.segmentOffSelectionColour = UIColor.white
         appearance.titleOnSelectionFont = UIFont.systemFont(ofSize: 14.0)
         appearance.titleOffSelectionFont = UIFont.systemFont(ofSize: 14.0)
         appearance.contentVerticalMargin = 10.0
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        appearance.tileOffSelectionAttributes = [
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightSemibold), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black.withAlphaComponent(0.6),
+            NSBackgroundColorAttributeName: UIColor.clear,
+            NSKernAttributeName: 0.0,
+            NSParagraphStyleAttributeName: paragraph,
+        ]
+        appearance.tileOnSelectionAttributes = [
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightSemibold), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black,
+            NSBackgroundColorAttributeName: UIColor.clear,
+            NSKernAttributeName: 0.0,
+            NSParagraphStyleAttributeName: paragraph,
+        ]
         
         self.segmentView = SMSegmentView(frame: CGRect.zero, dividerColour: UIColor.clear, dividerWidth: 1.0, segmentAppearance: appearance)
         
@@ -58,12 +75,12 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
             self.segmentView.addSegmentWithTitle(parkSection.name, onSelectionImage: nil, offSelectionImage: nil)
         }
         
-        self.segmentView.selectedSegmentIndex = self.selectedPage
-        
         super.init(node: ASPagerNode.init())
         
-        self.pagerNode.delegate = self
-        self.pagerNode.dataSource = self
+        self.segmentView.selectedSegmentIndex   = 0
+        
+        self.pagerNode.delegate     = self
+        self.pagerNode.dataSource   = self
     }
     
     func updateParkSections(park: String, parkName: String, parkSections: [ParkSection]){
@@ -72,45 +89,58 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         self.pagerNode.reloadData()
         
         let appearance = SMSegmentAppearance()
-        appearance.segmentOnSelectionColour = UIColor(red: 245.0/255.0, green: 174.0/255.0, blue: 63.0/255.0, alpha: 1.0)
+        appearance.segmentOnSelectionColour = UIColor.white
         appearance.segmentOffSelectionColour = UIColor.white
         appearance.titleOnSelectionFont = UIFont.systemFont(ofSize: 14.0)
         appearance.titleOffSelectionFont = UIFont.systemFont(ofSize: 14.0)
         appearance.contentVerticalMargin = 10.0
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        appearance.tileOffSelectionAttributes = [
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightSemibold), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black.withAlphaComponent(0.6),
+            NSBackgroundColorAttributeName: UIColor.clear,
+            NSKernAttributeName: 0.0,
+            NSParagraphStyleAttributeName: paragraph,
+        ]
+        appearance.tileOnSelectionAttributes = [
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightSemibold), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black,
+            NSBackgroundColorAttributeName: UIColor.clear,
+            NSKernAttributeName: 0.0,
+            NSParagraphStyleAttributeName: paragraph,
+        ]
+        
         self.segmentView.removeFromSuperview()
         self.segmentView = SMSegmentView(frame: CGRect.zero, dividerColour: UIColor.clear, dividerWidth: 1.0, segmentAppearance: appearance)
         for parkSection in parkSections {
             self.segmentView.addSegmentWithTitle(parkSection.name, onSelectionImage: nil, offSelectionImage: nil)
         }
-        self.segmentView.selectedSegmentIndex = 0
-        
-        self.segmentView.removeFromSuperview()
         
         let segmentFrame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.navigationController!.navigationBar.bounds.height)
         self.segmentView.frame = segmentFrame
-        self.segmentView.backgroundColor = UIColor.clear
         
-        self.segmentView.layer.cornerRadius = 0.0
-        self.segmentView.layer.borderColor = UIColor(white: 0.85, alpha: 1.0).cgColor
-        self.segmentView.layer.borderWidth = 0.0
+        self.selectedPage                       = 0
+        self.segmentView.selectedSegmentIndex   = 0
         self.segmentView.addTarget(self, action: #selector(selectSegmentInSegmentView(segmentView:)), for: .valueChanged)
         
-
+        self.initSelectionBar()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func catchNotification(notification:Notification) -> Void {
-        print("Catch notification")
-        
-        guard let userInfo = notification.userInfo, let message  = userInfo["message"] as? String, let date = userInfo["date"] as? Date
-            else {
-                print("No userInfo found in notification")
-                return
+    func initSelectionBar(){
+        if self.parkSections.count > 1 {
+            self.seletionBar.removeFromSuperview()
+            self.seletionBar.frame = CGRect(x: 0.0, y: self.segmentView.bounds.height - 2, width: self.segmentView.bounds.width/CGFloat(self.segmentView.numberOfSegments), height: 2.0)
+            self.seletionBar.backgroundColor = UIColor.black
+            self.placeSelectionBar()
+            self.segmentView.addSubview(self.seletionBar)
         }
     }
+    
     
     private func findShadowImage(under view: UIView) -> UIImageView? {
         if view is UIImageView && view.bounds.size.height <= 1 {
@@ -138,14 +168,19 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         if shadowImageView == nil {
             shadowImageView = findShadowImage(under: navigationController!.navigationBar)
         }
-        shadowImageView?.isHidden = true
+        shadowImageView?.isHidden = false
         
-        if self.showSelectedPage {
+        if self.showSelectedPage && !self.dataLoaded{
             self.pagerNode.reloadData {
+                self.dataLoaded = true
                 self.showSelectedPage = false
                 self.segmentView.selectedSegmentIndex = self.selectedPage
                 self.pagerNode.scrollToPage(at: self.selectedPage, animated: false)
             }
+        } else if self.showSelectedPage {
+            self.showSelectedPage = false
+            self.segmentView.selectedSegmentIndex = self.selectedPage
+            self.pagerNode.scrollToPage(at: self.selectedPage, animated: false)
         }
         
         self.navigationController!.navigationBar.addSubview(self.segmentView)
@@ -170,36 +205,29 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         self.segmentView.layer.borderColor = UIColor(white: 0.85, alpha: 1.0).cgColor
         self.segmentView.layer.borderWidth = 0.0
         
-        
-        
-         self.segmentView.addTarget(self, action: #selector(selectSegmentInSegmentView(segmentView:)), for: .valueChanged)
-        
-        
-        self.navigationController!.navigationBar.addSubview(self.segmentView)
+        self.segmentView.addTarget(self, action: #selector(selectSegmentInSegmentView(segmentView:)), for: .valueChanged)
+        // self.navigationController!.navigationBar.addSubview(self.segmentView)
         
         /**
-         * Load data from firebase
+         * Selection indicator for segmented view
          */
-        self.ref.child(self.park.path).observeSingleEvent(of: .value, with: { (snapshot) in
-            // Get park value
-            if let value = snapshot.value as? NSDictionary {
-                self.park.loadDB(value: value)
-            }
-            
-        }) { (error) in
-            print(error.localizedDescription)
-        }
+        self.initSelectionBar()
         
     }
     
-    // SMSegment selector for .ValueChanged
+    func placeSelectionBar() {
+        var barFrame = self.seletionBar.frame
+        barFrame.origin.x = barFrame.size.width * CGFloat(self.selectedPage)
+        self.seletionBar.frame = barFrame
+    }
+    
     func selectSegmentInSegmentView(segmentView: SMSegmentView) {
-        /*
-         Replace the following line to implement what you want the app to do after the segment gets tapped.
-         */
         print("Select segment at index: \(segmentView.selectedSegmentIndex)")
         self.selectedPage = segmentView.selectedSegmentIndex
-        self.pagerNode.scrollToPage(at: self.selectedPage, animated: false)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.placeSelectionBar()
+        })
+        self.pagerNode.scrollToPage(at: self.selectedPage, animated: true)
     }
     
 }
@@ -216,6 +244,7 @@ extension ListASPagerNode: ChangePage {
         default:
             self.selectedPage = 0
         }
+        self.placeSelectionBar()
     }
     
 }
@@ -224,6 +253,7 @@ extension ListASPagerNode: ASPagerDelegate {
     func pagerNode(_ pagerNode: ASPagerNode, constrainedSizeForNodeAt index: Int) -> ASSizeRange {
         return ASSizeRange(min: CGSize(width: 10, height: 100), max: CGSize(width: self.view.bounds.width, height: self.view.bounds.height))
     }
+    
 }
 extension ListASPagerNode: ASPagerDataSource {
     func numberOfPages(in pagerNode: ASPagerNode) -> Int {
@@ -257,22 +287,8 @@ extension ListASPagerNode: ASCollectionDataSource {
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {
-        let position = index
         return {
             let node = ASCellNode()
-            node.backgroundColor = UIColor.brown
-            let label = ASTextNode()
-            label.attributedText = NSAttributedString(
-                string: "collectionNode - Position: \(position)",
-                attributes: [
-                    NSFontAttributeName: UIFont(name: "Avenir-Book", size: 12)!,
-                    NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00),
-                    NSBackgroundColorAttributeName: UIColor.clear,
-                    NSKernAttributeName: 0.0,
-                    ])
-            
-            node.addSubnode(label)
-            
             return node
         }
     }

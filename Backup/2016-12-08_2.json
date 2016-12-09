@@ -1,0 +1,774 @@
+{
+  "park" : {
+    "addo" : {
+      "animals" : {
+        "-KYK-5QGjzvu8-79z6a6" : {
+          "name" : "Bison",
+          "url" : "gs://safaridigitalapp.appspot.com/animals/Bison1.jpg",
+          "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FBison1.jpg?alt=media&token=37cca9ce-4ebc-4362-aaa6-9cf2ebaa3c12"
+        },
+        "-KYK-5QGjzvu8-79z6a7" : {
+          "name" : "Elephant",
+          "url" : "gs://safaridigitalapp.appspot.com/animals/Elephant1.jpg",
+          "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FElephant1.jpg?alt=media&token=7b6569c9-d81e-4a7e-8233-fcb0c0dab4c9"
+        },
+        "-KYK-5QHLLriqHTNsC-J" : {
+          "name" : "Turtle",
+          "url" : "gs://safaridigitalapp.appspot.com/animals/Turtle.jpg"
+        },
+        "-KYK-5QHLLriqHTNsC-K" : {
+          "name" : "Giraffe",
+          "url" : "gs://safaridigitalapp.appspot.com/animals/Giraffe1.JPG",
+          "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FGiraffe1.JPG?alt=media&token=ff60a8ac-d078-4a22-8b0b-b90bad21c8e2"
+        },
+        "-KYK-5QHLLriqHTNsC-L" : {
+          "name" : "Zebra",
+          "url" : "gs://safaridigitalapp.appspot.com/animals/Zebra1.jpg"
+        },
+        "-KYK-5QHLLriqHTNsC-O" : {
+          "images" : {
+            "375" : "gs://safaridigitalapp.appspot.com/animals/-KY2kNNnJDQg45ORIGTZ_375x300.jpg",
+            "elephant" : "gs://safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg"
+          },
+          "imagesPublic" : {
+            "375" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KY2kNNnJDQg45ORIGTZ_375x300.jpg?alt=media&token=11faf287-d4cd-4f18-819b-904e72a21de1",
+            "elephant" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FAfrican_elephant_warning_raised_trunk.jpg?alt=media&token=ea026d8a-fe78-4a1a-8e56-a68c9596ea02"
+          },
+          "location" : {
+            "latitude" : -33.443804,
+            "longitude" : 25.746178
+          },
+          "name" : "Vacation animal",
+          "spottedby" : {
+            "1234abcd" : {
+              "name" : "Mike",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+            },
+            "123efsdf" : {
+              "name" : "Mikki",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+            }
+          },
+          "tags" : {
+            "a1" : "Alligator",
+            "a2" : "Owl",
+            "a3" : "Rhinoceros",
+            "a4" : "Unicorn"
+          },
+          "url" : "gs://safaridigitalapp.appspot.com/animals/p1120770.jpg",
+          "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fp1120770.jpg?alt=media&token=d8534920-e2b9-455b-84dd-8b58434c5876"
+        },
+          "-1234abc" : {
+              "images" : {
+                  "bison" : "gs://safaridigitalapp.appspot.com/animals/Bison1.jpg"
+              },
+              "imagesPublic" : {
+                  "bison" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FBison1.jpg?alt=media&token=37cca9ce-4ebc-4362-aaa6-9cf2ebaa3c12"
+              },
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Kruger Elephants",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/15_a_KrugerNational.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F15_a_KrugerNational.jpg?alt=media&token=eb5c6e80-7680-43fc-8841-2d6dbcdb0c04"
+          },
+          "-1234abcd" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/-KVMEIvvabbpUCXJzOYd.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVMEIvvabbpUCXJzOYd.jpg?alt=media&token=bd9b46ab-99f3-4d35-915c-feff3fe28c22"
+              },
+              "location" : {
+                  "latitude" : -23.888061,
+                  "longitude" : 31.969467
+              },
+              "name" : "Kruger Lions 1",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault.jpg?alt=media&token=b52d48c2-40d0-4454-91cc-77c9c8963246"
+          },
+          "-1234abcde" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FAfrican_elephant_warning_raised_trunk.jpg?alt=media&token=ea026d8a-fe78-4a1a-8e56-a68c9596ea02"
+              },
+              "location" : {
+                  "latitude" : -25.173119,
+                  "longitude" : 31.996186
+              },
+              "name" : "Kruger Lions 23",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion",
+                  "a2" : "Elephant"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault2.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault2.jpg?alt=media&token=6367df24-def7-4d2f-ac1f-cb1ffc0cd329"
+          },
+          "-1234abcupdate2016-12-08" : {
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Irina",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/-KVRXmOd6WdtD-bK4DoN.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVRXmOd6WdtD-bK4DoN.jpg?alt=media&token=d84ceeb1-2038-4e6d-80b7-afc1b705eafa"
+          },
+          "-1234abcdfadf" : {
+              "images" : {
+                  "bison" : "gs://safaridigitalapp.appspot.com/animals/Bison1.jpg"
+              },
+              "imagesPublic" : {
+                  "bison" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FBison1.jpg?alt=media&token=37cca9ce-4ebc-4362-aaa6-9cf2ebaa3c12"
+              },
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Kruger Elephants",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/15_a_KrugerNational.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F15_a_KrugerNational.jpg?alt=media&token=eb5c6e80-7680-43fc-8841-2d6dbcdb0c04"
+          },
+          "-1234abcdfdgfg" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/-KVMEIvvabbpUCXJzOYd.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVMEIvvabbpUCXJzOYd.jpg?alt=media&token=bd9b46ab-99f3-4d35-915c-feff3fe28c22"
+              },
+              "location" : {
+                  "latitude" : -23.888061,
+                  "longitude" : 31.969467
+              },
+              "name" : "Kruger Lions 1",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault.jpg?alt=media&token=b52d48c2-40d0-4454-91cc-77c9c8963246"
+          },
+          "-1234abcdeafgafg" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FAfrican_elephant_warning_raised_trunk.jpg?alt=media&token=ea026d8a-fe78-4a1a-8e56-a68c9596ea02"
+              },
+              "location" : {
+                  "latitude" : -25.173119,
+                  "longitude" : 31.996186
+              },
+              "name" : "Kruger Lions 23",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion",
+                  "a2" : "Elephant"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault2.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault2.jpg?alt=media&token=6367df24-def7-4d2f-ac1f-cb1ffc0cd329"
+          },
+          "-1234abcupdate2016-12-08agagfafg" : {
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Irina",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/-KVRXmOd6WdtD-bK4DoN.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVRXmOd6WdtD-bK4DoN.jpg?alt=media&token=d84ceeb1-2038-4e6d-80b7-afc1b705eafa"
+          },
+          "-1234abcffefEF" : {
+              "images" : {
+                  "bison" : "gs://safaridigitalapp.appspot.com/animals/Bison1.jpg"
+              },
+              "imagesPublic" : {
+                  "bison" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FBison1.jpg?alt=media&token=37cca9ce-4ebc-4362-aaa6-9cf2ebaa3c12"
+              },
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Kruger Elephants",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/15_a_KrugerNational.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F15_a_KrugerNational.jpg?alt=media&token=eb5c6e80-7680-43fc-8841-2d6dbcdb0c04"
+          },
+          "-1234abcd<dvaewf" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/-KVMEIvvabbpUCXJzOYd.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVMEIvvabbpUCXJzOYd.jpg?alt=media&token=bd9b46ab-99f3-4d35-915c-feff3fe28c22"
+              },
+              "location" : {
+                  "latitude" : -23.888061,
+                  "longitude" : 31.969467
+              },
+              "name" : "Kruger Lions 1",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault.jpg?alt=media&token=b52d48c2-40d0-4454-91cc-77c9c8963246"
+          },
+          "-1234abcdeasEewf" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FAfrican_elephant_warning_raised_trunk.jpg?alt=media&token=ea026d8a-fe78-4a1a-8e56-a68c9596ea02"
+              },
+              "location" : {
+                  "latitude" : -25.173119,
+                  "longitude" : 31.996186
+              },
+              "name" : "Kruger Lions 23",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion",
+                  "a2" : "Elephant"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault2.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault2.jpg?alt=media&token=6367df24-def7-4d2f-ac1f-cb1ffc0cd329"
+          },
+          "-1234abcupdate2016-12-08adsfa" : {
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Irina",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/-KVRXmOd6WdtD-bK4DoN.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVRXmOd6WdtD-bK4DoN.jpg?alt=media&token=d84ceeb1-2038-4e6d-80b7-afc1b705eafa"
+          },
+          "-1234abcagag" : {
+              "images" : {
+                  "bison" : "gs://safaridigitalapp.appspot.com/animals/Bison1.jpg"
+              },
+              "imagesPublic" : {
+                  "bison" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FBison1.jpg?alt=media&token=37cca9ce-4ebc-4362-aaa6-9cf2ebaa3c12"
+              },
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Kruger Elephants",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/15_a_KrugerNational.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F15_a_KrugerNational.jpg?alt=media&token=eb5c6e80-7680-43fc-8841-2d6dbcdb0c04"
+          },
+          "-1234abcdadfafga" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/-KVMEIvvabbpUCXJzOYd.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVMEIvvabbpUCXJzOYd.jpg?alt=media&token=bd9b46ab-99f3-4d35-915c-feff3fe28c22"
+              },
+              "location" : {
+                  "latitude" : -23.888061,
+                  "longitude" : 31.969467
+              },
+              "name" : "Kruger Lions 1",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault.jpg?alt=media&token=b52d48c2-40d0-4454-91cc-77c9c8963246"
+          },
+          "-1234abcde3ragaf" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FAfrican_elephant_warning_raised_trunk.jpg?alt=media&token=ea026d8a-fe78-4a1a-8e56-a68c9596ea02"
+              },
+              "location" : {
+                  "latitude" : -25.173119,
+                  "longitude" : 31.996186
+              },
+              "name" : "Kruger Lions 23",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion",
+                  "a2" : "Elephant"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault2.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault2.jpg?alt=media&token=6367df24-def7-4d2f-ac1f-cb1ffc0cd329"
+          },
+          "-1234abcupdate2016-12-08cvbxcbsg" : {
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Irina",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/-KVRXmOd6WdtD-bK4DoN.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVRXmOd6WdtD-bK4DoN.jpg?alt=media&token=d84ceeb1-2038-4e6d-80b7-afc1b705eafa"
+          },
+          "-1234abcadfafd" : {
+              "images" : {
+                  "bison" : "gs://safaridigitalapp.appspot.com/animals/Bison1.jpg"
+              },
+              "imagesPublic" : {
+                  "bison" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FBison1.jpg?alt=media&token=37cca9ce-4ebc-4362-aaa6-9cf2ebaa3c12"
+              },
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Kruger Elephants",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/15_a_KrugerNational.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F15_a_KrugerNational.jpg?alt=media&token=eb5c6e80-7680-43fc-8841-2d6dbcdb0c04"
+          },
+          "-1234abcdasdfaf" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/-KVMEIvvabbpUCXJzOYd.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVMEIvvabbpUCXJzOYd.jpg?alt=media&token=bd9b46ab-99f3-4d35-915c-feff3fe28c22"
+              },
+              "location" : {
+                  "latitude" : -23.888061,
+                  "longitude" : 31.969467
+              },
+              "name" : "Kruger Lions 1",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault.jpg?alt=media&token=b52d48c2-40d0-4454-91cc-77c9c8963246"
+          },
+          "-1234abcdegagf" : {
+              "images" : {
+                  "lion" : "gs://safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg"
+              },
+              "imagesPublic" : {
+                  "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FAfrican_elephant_warning_raised_trunk.jpg?alt=media&token=ea026d8a-fe78-4a1a-8e56-a68c9596ea02"
+              },
+              "location" : {
+                  "latitude" : -25.173119,
+                  "longitude" : 31.996186
+              },
+              "name" : "Kruger Lions 23",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Lion",
+                  "a2" : "Elephant"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault2.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault2.jpg?alt=media&token=6367df24-def7-4d2f-ac1f-cb1ffc0cd329"
+          },
+          "-1234abcupdate2016-12-08agadafafg" : {
+              "location" : {
+                  "latitude" : -23.612199,
+                  "longitude" : 31.38055
+              },
+              "name" : "Irina",
+              "spottedby" : {
+                  "1234abcd" : {
+                      "name" : "Mike",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                  },
+                  "123efsdf" : {
+                      "name" : "Mikki",
+                      "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+                  }
+              },
+              "tags" : {
+                  "a1" : "Elephant",
+                  "a2" : "Bison"
+              },
+              "url" : "gs://safaridigitalapp.appspot.com/animals/-KVRXmOd6WdtD-bK4DoN.jpg",
+              "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVRXmOd6WdtD-bK4DoN.jpg?alt=media&token=d84ceeb1-2038-4e6d-80b7-afc1b705eafa"
+          }
+      },
+      "attractions" : {
+        "-KYK-5QIfh8sDT_IPqpd" : {
+          "name" : "Main Camp",
+          "url" : "gs://safaridigitalapp.appspot.com/attractions/MainCamp1.jpg"
+        },
+        "-KYK-5QJGMPFDTEk6g1f" : {
+          "name" : "Criss Cross",
+          "url" : "gs://safaridigitalapp.appspot.com/attractions/CrissCross1.jpg"
+        },
+        "-KYK-5QJGMPFDTEk6g1g" : {
+          "name" : "Shamrock Chapel",
+          "url" : "gs://safaridigitalapp.appspot.com/attractions/ShamrockChapel1.jpg"
+        },
+        "-KYK-5QK1-_xTxMIGKB6" : {
+          "name" : "No image URL",
+          "url" : ""
+        },
+        "-KYK-5QK1-_xTxMIGKB7" : {
+          "name" : "Image URL wron",
+          "url" : "gs://safaridigitalapp.appspot.com/parks/QuestionMark222.jpg"
+        }
+      }
+    },
+    "kruger" : {
+      "animals" : {
+        "-1234abc" : {
+          "images" : {
+            "bison" : "gs://safaridigitalapp.appspot.com/animals/Bison1.jpg"
+          },
+          "imagesPublic" : {
+            "bison" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FBison1.jpg?alt=media&token=37cca9ce-4ebc-4362-aaa6-9cf2ebaa3c12"
+          },
+          "location" : {
+            "latitude" : -23.612199,
+            "longitude" : 31.38055
+          },
+          "name" : "Kruger Elephants",
+          "spottedby" : {
+            "1234abcd" : {
+              "name" : "Mike",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+            },
+            "123efsdf" : {
+              "name" : "Mikki",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+            }
+          },
+          "tags" : {
+            "a1" : "Elephant",
+            "a2" : "Bison"
+          },
+          "url" : "gs://safaridigitalapp.appspot.com/animals/15_a_KrugerNational.jpg",
+          "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F15_a_KrugerNational.jpg?alt=media&token=eb5c6e80-7680-43fc-8841-2d6dbcdb0c04"
+        },
+        "-1234abcd" : {
+          "images" : {
+            "lion" : "gs://safaridigitalapp.appspot.com/animals/-KVMEIvvabbpUCXJzOYd.jpg"
+          },
+          "imagesPublic" : {
+            "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVMEIvvabbpUCXJzOYd.jpg?alt=media&token=bd9b46ab-99f3-4d35-915c-feff3fe28c22"
+          },
+          "location" : {
+            "latitude" : -23.888061,
+            "longitude" : 31.969467
+          },
+          "name" : "Kruger Lions 1",
+          "spottedby" : {
+            "1234abcd" : {
+              "name" : "Mike",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+            },
+            "123efsdf" : {
+              "name" : "Mikki",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+            }
+          },
+          "tags" : {
+            "a1" : "Lion"
+          },
+          "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault.jpg",
+          "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault.jpg?alt=media&token=b52d48c2-40d0-4454-91cc-77c9c8963246"
+        },
+        "-1234abcde" : {
+          "images" : {
+            "lion" : "gs://safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg"
+          },
+          "imagesPublic" : {
+            "lion" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2FAfrican_elephant_warning_raised_trunk.jpg?alt=media&token=ea026d8a-fe78-4a1a-8e56-a68c9596ea02"
+          },
+          "location" : {
+            "latitude" : -25.173119,
+            "longitude" : 31.996186
+          },
+          "name" : "Kruger Lions 23",
+          "spottedby" : {
+            "1234abcd" : {
+              "name" : "Mike",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+            },
+            "123efsdf" : {
+              "name" : "Mikki",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+            }
+          },
+          "tags" : {
+            "a1" : "Lion",
+            "a2" : "Elephant"
+          },
+          "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault2.jpg",
+          "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2Fmaxresdefault2.jpg?alt=media&token=6367df24-def7-4d2f-ac1f-cb1ffc0cd329"
+        },
+        "-1234abcupdate2016-12-08" : {
+          "location" : {
+            "latitude" : -23.612199,
+            "longitude" : 31.38055
+          },
+          "name" : "Irina",
+          "spottedby" : {
+            "1234abcd" : {
+              "name" : "Mike",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+            },
+            "123efsdf" : {
+              "name" : "Mikki",
+              "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+            }
+          },
+          "tags" : {
+            "a1" : "Elephant",
+            "a2" : "Bison"
+          },
+          "url" : "gs://safaridigitalapp.appspot.com/animals/-KVRXmOd6WdtD-bK4DoN.jpg",
+          "urlPublic" : "https://firebasestorage.googleapis.com/v0/b/safaridigitalapp.appspot.com/o/animals%2F-KVRXmOd6WdtD-bK4DoN.jpg?alt=media&token=d84ceeb1-2038-4e6d-80b7-afc1b705eafa"
+        }
+      }
+    }
+  },
+  "parkinfo" : {
+    "addo" : {
+      "country" : "Eastern Cape, South Africa",
+      "countryicon" : "za",
+      "image" : "https://api.mapbox.com/styles/v1/mbecker/ciw3n3et600k02klkaeiyib5m/static/25.934993,-33.590108,7.77,0.00,0.00/600x400?access_token=pk.eyJ1IjoibWJlY2tlciIsImEiOiJjaWt2MDZxbDkwMDFzd3ptNXF3djVhYW42In0.9Lavn2fn_0tg-QVrPhwEzA",
+      "info" : "Addo Elephant National Park is a diverse wildlife conservation park situated close to Port Elizabeth in South Africa and is one of the country's 19 national parks. It currently ranks third in size after Kruger National Park and the Kgalagadi Transfrontier Park.",
+      "mapimage" : "https://api.mapbox.com/styles/v1/mbecker/ciw3n3et600k02klkaeiyib5m/static/25.934993,-33.590108,7.77,0.00,0.00/600x400?access_token=pk.eyJ1IjoibWJlY2tlciIsImEiOiJjaWt2MDZxbDkwMDFzd3ptNXF3djVhYW42In0.9Lavn2fn_0tg-QVrPhwEzA",
+      "name" : "Addo Elephant National Park",
+      "parkicon" : "sanparks"
+    },
+    "kruger" : {
+      "country" : "Limpopo and Mpumalanga provinces, South Africa",
+      "countryicon" : "za",
+      "image" : "https://api.mapbox.com/styles/v1/mbecker/ciw3n3et600k02klkaeiyib5m/static/32.081503,-25.007313,6.62,0.00,0.00/600x400?access_token=pk.eyJ1IjoibWJlY2tlciIsImEiOiJjaWt2MDZxbDkwMDFzd3ptNXF3djVhYW42In0.9Lavn2fn_0tg-QVrPhwEzA",
+      "info" : "Kruger National Park is one of the largest game reserves in Africa. It covers an area of 19,485 square kilometres (7,523 sq mi) in the provinces of Limpopo and Mpumalanga in northeastern South Africa, and extends 360 kilometres (220 mi) from north to south and 65 kilometres (40 mi) from east to west. The administrative headquarters are in Skukuza. Areas of the park were first protected by the government of the South African Republic in 1898, and it became South Africa's first national park in 1926.",
+      "mapimage" : "https://api.mapbox.com/styles/v1/mbecker/ciw3n3et600k02klkaeiyib5m/static/32.081503,-25.007313,6.62,0.00,0.00/600x400?access_token=pk.eyJ1IjoibWJlY2tlciIsImEiOiJjaWt2MDZxbDkwMDFzd3ptNXF3djVhYW42In0.9Lavn2fn_0tg-QVrPhwEzA",
+      "name" : "Kruger National Park",
+      "parkicon" : "sanparks"
+    }
+  },
+  "sections" : {
+    "-KTAVhkdrg86cuSvgp5U" : {
+      "name" : "Animals",
+      "path" : "park/addo/animals"
+    },
+    "-KTAVhkol3g-s53F06g9" : {
+      "name" : "Attractions",
+      "path" : "park/addo/attractions"
+    }
+  }
+}

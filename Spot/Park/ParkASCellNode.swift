@@ -25,7 +25,6 @@ class ParkASCellNode: ASCellNode {
     var collectionNode: ASCollectionNode!
     let parkSection: ParkSection!
     let park: Park!
-    // var items: [ParkItem]   = [ParkItem]()
     var items2: [ParkItem2] = [ParkItem2]()
     var nodes = [ItemASCellNode]()
     weak var delegate:ParkASCellNodeDelegate?
@@ -78,18 +77,30 @@ class ParkASCellNode: ASCellNode {
         
         self.addSubnode(self.collectionNode)
         
-        // Listen for added snapshots
+        // Listen for added snapshots; automatically reconnects
         self.ref.child(self.parkSection.path).observe(.childAdded, with: { (snapshot) -> Void in
-            // let item = ParkItem2(snapshot: snapshot)
-            let item2 = ParkItem2(snapshot: snapshot, park: self.park)
+            let item2: ParkItem2 = ParkItem2(snapshot: snapshot, park: self.park)
             OperationQueue.main.addOperation({
-                // self.items.insert(item, at: 0)
                 self.items2.insert(item2, at: 0)
                 let indexPath = IndexPath(item: 0, section: 0)
                 self.collectionNode.insertItems(at: [indexPath])
                 self.collectionNode.reloadItems(at: [indexPath])
             })
         })
+        
+        self.ref.child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
+            // ParkItem2 is updated; reload item in table array
+            for i in 0...self.items2.count-1 {
+                if self.items2[i].key == snapshot.key {
+                    let item        = ParkItem2(snapshot: snapshot, park: self.park)
+                    self.items2[i]  = item
+                    let indexPath = IndexPath(item: i, section: 0)
+                    self.collectionNode.reloadItems(at: [indexPath])
+                }
+            }
+            
+        })
+        
     }
     
     override func layout() {
@@ -105,8 +116,6 @@ class ParkASCellNode: ASCellNode {
 
 extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
     
-    
-    
     func collectionNode(_ collectionNode: ASCollectionNode, numberOfItemsInSection section: Int) -> Int {
         if self.items2.count > 0 {
             self.loadingIndicatorView.removeFromSuperview()
@@ -117,7 +126,8 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
     func collectionNode(_ collectionNode: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {
         // Use the node block that the collection node is able to prepare and display all of it's cell concurrently
         return {
-            let node = ItemASCellNode(parkItem: self.items2[indexPath.row])
+            let parkitem = self.items2[indexPath.row]
+            let node = ItemASCellNode(parkItem: parkitem)
             node._title.attributedText = NSAttributedString(
                 string: self.items2[indexPath.row].name,
                 attributes: [
@@ -140,7 +150,8 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, didSelectItemAt indexPath: IndexPath) {
-        self.delegate?.didSelectPark(self.items2[indexPath.row])
+        let parkItem = self.items2[indexPath.row]
+        self.delegate?.didSelectPark(parkItem)
     }
 
 }

@@ -10,6 +10,7 @@ import UIKit
 import CoreData
 import Firebase
 import FirebaseMessaging
+import FirebaseDatabase
 import AsyncDisplayKit
 import UserNotifications
 
@@ -50,6 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // [END register_for_notifications]
         
         FIRApp.configure()
+        FIRDatabase.database().persistenceEnabled = true
         
         // Add observer for InstanceID token refresh callback.
         NotificationCenter.default.addObserver(self,

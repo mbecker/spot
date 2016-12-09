@@ -93,5 +93,8 @@ extension MainASTabBarController: SelectParkDelegate {
         }
         self.parkController.loadPark(park: selectedPark, parkName: selectedParkName, parkSections: parkSections)
         self.listController.updateParkSections(park: selectedPark, parkName: selectedParkName, parkSections: parkSections)
+        if let vc = self.listController.parent as? ASNavigationController {
+            vc.popToRootViewController(animated: false)
+        }
     }
 }

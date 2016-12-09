@@ -187,7 +187,19 @@ class ParkItem2 {
             self.longitude = nil
         }
         
+        /**
+         * 1. Load public storage urls form stored firebase values for: url and images
+         */
         self.url        = snapshotValue["url"] as? String ?? nil
+        if let urlPublicString = snapshotValue["urlPublic"] as? String {
+            self.urlPublic  = URL(string: urlPublicString)!
+        }
+        if let images = snapshotValue["imagesPublic"] as? [String: String] {
+            for (name, url) in images {
+                self.imagesPublic[name] = URL(string: url)!
+            }
+        }
+        
         
         /*
          * Images: Load google storage and public images reference
@@ -196,34 +208,66 @@ class ParkItem2 {
             self.images = images
             for (name, url) in images {
                 let imgStorageReference = self.storage.reference(forURL: url)
-                loadPublicImage(name: name, imgStorageReference: imgStorageReference)
+                imgStorageReference.downloadURL(completion: { (storageURL, error) -> Void in
+                    if error == nil {
+                        self.setImagePublic(name: name, url: storageURL!, overwrite: true)
+                    }
+                })
             }
         } else {
             self.images = nil
         }
         
-        if let url: String = self.url, url.characters.count > 0, let imgStorageReference: FIRStorageReference = self.storage.reference(forURL: url) {
+        if let url: String = self.url, url.characters.count > 0 {
+            let imgStorageReference: FIRStorageReference = self.storage.reference(forURL: url)
             imgStorageReference.downloadURL(completion: { (storageURL, error) -> Void in
                 if error == nil {
-                    self.urlPublic = storageURL!
+                    self.setUrlPublic(url: storageURL!, overwrite: true)
                 } else {
-                    self.urlPublic = nil
+                    print(":: PARK - init - set self.url")
+                    print(error!.localizedDescription)
                 }
             })
-        } else {
-            self.urlPublic = nil
         }
         
+        /**
+         * Offline: Store images as public url
+         */
         
         
     }
     
-    func loadPublicImage(name: String, imgStorageReference: FIRStorageReference){
-        imgStorageReference.downloadURL(completion: { (storageURL, error) -> Void in
-            if error == nil {
-                self.imagesPublic[name] = storageURL!
+    /**
+     *  Only save url pubic if it's not already set; see information flow for public storage image:
+            1.) ParkItem is loaded
+            2.) Loadined into Parktabel
+            3.) Parktable cell loads public storage url
+            4.) Save to self.urlPublic and firebase
+            5.) NOW the ParkItem loads public storage url
+        General assumption: firebase["url"] doesn't change during app's lifecycle
+     */
+    func setUrlPublic(url: URL, overwrite: Bool = false){
+        if overwrite {
+            self.urlPublic = url
+            self.ref.child("urlPublic").setValue(url.absoluteString)
+        } else {
+            if self.urlPublic == nil {
+                self.urlPublic = url
+                self.ref.child("urlPublic").setValue(url.absoluteString)
             }
-        })
+        }
+    }
+    
+    func setImagePublic(name: String, url: URL, overwrite: Bool = false){
+        if overwrite {
+            self.imagesPublic[name] = url
+            self.ref.child("imagesPublic").child(name).setValue(url.absoluteString)
+        } else {
+            if !self.imagesPublic.contains(where: { _,_ in key == name }) {
+                self.imagesPublic[name] = url
+                self.ref.child("imagesPublic").child(name).setValue(url.absoluteString)
+            }
+        }
     }
     
 }
@@ -478,4 +522,148 @@ let icons = [
     "Panels"    :   "panel.png",
     "Tent"      :   "tent.png"
 ]
+
+class FirebaseModel {
+    
+    var ref: FIRDatabaseReference!
+    
+    init(){
+        ref = FIRDatabase.database().reference()
+    }
+    
+    /**
+     * Firebase Model
+     "-1234abcd" : {
+        "name" : "Kruger Lions 1",
+        
+        "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault.jpg",
+        "images" : {
+            "lion" : "gs://safaridigitalapp.appspot.com/animals/-KVMEIvvabbpUCXJzOYd.jpg"
+        },
+     
+        "location" : {
+            "latitude" : -23.888061,
+            "longitude" : 31.969467
+        },
+     
+        "spottedby" : {
+            "1234abcd" : {
+                "name" : "Mike",
+                "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+            },
+            "123efsdf" : {
+                "name" : "Mikki",
+                "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
+            }
+        },
+     
+        "tags" : {
+            "a1" : "Lion"
+        },
+     
+     },
+     */
+    
+    let animals = [
+        "silver fox",
+        "baboon",
+        "dromedary",
+        "kangaroo",
+        "elk",
+        "woodchuck",
+        "walrus",
+        "capybara",
+        "giraffe",
+        "eagle owl",
+        "wildcat",
+        "armadillo",
+        "parakeet",
+        "seal",
+        "mynah bird",
+        "octopus"
+    ]
+    
+    let urls = [
+        "gs://safaridigitalapp.appspot.com/animals/-KVS55WPWeluyuQtk4dQ.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/15_a_KrugerNational.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/Bison1.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/Elephant1.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/Giraffe1.JPG",
+        "gs://safaridigitalapp.appspot.com/animals/maxresdefault.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/maxresdefault2.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/p1120770.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/coati.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/coyote.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/mandrill.jpg",
+        "gs://safaridigitalapp.appspot.com/animals/ocelot.jpg"
+    ]
+    
+    
+    public func addAnimals(count: Int, parkName: String){
+        for _ in 0...count {
+            addAnimal(parkName: parkName)
+        }
+    }
+    
+    public func addAnimal(parkName: String){
+        
+        var images = [String: String]()
+        for i in 0...randomNumber() {
+            images["image" + String(i)] = urls[randomNumber(range: 0...urls.count - 1)]
+        }
+        
+        var location = [String: Double]()
+        location["latitude"] = -23.888061
+        location["longitude"] = 31.969589
+        
+        
+        
+        let post =
+            [
+                "timestamp": FIRServerValue.timestamp(),
+                "name": animals[randomNumber(range: 0...animals.count - 1)],
+                "url":  urls[randomNumber(range: 0...urls.count - 1)],
+                "images": images,
+                "location": location,
+                "spottedby": [
+                    "123abv": [
+                        "name" : "Mike",
+                        "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
+                    ],
+                    "121asdy23abv": [
+                        "name" : "Michael",
+                        "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego6.jpg"
+                    ]
+                ],
+                "tags": [
+                    "Dinosaur"  :   "Dinosaur-66.png",
+                    "Dolphin"   :   "Dolphin-66.png",
+                    "Duck"      :   "Duck-66.png",
+                    "Elephant"  :   "Elephant_64.png",
+                    "Creek"     :   "Creek-66.png",
+                    "Forest"    :   "Forest-66.png",
+                    "Fountain"  :   "Fountain-66.png",
+                ]
+            ] as [String : Any]
+        
+        let key = ref.child("park/\(parkName)/animals").childByAutoId().key
+        let childUpdates = ["/park/\(parkName)/animals//\(key)": post]
+        ref.updateChildValues(childUpdates, withCompletionBlock: { (error:Error?, dbref: FIRDatabaseReference) in
+            if error != nil {
+                print(error?.localizedDescription)
+            } else {
+                print(":: DB :: Added ANIMAL")
+            }
+        })
+        
+    }
+    
+    func randomNumber(range: ClosedRange<Int> = 1...6) -> Int {
+        let min = range.lowerBound
+        let max = range.upperBound
+        return Int(arc4random_uniform(UInt32(1 + max - min))) + min
+    }
+    
+}
 

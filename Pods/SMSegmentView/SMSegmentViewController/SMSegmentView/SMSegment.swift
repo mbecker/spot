@@ -64,6 +64,9 @@ open class SMSegment: UIView {
                 self.backgroundColor = appearance.segmentOffSelectionColour
                 self.label.font = appearance.titleOffSelectionFont
                 self.label.textColor = appearance.titleOffSelectionColour
+                
+                self.label.attributedText = NSAttributedString(string: self.title!, attributes: appearance.tileOffSelectionAttributes)
+                
             }
             self.imageView.image = self.offSelectionImage
         })
@@ -110,6 +113,8 @@ open class SMSegment: UIView {
                 self.backgroundColor = self.appearance?.segmentOnSelectionColour
                 self.label.textColor = self.appearance?.titleOnSelectionColour
                 self.imageView.image = self.onSelectionImage
+                
+                self.label.attributedText = NSAttributedString(string: self.title!, attributes: self.appearance?.tileOnSelectionAttributes)
             })
         }
         else {
@@ -117,6 +122,8 @@ open class SMSegment: UIView {
                 self.backgroundColor = self.appearance?.segmentOffSelectionColour
                 self.label.textColor = self.appearance?.titleOffSelectionColour
                 self.imageView.image = self.offSelectionImage
+                
+                self.label.attributedText = NSAttributedString(string: self.title!, attributes: self.appearance?.tileOffSelectionAttributes)
             })
         }
     }

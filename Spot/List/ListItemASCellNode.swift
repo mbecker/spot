@@ -10,10 +10,10 @@ import UIKit
 import AsyncDisplayKit
 import FirebaseStorage
 
-class ItemASCellNode: ASCellNode {
+class ListItemASCellNode: ASCellNode {
     
     let _parkItem   :   ParkItem2!
-    var storage     :   FIRStorage
+    var _storage     :   FIRStorage
     var _image      :   ASNetworkImageNode
     
     var _title              =   ASTextNode()
@@ -21,10 +21,47 @@ class ItemASCellNode: ASCellNode {
     var _errorText          =   ASTextNode()
     var _loadingIndicator   =   BallPulse()
     
+    let _height: CGFloat        = 112
+    let _imageHeight: CGFloat   = 96
+    let _imageWidth: CGFloat    = 142
+    
+    override var isSelected: Bool {
+        get {
+            return self.isSelected
+        }
+        set {
+            if newValue {
+                self.backgroundColor = UIColor.clear
+            } else {
+                self.backgroundColor = UIColor.white
+            }
+        }
+    }
+    
+    override var isHighlighted: Bool {
+        get {
+            return self.isSelected
+        }
+        set {
+            if newValue {
+                self.backgroundColor = UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00).withAlphaComponent(0.6) // Bonjour
+            } else {
+                self.backgroundColor = UIColor.white
+            }
+        }
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>?, with event: UIEvent?) {
+        self.backgroundColor = UIColor.clear
+    }
+    
+    /**
+     * Height: 108 (188)
+     */
     
     init(parkItem: ParkItem2){
-        self._parkItem = parkItem
-        self.storage                    = FIRStorage.storage()
+        self._parkItem                  = parkItem
+        self._storage                   = FIRStorage.storage()
         let cache                       = KingfisherCache.sharedManager
         self._image                     = ASNetworkImageNode(cache: cache, downloader: cache)
         
@@ -49,54 +86,55 @@ class ItemASCellNode: ASCellNode {
     override func didLoad() {
         super.didLoad()
         self.backgroundColor = UIColor.clear
-        self._image.imageModificationBlock = { image in
-            var modifiedImage: UIImage?
-            let rect = CGRect(origin: CGPoint.zero, size: image.size)
-            
-            UIGraphicsBeginImageContextWithOptions(image.size, false, UIScreen.main.scale)
-            let maskPath = UIBezierPath(roundedRect: rect, byRoundingCorners: UIRectCorner.allCorners, cornerRadii: CGSize(width: 10, height: 10))
-            maskPath.addClip()
-            image.draw(in: rect)
-            modifiedImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            
-            return modifiedImage
-        }
+//        self._image.imageModificationBlock = { image in
+//            var modifiedImage: UIImage?
+//            let rect = CGRect(origin: CGPoint.zero, size: image.size)
+//            
+//            UIGraphicsBeginImageContextWithOptions(image.size, false, UIScreen.main.scale)
+//            let maskPath = UIBezierPath(roundedRect: rect, byRoundingCorners: UIRectCorner.allCorners, cornerRadii: CGSize(width: 10, height: 10))
+//            maskPath.addClip()
+//            image.draw(in: rect)
+//            modifiedImage = UIGraphicsGetImageFromCurrentImageContext()
+//            UIGraphicsEndImageContext()
+//            
+//            return modifiedImage
+//        }
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         self._loadingIndicator.style.width  = ASDimension(unit: .points, value: 44)
         self._loadingIndicator.style.height = ASDimension(unit: .points, value: 44)
         
-        let loadingIndicatorInsetSpec       = ASInsetLayoutSpec(insets: UIEdgeInsets(top: 140 / 2 - 22, left: 186 / 2 - 22, bottom: 0, right: 0), child: self._loadingIndicator)
+        let loadingIndicatorInsetSpec       = ASInsetLayoutSpec(insets: UIEdgeInsets(top: self._imageHeight / 2 - 22, left: self._imageWidth / 2 - 22, bottom: 0, right: 0), child: self._loadingIndicator)
         
-        self._image.style.width             = ASDimension(unit: .points, value: 186)
-        self._image.style.height            = ASDimension(unit: .points, value: 140)
+        self._image.style.width             = ASDimension(unit: .points, value: self._imageWidth)
+        self._image.style.height            = ASDimension(unit: .points, value: self._imageHeight)
         
         self._errorText.style.alignSelf     = .center
-        self._errorText.style.width         = ASDimension(unit: .points, value: 186 * 2 / 3)
+        self._errorText.style.width         = ASDimension(unit: .points, value: self._imageHeight * 2 / 3)
         self._errorText.style.height        = ASDimension(unit: .points, value: 28.640625)
         self._errorText.backgroundColor     = UIColor.clear
         
         let errorCenterLayout               = ASCenterLayoutSpec(centeringOptions: .XY, sizingOptions: .minimumXY, child: self._errorText)
-        errorCenterLayout.style.width       = ASDimension(unit: .points, value: 186 / 2)
-        errorCenterLayout.style.height      = ASDimension(unit: .points, value: 140)
-        
+        errorCenterLayout.style.width       = ASDimension(unit: .points, value: self._imageWidth / 2)
+        errorCenterLayout.style.height      = ASDimension(unit: .points, value: self._imageHeight)
         
         let errorTextOverlaySpec            = ASOverlayLayoutSpec(child: self._image, overlay: errorCenterLayout)
         
         let loadingIndicatorOverlaySpec     = ASOverlayLayoutSpec(child: errorTextOverlaySpec, overlay: loadingIndicatorInsetSpec)
-        
-        self._title.style.flexGrow          = 1 // 	If the sum of childrens' stack dimensions is less than the minimum size, should this object grow?
-        self._detail.style.flexGrow         = 1
+        let imageInsetSpec                  = ASInsetLayoutSpec(insets: UIEdgeInsets(top: self._height - self._imageHeight, left: 20, bottom: 0, right: 0), child: loadingIndicatorOverlaySpec)
         
         let verticalTextStackSpec           = ASStackLayoutSpec(direction: .vertical, spacing: 0, justifyContent: .start, alignItems: .start, children: [self._title, self._detail])
-        let insetSpec                       = ASInsetLayoutSpec(insets: UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0), child: verticalTextStackSpec)
+        let textInsetSpec                   = ASInsetLayoutSpec(insets: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0), child: verticalTextStackSpec)
+        textInsetSpec.style.flexShrink      = 1
         
-        let verticalStackSpec               = ASStackLayoutSpec(direction: .vertical, spacing: 0, justifyContent: .start, alignItems: .start, children: [loadingIndicatorOverlaySpec, insetSpec])
-        verticalStackSpec.style.flexGrow    = 1
+        let verticalStackSpec               = ASStackLayoutSpec(direction: .horizontal, spacing: 0, justifyContent: .start, alignItems: .start, children: [loadingIndicatorOverlaySpec, textInsetSpec])
+        verticalStackSpec.style.flexShrink  = 0
         
-        return verticalStackSpec
+        let insetSpec                       = ASInsetLayoutSpec(insets: UIEdgeInsets(top: (self._height - self._imageHeight) / 2, left: 20, bottom: 0, right: 0), child: verticalStackSpec)
+        
+        
+        return insetSpec
     }
     
     func loadImage() {
@@ -104,11 +142,11 @@ class ItemASCellNode: ASCellNode {
             self._image.url = imageURL
         } else if let imageURL: String = self._parkItem.url as String!, imageURL.characters.count > 0 {
             // cellData.url is resized image 3750x300
-            let imgRef = self.storage.reference(forURL: imageURL)
+            let imgRef = self._storage.reference(forURL: imageURL)
             loadImageURL(imgRef: imgRef)
         } else if let imageURL: String = self._parkItem.images?["original"], imageURL.characters.count > 0 {
             // resized image doesn't exist -> Load "original" image
-            let imgRef = self.storage.reference(forURL: imageURL)
+            let imgRef = self._storage.reference(forURL: imageURL)
             loadImageURL(imgRef: imgRef)
         } else {
             // Show error
@@ -125,7 +163,7 @@ class ItemASCellNode: ASCellNode {
                     NSKernAttributeName: 0.0,
                     NSParagraphStyleAttributeName: paragraph,
                     ])
-
+            
         }
         
         
@@ -157,7 +195,7 @@ class ItemASCellNode: ASCellNode {
 }
 
 
-extension ItemASCellNode: ASNetworkImageNodeDelegate {
+extension ListItemASCellNode: ASNetworkImageNodeDelegate {
     
     func imageNodeDidFinishDecoding(_ imageNode: ASNetworkImageNode) {
         self._loadingIndicator.removeFromSupernode()

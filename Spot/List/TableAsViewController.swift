@@ -48,9 +48,10 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     override func viewDidLoad() {
         super.viewDidLoad()
         // TableView
-        self.tableNode.view.showsVerticalScrollIndicator = false
-        self.tableNode.view.backgroundColor = UIColor.white
-        self.tableNode.view.separatorColor = UIColor.clear
+        self.tableNode.view.showsVerticalScrollIndicator    = false
+        self.tableNode.allowsSelection                      = true
+        self.tableNode.view.backgroundColor                 = UIColor.white
+        self.tableNode.view.separatorColor                  = UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00) // Bonjour
         
         self.view.backgroundColor = UIColor.white
         
@@ -62,9 +63,22 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
                 // self.items.insert(item, at: 0)
                 self.items2.insert(item2, at: 0)
                 let indexPath = IndexPath(item: 0, section: 0)
-                self.tableNode.insertRows(at: [indexPath], with: .top)
+                self.tableNode.insertRows(at: [indexPath], with: .none)
                 self.tableNode.reloadRows(at: [indexPath], with: .none)
             })
+        })
+        
+        self.ref.child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
+            // ParkItem2 is updated; replace item in table array
+            for i in 0...self.items2.count-1 {
+                if self.items2[i].key == snapshot.key {
+                    let item        = ParkItem2(snapshot: snapshot, park: self.park)
+                    self.items2[i]  = item
+                    let indexPath = IndexPath(item: i, section: 0)
+                    self.tableNode.reloadRows(at: [indexPath], with: .fade)
+                }
+            }
+            
         })
 
     }
@@ -104,18 +118,32 @@ extension TableAsViewController : ASTableDataSource {
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
-        let node = ASTextCellNode()
-        let name = self.items2[indexPath.row].name
-        node.text = "Page: \(self.page) - Node: \(indexPath.row) - Name: \(name)"
-        node.backgroundColor = UIColor.white
-        return ItemASCellNode(parkItem: self.items2[indexPath.row])
+        let node = ListItemASCellNode(parkItem: self.items2[indexPath.row])
+        node.selectionStyle = .none
+        node._title.attributedText = NSAttributedString(
+            string: self.items2[indexPath.row].name,
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+                NSForegroundColorAttributeName: UIColor.black,
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.0,
+                ])
+        node._detail.attributedText = NSAttributedString(
+            string: "Latitude: \(self.items2[indexPath.row].latitude) - Longitude \(self.items2[indexPath.row].longitude) + adsasdasdasdasdasdasdadsa ds asd a ds a d as d",
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
+                NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.0,
+                ])
+        return node
     }
 }
 
 extension TableAsViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
-        return ASSizeRange.init(min: CGSize(width: 0, height: 186), max: CGSize(width: 0, height: 186))
+        return ASSizeRange.init(min: CGSize(width: 0, height: 112), max: CGSize(width: 0, height: 112))
     }
     
     

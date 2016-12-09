@@ -38,15 +38,16 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
      */
     var parkData: Park
     var delegate: SelectParkDelegate?
+    var parkName: String
     
     init() {
-        let park: String = UserDefaults.standard.object(forKey: UserDefaultTypes.parkpath.rawValue) as? String ?? "addo"
+        self.parkName = UserDefaults.standard.object(forKey: UserDefaultTypes.parkpath.rawValue) as? String ?? "addo"
         self.ref = FIRDatabase.database().reference()
         let parkSections = [
-            ParkSection(name: "Attractions", path: "park/\(park)/attractions"),
-            ParkSection(name: "Animals", path: "park/\(park)/animals")
+            ParkSection(name: "Attractions", path: "park/\(self.parkName)/attractions"),
+            ParkSection(name: "Animals", path: "park/\(self.parkName)/animals")
         ]
-        parkData = Park(name: "Addo Elephant National Park", path: "parkinfo/\(park)", sections: parkSections)
+        parkData = Park(name: "Addo Elephant National Park", path: "parkinfo/\(self.parkName)", sections: parkSections)
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -54,6 +55,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
     init(park: String, parkName: String, parkSections: [ParkSection]){
         self.ref = FIRDatabase.database().reference()
+        self.parkName = park
         self.parkData = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
@@ -72,9 +74,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.showsVerticalScrollIndicator = false
         self.tableNode.view.backgroundColor = UIColor.white
         self.tableNode.view.separatorColor = UIColor.clear
-        let parkTableHeader = ParkTableHeaderUIView(parkName: self.parkData.name)
-        parkTableHeader.delegate = self
-        self.tableNode.view.tableHeaderView = parkTableHeader
+        self.tableNode.view.tableFooterView = tableFooterView
         
         /**
          * SETUP DATA
@@ -85,6 +85,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     }
     
     func loadPark(park: String, parkName: String, parkSections: [ParkSection]){
+        self.parkName = parkName
         self.parkData = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
         self.tableNode.reloadData()
         loadDataFromDB()        
@@ -98,7 +99,8 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     }
     
     func loadDataFromDB(){
-        let parkTableHeader = ParkTableHeaderUIView(parkName: self.parkData.name)
+        let parkTableHeader                 = ParkTableHeaderUIView(parkName: self.parkData.name)
+        parkTableHeader.delegate            = self
         self.tableNode.view.tableHeaderView = parkTableHeader
         self.ref.child(self.parkData.path).observeSingleEvent(of: .value, with: { (snapshot) in
             // Get park value
@@ -155,7 +157,14 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         buttonClearCache.setTitle("Clear Cache", for: .normal)
         buttonClearCache.addTarget(self, action: #selector(didTapClearCache), for: .touchUpInside)
         
+        let addItems = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 20 - 150, y: 20, width: 150, height: 50))
+        addItems.setBackgroundColor(color: UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00), forState: .normal)
+        addItems.setBackgroundColor(color: UIColor(red:0.83, green:0.29, blue:0.31, alpha:1.00), forState: .highlighted)
+        addItems.setTitle("Add items", for: .normal)
+        addItems.addTarget(self, action: #selector(didTapAddItems), for: .touchUpInside)
+        
         view.addSubview(buttonClearCache)
+        view.addSubview(addItems)
         
         return view
     }()
@@ -176,6 +185,11 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
             self.present(alert, animated: true, completion: nil)
             
         }
+    }
+    
+    @objc fileprivate func didTapAddItems() {
+        let firebaseModels = FirebaseModel()
+        firebaseModels.addAnimals(count: 5, parkName: self.parkName)
     }
     
     func sectionHeaderView(text: String, sectionId: Int = 0) -> UIView {
@@ -235,12 +249,6 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     }
     
     @objc func pushDetail(sender: UIButton) {
-        // Post notification
-        let nc = NotificationCenter.default
-        nc.post(name:Notification.Name(rawValue:"MyNotification"),
-                object: nil,
-                userInfo: ["message":"Hello there!", "date":Date()])
-        
         // self.tabBarController?.selectedIndex = 1
         print("-- TAGS --")
         print(sender.tag)
@@ -248,7 +256,6 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         if let vc = self.tabBarController!.viewControllers![1] as? ASNavigationController {
             vc.popToRootViewController(animated: false)
             if let view = vc.topViewController as? ChangePage {
-                print("CHANGE TAB")
                 view.changePage(tab: sender.tag, showSelectedPage: true)
             }
         }
@@ -279,7 +286,6 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        // From header text to immage horizinta slider
         return 42
     }
     
