@@ -79,20 +79,26 @@ class ParkASCellNode: ASCellNode {
         
         // Listen for added snapshots; automatically reconnects
         self.ref.child(self.parkSection.path).observe(.childAdded, with: { (snapshot) -> Void in
-            let item2: ParkItem2 = ParkItem2(snapshot: snapshot, park: self.park)
-            OperationQueue.main.addOperation({
-                self.items2.insert(item2, at: 0)
-                let indexPath = IndexPath(item: 0, section: 0)
-                self.collectionNode.insertItems(at: [indexPath])
-                self.collectionNode.reloadItems(at: [indexPath])
-            })
+            
+            if self.parkSection.name == "Animals" {
+                print(snapshot)
+            }
+            
+            if let item2: ParkItem2 = ParkItem2(snapshot: snapshot, park: self.park) {
+                OperationQueue.main.addOperation({
+                    self.items2.insert(item2, at: 0)
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    self.collectionNode.insertItems(at: [indexPath])
+                    self.collectionNode.reloadItems(at: [indexPath])
+                })
+            }
+            
         })
         
         self.ref.child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
             // ParkItem2 is updated; reload item in table array
             for i in 0...self.items2.count-1 {
-                if self.items2[i].key == snapshot.key {
-                    let item        = ParkItem2(snapshot: snapshot, park: self.park)
+                if self.items2[i].key == snapshot.key, let item = ParkItem2(snapshot: snapshot, park: self.park) {
                     self.items2[i]  = item
                     let indexPath = IndexPath(item: i, section: 0)
                     self.collectionNode.reloadItems(at: [indexPath])

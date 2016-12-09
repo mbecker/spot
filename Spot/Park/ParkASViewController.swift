@@ -85,7 +85,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     }
     
     func loadPark(park: String, parkName: String, parkSections: [ParkSection]){
-        self.parkName = parkName
+        self.parkName = park
         self.parkData = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
         self.tableNode.reloadData()
         loadDataFromDB()        
@@ -163,8 +163,15 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         addItems.setTitle("Add items", for: .normal)
         addItems.addTarget(self, action: #selector(didTapAddItems), for: .touchUpInside)
         
+        let deleteItems = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 20 - 150, y: 90, width: 150, height: 50))
+        deleteItems.setBackgroundColor(color: UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00), forState: .normal)
+        deleteItems.setBackgroundColor(color: UIColor(red:0.83, green:0.29, blue:0.31, alpha:1.00), forState: .highlighted)
+        deleteItems.setTitle("Delete items", for: .normal)
+        deleteItems.addTarget(self, action: #selector(didTapDeleteItems), for: .touchUpInside)
+        
         view.addSubview(buttonClearCache)
         view.addSubview(addItems)
+        view.addSubview(deleteItems)
         
         return view
     }()
@@ -190,6 +197,11 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     @objc fileprivate func didTapAddItems() {
         let firebaseModels = FirebaseModel()
         firebaseModels.addAnimals(count: 5, parkName: self.parkName)
+    }
+    
+    @objc fileprivate func didTapDeleteItems(){
+        let firebaseModel = FirebaseModel()
+        firebaseModel.deleteItems(parkName: self.parkName)
     }
     
     func sectionHeaderView(text: String, sectionId: Int = 0) -> UIView {

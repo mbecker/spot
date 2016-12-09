@@ -131,23 +131,30 @@ class ParkItem2 {
      */
     var park        :   Park!
     
-    init(snapshot: FIRDataSnapshot, park: Park) {
+    init?(snapshot: FIRDataSnapshot, park: Park) {
+        
         self.storage      = FIRStorage.storage()
         self.key          = snapshot.key
         self.ref          = snapshot.ref
+        let snapshotValue = snapshot.value as! [String: AnyObject]
+        
+        
+        if let name: String = snapshotValue["name"] as? String {
+            self.name = name
+        } else {
+            return nil
+        }
         
         self.park         = park
         
-        let snapshotValue = snapshot.value as! [String: AnyObject]
-        self.name         = snapshotValue["name"] as! String
+        
+        
+        
         
         
         /**
          * Tags
          */
-        if(self.name == "Vacation animal") {
-            print("VACATION ANIMAL");
-        }
         if let tags: [String:String] = snapshotValue["tags"] as? [String:String] {
             for (_, tag) in tags {
                 self.tags.append(tag)
@@ -637,13 +644,13 @@ class FirebaseModel {
                     ]
                 ],
                 "tags": [
-                    "Dinosaur"  :   "Dinosaur-66.png",
-                    "Dolphin"   :   "Dolphin-66.png",
-                    "Duck"      :   "Duck-66.png",
-                    "Elephant"  :   "Elephant_64.png",
-                    "Creek"     :   "Creek-66.png",
-                    "Forest"    :   "Forest-66.png",
-                    "Fountain"  :   "Fountain-66.png",
+                    "Dinosaur"  :   "Dinosaur",
+                    "Dolphin"   :   "Dolphin",
+                    "Duck"      :   "Duck",
+                    "Elephant"  :   "Elephant",
+                    "Creek"     :   "Creek",
+                    "Forest"    :   "Forest",
+                    "Fountain"  :   "Fountain",
                 ]
             ] as [String : Any]
         
@@ -657,6 +664,16 @@ class FirebaseModel {
             }
         })
         
+    }
+    
+    func deleteItems(parkName: String){
+        self.ref.child("park").child(parkName).child("animals").removeValue(completionBlock: { (error:Error?, dbref: FIRDatabaseReference) in
+            if error != nil {
+                print(error?.localizedDescription)
+            } else {
+                print(":: DB :: \(parkName) :: Deleted ANIMALS")
+            }
+        })
     }
     
     func randomNumber(range: ClosedRange<Int> = 1...6) -> Int {

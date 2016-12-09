@@ -4,6 +4,7 @@ import Firebase
 import FirebaseDatabase
 import FirebaseMessaging
 import Kingfisher
+import NVActivityIndicatorView
 
 class TableAsViewController: ASViewController<ASDisplayNode> {
     
@@ -16,11 +17,8 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         return node as! ASTableNode
     }
     
-    /**
-     * Firebase
-     */
     let ref         :   FIRDatabaseReference
-    
+    let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect.zero, type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
     let page: Int
     let parkSection: ParkSection
     let park: Park
@@ -48,31 +46,39 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     override func viewDidLoad() {
         super.viewDidLoad()
         // TableView
+        self.view.backgroundColor = UIColor.white
         self.tableNode.view.showsVerticalScrollIndicator    = false
         self.tableNode.allowsSelection                      = true
         self.tableNode.view.backgroundColor                 = UIColor.white
         self.tableNode.view.separatorColor                  = UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00) // Bonjour
         
-        self.view.backgroundColor = UIColor.white
+        
+        // Loading indicator
+        self.loadingIndicatorView.frame = CGRect(x: self.view.bounds.width / 2 - 22, y: UIScreen.main.bounds.height / 2 - 22, width: 44, height: 44)
+        self.loadingIndicatorView.startAnimating()
+        self.view.addSubview(self.loadingIndicatorView)
         
         // Listen for added snapshots
         self.ref.child(self.parkSection.path).observe(.childAdded, with: { (snapshot) -> Void in
-            // let item = ParkItem2(snapshot: snapshot)
-            let item2 = ParkItem2(snapshot: snapshot, park: self.park)
-            OperationQueue.main.addOperation({
-                // self.items.insert(item, at: 0)
-                self.items2.insert(item2, at: 0)
-                let indexPath = IndexPath(item: 0, section: 0)
-                self.tableNode.insertRows(at: [indexPath], with: .none)
-                self.tableNode.reloadRows(at: [indexPath], with: .none)
-            })
+            
+            if let item2 = ParkItem2(snapshot: snapshot, park: self.park) {
+                OperationQueue.main.addOperation({
+                    self.items2.insert(item2, at: 0)
+                    
+                    self.loadingIndicatorView.removeFromSuperview()
+                    
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    self.tableNode.insertRows(at: [indexPath], with: .none)
+                    self.tableNode.reloadRows(at: [indexPath], with: .none)
+                })
+            }
+            
         })
         
         self.ref.child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
             // ParkItem2 is updated; replace item in table array
             for i in 0...self.items2.count-1 {
-                if self.items2[i].key == snapshot.key {
-                    let item        = ParkItem2(snapshot: snapshot, park: self.park)
+                if self.items2[i].key == snapshot.key, let item = ParkItem2(snapshot: snapshot, park: self.park) {
                     self.items2[i]  = item
                     let indexPath = IndexPath(item: i, section: 0)
                     self.tableNode.reloadRows(at: [indexPath], with: .fade)
