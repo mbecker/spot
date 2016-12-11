@@ -8,7 +8,32 @@ PODS:
     - AsyncDisplayKit/Core
     - PINRemoteImage/iOS (= 3.0.0-beta.6)
     - PINRemoteImage/PINCache
+  - Bolts (1.8.4):
+    - Bolts/AppLinks (= 1.8.4)
+    - Bolts/Tasks (= 1.8.4)
+  - Bolts/AppLinks (1.8.4):
+    - Bolts/Tasks
+  - Bolts/Tasks (1.8.4)
   - EZAlertController (3.2)
+  - FacebookCore (0.2.0):
+    - Bolts (~> 1.8)
+    - FBSDKCoreKit (~> 4.15)
+  - FacebookLogin (0.2.0):
+    - Bolts (~> 1.8)
+    - FacebookCore (~> 0.2)
+    - FBSDKCoreKit (~> 4.15)
+    - FBSDKLoginKit (~> 4.15)
+  - FacebookShare (0.2.0):
+    - Bolts (~> 1.8)
+    - FacebookCore (~> 0.2)
+    - FBSDKCoreKit (~> 4.15)
+    - FBSDKShareKit (~> 4.15)
+  - FBSDKCoreKit (4.17.0):
+    - Bolts (~> 1.7)
+  - FBSDKLoginKit (4.17.0):
+    - FBSDKCoreKit
+  - FBSDKShareKit (4.17.0):
+    - FBSDKCoreKit
   - Firebase (3.9.0):
     - Firebase/Core (= 3.9.0)
   - Firebase/Auth (3.9.0):
@@ -91,6 +116,9 @@ PODS:
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/facebook/AsyncDisplayKit`)
   - EZAlertController (= 3.2)
+  - FacebookCore
+  - FacebookLogin
+  - FacebookShare
   - Firebase
   - Firebase/Auth
   - Firebase/Database
@@ -125,7 +153,14 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   AsyncDisplayKit: 4d4403eb61b2b667866e98ca8b7fab6cec497b68
+  Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   EZAlertController: 633be01320bed47720be54054df47667d61c2481
+  FacebookCore: 2cb3f0fbff218e9d3119cec84bae983b232412de
+  FacebookLogin: c9d606504735780a9e3002465a615512e0a691a5
+  FacebookShare: 8e9ee8ea06505e6a1d3d719b0cc63e840fb8aaeb
+  FBSDKCoreKit: 30a21d2d7b92984b3d80497113433c00824c35e9
+  FBSDKLoginKit: 42b7129ac0373ca99eaf4cbebf4d07bd42371f59
+  FBSDKShareKit: 9b573d03fbee36cbaf42d5bb1f2bc019e0d72347
   Firebase: ff77ffb77b317c3720fef57a60e9335cebf962e6
   FirebaseAnalytics: 6e58fc9b397664369ac7617fb0ba93fab6ba7b5b
   FirebaseAuth: 96e9674ff31d6e1f826d53e26aa003a57cab0295
@@ -147,6 +182,6 @@ SPEC CHECKSUMS:
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
 
-PODFILE CHECKSUM: 7eb8fca27ef59d5ef3fc78eecb0453d9951e4abe
+PODFILE CHECKSUM: 09845296790cff43eae052dfc8c98da5c3f8febb
 
 COCOAPODS: 1.2.0.beta.1

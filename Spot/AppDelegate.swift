@@ -11,8 +11,11 @@ import CoreData
 import Firebase
 import FirebaseMessaging
 import FirebaseDatabase
+
 import AsyncDisplayKit
 import UserNotifications
+
+import FBSDKCoreKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -60,14 +63,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                object: nil)
         
         
-        let tabBar = MainASTabBarController()
+        
+        /**
+         * Facebook
+         */
+        
+        // let navController = UINavigationController(rootViewController: LoginViewController())
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white
-        window.rootViewController = tabBar
+        window.rootViewController = MainNavigationController()
         window.makeKeyAndVisible()
         self.window = window
-        return true
+        
+        return FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -99,6 +108,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        let sourceApplication: String? = options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String
+        let annotation = options[UIApplicationOpenURLOptionsKey.annotation] ?? []
+        return FBSDKApplicationDelegate.sharedInstance().application(app, open: url, sourceApplication: sourceApplication, annotation: annotation)
     }
 
     // MARK: - Core Data stack

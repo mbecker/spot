@@ -11,8 +11,12 @@ import AsyncDisplayKit
 import Firebase
 import FirebaseDatabase
 import FirebaseMessaging
+import FirebaseAuth
 import Kingfisher
 import EZAlertController
+
+import FacebookLogin
+import FacebookCore
 
 protocol SelectParkDelegate {
     func selectPark()
@@ -126,6 +130,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         super.viewWillAppear(animated)
         
         self.navigationController?.navigationBar.isHidden = true
+        // self.navigationController?.isNavigationBarHidden = true
         
         //Status bar style and visibility
         UIApplication.shared.isStatusBarHidden = false
@@ -169,9 +174,27 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         deleteItems.setTitle("Delete items", for: .normal)
         deleteItems.addTarget(self, action: #selector(didTapDeleteItems), for: .touchUpInside)
         
+        let loginButton = LoginButton(readPermissions: [ .publicProfile, .email, .userFriends ])
+        loginButton.center = view.center
+        loginButton.delegate = self
+        
+        let fbPhoto = UIImageView(frame: CGRect(x: 20, y: view.bounds.height - 20 - 60, width: 60, height: 60))
+        var handle: FIRAuthStateDidChangeListenerHandle!
+        handle = FIRAuth.auth()?.addStateDidChangeListener() { (auth, user) in
+            print(":: FIREBASE HANDLER ::")
+            print(auth)
+            if let image = user?.photoURL {
+                let processor = RoundCornerImageProcessor(cornerRadius: 30)
+                fbPhoto.kf.setImage(with: image, placeholder: nil, options: [.processor(processor)])
+            } else {
+                fbPhoto.image = nil
+            }
+        }
+        view.addSubview(fbPhoto)
         view.addSubview(buttonClearCache)
         view.addSubview(addItems)
         view.addSubview(deleteItems)
+        view.addSubview(loginButton)
         
         return view
     }()
@@ -278,6 +301,53 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
 
 
+}
+
+extension ParkASViewController: LoginButtonDelegate {
+    func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
+        
+//        let grantedPermissions:     Set<Permission>
+//        let declinedPermissions:    Set<Permission>
+//        let token:                  AccessToken
+        
+        switch result {
+        case .success(let grantedPermissions, let declinedPermissions, let token):
+            let credential = FIRFacebookAuthProvider.credential(withAccessToken: token.authenticationToken)
+            FIRAuth.auth()?.signIn(with: credential) { (user, error) in
+                // ...
+                if let error = error {
+                    print(error)
+                    return
+                }
+                print(":: FIREBASE :: LOGGED IN ")
+                print("displayname: \(user!.displayName)")
+                print("email: \(user!.email)")
+                print("image: \(user!.photoURL)")
+            }
+            break
+        case .cancelled:
+            print(":: FACEBOOK LOGIN CANCELLED ::")
+            break
+        case .failed(let error):
+            print(":: FACEBOOK LOGIN ERROR ::")
+            print(error)
+            break
+        }
+        
+        
+    }
+    
+    func loginButtonDidLogOut(_ loginButton: LoginButton) {
+        print(":: FACEBOOK LOGOUT ::")
+        let firebaseAuth = FIRAuth.auth()
+        do {
+            try firebaseAuth?.signOut()
+        } catch let signOutError as NSError {
+            print(":: FIREBASE LOGOUT ::")
+            print ("Error signing out: %@", signOutError)
+        }
+        
+    }
 }
 
 extension ParkASViewController : ASTableDataSource {
