@@ -14,22 +14,22 @@ class MainNavigationController: UINavigationController {
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        var handle: FIRAuthStateDidChangeListenerHandle!
-        handle = FIRAuth.auth()?.addStateDidChangeListener() { (auth, user) in
-            print(":: FIREBASE HANDLER ::")
-            print(auth)
-            print(user)
-            if  user == nil && self.topViewController is MainASTabBarController {
-                self.pushViewController(LoginViewController(), animated: false)
-            }
-        }
-        
-        if FIRAuth.auth()?.currentUser == nil {
-            self.pushViewController(LoginViewController(), animated: false)
-        } else {
-            self.pushViewController(MainASTabBarController(), animated: false)
-        }
-
+//        var handle: FIRAuthStateDidChangeListenerHandle!
+//        handle = FIRAuth.auth()?.addStateDidChangeListener() { (auth, user) in
+//            print(":: FIREBASE HANDLER ::")
+//            print(auth)
+//            print(user)
+//            if  user == nil && self.topViewController is MainASTabBarController {
+//                self.pushViewController(LoginViewController(), animated: false)
+//            }
+//        }
+//        
+//        if FIRAuth.auth()?.currentUser == nil {
+//            self.pushViewController(LoginViewController(), animated: false)
+//        } else {
+//            self.pushViewController(MainASTabBarController(), animated: false)
+//        }
+//
     }
     
     required init?(coder aDecoder: NSCoder) {

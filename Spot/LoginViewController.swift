@@ -29,24 +29,29 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let image   = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 264))
+        
+        self.view.backgroundColor = UIColor.white
+        
+        let image   = UIImageView(frame: CGRect(x: UIScreen.main.bounds.width / 2 - UIScreen.main.bounds.width / 2 / 2, y: UIScreen.main.bounds.height / 2 - UIScreen.main.bounds.width / 2, width: UIScreen.main.bounds.width / 2, height: UIScreen.main.bounds.width / 2))
         image.image = images[randomNumber()]
+        image.cornerRadius = UIScreen.main.bounds.width / 4
+        image.clipsToBounds = true
         
         let loginButton     = LoginButton(readPermissions: [ .publicProfile, .email, .userFriends ])
-        loginButton.frame   = CGRect(x: UIScreen.main.bounds.width / 2 - 240 / 2, y: 264 + (UIScreen.main.bounds.height - 264) / 2 - 64 / 2, width: 240, height: 64)
+        loginButton.frame   = CGRect(x: UIScreen.main.bounds.width / 2 - 240 / 2, y: 264 + (UIScreen.main.bounds.height - 264) / 2 - 44 / 2, width: 240, height: 44)
         loginButton.delegate = self
         
         errorLabel.font = UIFont.systemFont(ofSize: 12)
         errorLabel.translatesAutoresizingMaskIntoConstraints = false
+        errorLabel.text = "What's going on?"
         
         self.view.addSubview(image)
         self.view.addSubview(loginButton)
         self.view.addSubview(errorLabel)
         
         errorLabel.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 8).isActive = true
-        errorLabel.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20).isActive = true
-        errorLabel.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 20).isActive = true
-        errorLabel.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 20).isActive = true
+        errorLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        // errorLabel.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 20).isActive = true
         
         
         
@@ -81,7 +86,8 @@ extension LoginViewController: LoginButtonDelegate {
                 print("displayname: \(user!.displayName)")
                 print("email: \(user!.email)")
                 print("image: \(user!.photoURL)")
-                self.navigationController?.pushViewController(MainASTabBarController(), animated: true)
+                // self.navigationController?.pushViewController(MainASTabBarController(), animated: true)
+                
             }
             break
         case .cancelled:

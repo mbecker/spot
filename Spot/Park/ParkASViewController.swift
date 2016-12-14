@@ -78,7 +78,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.showsVerticalScrollIndicator = false
         self.tableNode.view.backgroundColor = UIColor.white
         self.tableNode.view.separatorColor = UIColor.clear
-        self.tableNode.view.tableFooterView = tableFooterView
+        
         
         /**
          * SETUP DATA
@@ -113,6 +113,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
                 let parkTableHeader = ParkTableHeaderUIView.init(park: self.parkData)
                 parkTableHeader.delegate = self
                 self.tableNode.view.tableHeaderView = parkTableHeader
+                self.tableNode.view.tableFooterView = self.tableFooterView
             }
             
         }) { (error) in
