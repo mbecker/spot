@@ -21,6 +21,10 @@ class ItemASCellNode: ASCellNode {
     var _errorText          =   ASTextNode()
     var _loadingIndicator   =   BallPulse()
     
+    let _height: CGFloat        = 80 // 112
+    let _imageHeight: CGFloat   = 140 // 96
+    let _imageWidth: CGFloat    = 186 // 103.55417528 // 142
+    
     
     init(parkItem: ParkItem2){
         self._parkItem = parkItem
@@ -68,19 +72,22 @@ class ItemASCellNode: ASCellNode {
         self._loadingIndicator.style.width  = ASDimension(unit: .points, value: 44)
         self._loadingIndicator.style.height = ASDimension(unit: .points, value: 44)
         
-        let loadingIndicatorInsetSpec       = ASInsetLayoutSpec(insets: UIEdgeInsets(top: 140 / 2 - 22, left: 186 / 2 - 22, bottom: 0, right: 0), child: self._loadingIndicator)
+        let loadingIndicatorInsetSpec       = ASInsetLayoutSpec(insets: UIEdgeInsets(top: self._imageHeight / 2 - 22, left: self._imageWidth / 2 - 22, bottom: 0, right: 0), child: self._loadingIndicator)
         
-        self._image.style.width             = ASDimension(unit: .points, value: 186)
-        self._image.style.height            = ASDimension(unit: .points, value: 140)
+        self._image.style.width             = ASDimension(unit: .points, value: self._imageWidth)
+        self._image.style.height            = ASDimension(unit: .points, value: self._imageHeight)
         
         self._errorText.style.alignSelf     = .center
-        self._errorText.style.width         = ASDimension(unit: .points, value: 186 * 2 / 3)
-        self._errorText.style.height        = ASDimension(unit: .points, value: 28.640625)
+//        self._errorText.style.width         = ASDimension(unit: .points, value: 186 * 2 / 3)
+//        self._errorText.style.height        = ASDimension(unit: .points, value: 28.640625)
         self._errorText.backgroundColor     = UIColor.clear
+//        self._errorText.style.width       = ASDimension(unit: .points, value: self._imageWidth - 8)
+//        self._errorText.style.height      = ASDimension(unit: .points, value: self._imageHeight - 8)
+        self._errorText.style.flexGrow = 1.0
         
         let errorCenterLayout               = ASCenterLayoutSpec(centeringOptions: .XY, sizingOptions: .minimumXY, child: self._errorText)
-        errorCenterLayout.style.width       = ASDimension(unit: .points, value: 186 / 2)
-        errorCenterLayout.style.height      = ASDimension(unit: .points, value: 140)
+        errorCenterLayout.style.width       = ASDimension(unit: .points, value: self._imageWidth - 8)
+        errorCenterLayout.style.height      = ASDimension(unit: .points, value: self._imageHeight - 8)
         
         
         let errorTextOverlaySpec            = ASOverlayLayoutSpec(child: self._image, overlay: errorCenterLayout)
@@ -114,21 +121,25 @@ class ItemASCellNode: ASCellNode {
             // Show error
             // self._image.url = URL(string: "https://error.com")
             self._loadingIndicator.removeFromSupernode()
-            let paragraph = NSMutableParagraphStyle()
-            paragraph.alignment = .center
-            self._errorText.attributedText = NSAttributedString(
-                string: "No image uploaded.",
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
-                    NSForegroundColorAttributeName: UIColor.black,
-                    NSBackgroundColorAttributeName: UIColor.clear,
-                    NSKernAttributeName: 0.0,
-                    NSParagraphStyleAttributeName: paragraph,
-                    ])
-
+            self.showError(text: "Error:\nNo image uploaded")
         }
         
         
+    }
+    
+    func showError(text: String){
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        self._errorText.attributedText = NSAttributedString(
+            string: text,
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 10, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+                NSForegroundColorAttributeName: UIColor.black,
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.0,
+                NSParagraphStyleAttributeName: paragraph,
+                ])
+        self.setNeedsLayout()
     }
     
     func loadImageURL(imgRef: FIRStorageReference){
@@ -137,15 +148,7 @@ class ItemASCellNode: ASCellNode {
                 self._loadingIndicator.removeFromSupernode()
                 let paragraph = NSMutableParagraphStyle()
                 paragraph.alignment = .center
-                self._errorText.attributedText = NSAttributedString(
-                    string: (error?.localizedDescription)!,
-                    attributes: [
-                        NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
-                        NSForegroundColorAttributeName: UIColor.black,
-                        NSBackgroundColorAttributeName: UIColor.clear,
-                        NSKernAttributeName: 0.0,
-                        NSParagraphStyleAttributeName: paragraph,
-                        ])
+                self.showError(text: "Error:\n\(error!.localizedDescription)")
             } else {
                 self._image.url = storageURL
                 self._parkItem.setUrlPublic(url: storageURL!)

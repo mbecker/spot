@@ -39,12 +39,11 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     var dataLoaded: Bool = false
     
     var park: Park
-    var parkSections: [ParkSection]
     
-    init(park: String, parkName: String, parkSections: [ParkSection]){
-        self.park           = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
-        self.parkSections   = parkSections
+    
+    init(park: Park){
         self.ref = FIRDatabase.database().reference()
+        self.park = park
         
         let appearance = SMSegmentAppearance()
         appearance.segmentOnSelectionColour = UIColor.white
@@ -71,10 +70,10 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         
         self.segmentView = SMSegmentView(frame: CGRect.zero, dividerColour: UIColor.clear, dividerWidth: 1.0, segmentAppearance: appearance)
         
-        for parkSection in parkSections {
+        for parkSection in self.park.sections {
             self.segmentView.addSegmentWithTitle(parkSection.name, onSelectionImage: nil, offSelectionImage: nil)
         }
-        
+
         super.init(node: ASPagerNode.init())
         
         self.segmentView.selectedSegmentIndex   = 0
@@ -82,57 +81,13 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         self.pagerNode.delegate     = self
         self.pagerNode.dataSource   = self
     }
-    
-    func updateParkSections(park: String, parkName: String, parkSections: [ParkSection]){
-        self.park           = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
-        self.parkSections   = parkSections
-        self.pagerNode.reloadData()
-        
-        let appearance = SMSegmentAppearance()
-        appearance.segmentOnSelectionColour = UIColor.white
-        appearance.segmentOffSelectionColour = UIColor.white
-        appearance.titleOnSelectionFont = UIFont.systemFont(ofSize: 14.0)
-        appearance.titleOffSelectionFont = UIFont.systemFont(ofSize: 14.0)
-        appearance.contentVerticalMargin = 10.0
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.alignment = .center
-        appearance.tileOffSelectionAttributes = [
-            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightSemibold), // UIFont(name: "Avenir-Heavy", size: 12)!,
-            NSForegroundColorAttributeName: UIColor.black.withAlphaComponent(0.6),
-            NSBackgroundColorAttributeName: UIColor.clear,
-            NSKernAttributeName: 0.0,
-            NSParagraphStyleAttributeName: paragraph,
-        ]
-        appearance.tileOnSelectionAttributes = [
-            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightSemibold), // UIFont(name: "Avenir-Heavy", size: 12)!,
-            NSForegroundColorAttributeName: UIColor.black,
-            NSBackgroundColorAttributeName: UIColor.clear,
-            NSKernAttributeName: 0.0,
-            NSParagraphStyleAttributeName: paragraph,
-        ]
-        
-        self.segmentView.removeFromSuperview()
-        self.segmentView = SMSegmentView(frame: CGRect.zero, dividerColour: UIColor.clear, dividerWidth: 1.0, segmentAppearance: appearance)
-        for parkSection in parkSections {
-            self.segmentView.addSegmentWithTitle(parkSection.name, onSelectionImage: nil, offSelectionImage: nil)
-        }
-        
-        let segmentFrame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.navigationController!.navigationBar.bounds.height)
-        self.segmentView.frame = segmentFrame
-        
-        self.selectedPage                       = 0
-        self.segmentView.selectedSegmentIndex   = 0
-        self.segmentView.addTarget(self, action: #selector(selectSegmentInSegmentView(segmentView:)), for: .valueChanged)
-        
-        self.initSelectionBar()
-    }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     func initSelectionBar(){
-        if self.parkSections.count > 1 {
+        if self.park.sections.count > 1 {
             self.seletionBar.removeFromSuperview()
             self.seletionBar.frame = CGRect(x: 0.0, y: self.segmentView.bounds.height - 2, width: self.segmentView.bounds.width/CGFloat(self.segmentView.numberOfSegments), height: 2.0)
             self.seletionBar.backgroundColor = UIColor.black
@@ -222,7 +177,6 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     }
     
     func selectSegmentInSegmentView(segmentView: SMSegmentView) {
-        print("Select segment at index: \(segmentView.selectedSegmentIndex)")
         self.selectedPage = segmentView.selectedSegmentIndex
         UIView.animate(withDuration: 0.3, animations: {
             self.placeSelectionBar()
@@ -257,15 +211,14 @@ extension ListASPagerNode: ASPagerDelegate {
 }
 extension ListASPagerNode: ASPagerDataSource {
     func numberOfPages(in pagerNode: ASPagerNode) -> Int {
-        return self.parkSections.count
+        return self.park.sections.count
     }
     
     func pagerNode(_ pagerNode: ASPagerNode, nodeAt index: Int) -> ASCellNode {
-        let parkSection = self.parkSections[index]
+        let parkSection = self.park.sections[index]
         let page        = index
-        print(parkSection.name)
         let node = ASCellNode(viewControllerBlock: { () -> UIViewController in
-            let view = TableAsViewController(page: page, park: self.park, parkSection: parkSection)
+            let view = TableAsViewController(page: page, park: self.park, parkSection: self.park.sections[index])
             view.delegate = self
             return view
         }, didLoad: nil)
@@ -283,7 +236,7 @@ extension ListASPagerNode: ASCollectionDataSource {
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, numberOfItemsInSection section: Int) -> Int {
-        return self.parkSections.count
+        return self.park.sections.count
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {

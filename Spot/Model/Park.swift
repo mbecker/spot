@@ -27,7 +27,8 @@ enum ItemType {
 
 class Park {
     let ref         :   FIRDatabaseReference
-    var name        :   String!
+    let park        :   String!
+    var parkName        :   String!
     let path        :   String!
     let sections    :   [ParkSection]!
     var country     :   String?
@@ -36,10 +37,25 @@ class Park {
     var mapImage    :   String?
     var info        :   String?
     
-    init(name: String, path: String, sections: [ParkSection]) {
+    init(park: String, parkName: String, sections: [ParkSection]) {
         self.ref        = FIRDatabase.database().reference()
-        self.name       = name
-        self.path       = path
+        self.park       = park
+        self.parkName   = parkName
+        self.path       = "parkinfo/\(park)"
+        self.sections   = sections
+        
+        self.country        = nil
+        self.countryIcon    = nil
+        self.parkIcon       = nil
+        self.mapImage       = nil
+        self.info           = nil
+    }
+    
+    init(park: String, parkName: String, sections: [ParkSection], completion: @escaping (_ result: Bool) -> Void) {
+        self.ref        = FIRDatabase.database().reference()
+        self.park       = park
+        self.parkName   = parkName
+        self.path       = "parkinfo/\(park)"
         self.sections   = sections
         
         self.country        = nil
@@ -48,7 +64,70 @@ class Park {
         self.mapImage       = nil
         self.info           = nil
         
-        loadDB(path: self.path)
+        loadDB(path: path) { (loaded) in
+            if loaded {
+                completion(true)
+            } else {
+                completion(false)
+            }
+        }
+    }
+    
+    func load(completion: @escaping (_ result: Bool) -> Void) {
+        self.ref.child(path).observeSingleEvent(of: .value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            self.country            =   value?["country"]       as? String ?? nil
+            self.mapImage           =   value?["mapimage"]      as? String ?? nil
+            self.parkName           =   value?["name"]          as? String ?? nil
+            self.info               =   value?["info"]          as? String ?? nil
+            
+            if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
+                self.countryIcon    =   AssetManager.getImage(countryIconName)
+            } else {
+                self.countryIcon    =   nil
+            }
+            if let parkIconValue    =   value?["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
+                self.parkIcon       =   AssetManager.getImage(parkIconName)
+            } else {
+                self.parkIcon       = nil
+            }
+            
+            completion(true)
+            
+        }) { (error) in
+            print(error.localizedDescription)
+            completion(false)
+        }
+    }
+    
+    func loadDB(path: String, completion: @escaping (_ result: Bool) -> Void) {
+        self.ref.child(path).observeSingleEvent(of: .value, with: { (snapshot) in
+            // Get park value
+            let value = snapshot.value as? NSDictionary
+            
+            self.country            =   value?["country"]       as? String ?? nil
+            self.mapImage           =   value?["mapimage"]      as? String ?? nil
+            self.parkName           =   value?["name"]          as? String ?? nil
+            self.info               =   value?["info"]          as? String ?? nil
+            
+            if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
+                self.countryIcon    =   AssetManager.getImage(countryIconName)
+            } else {
+                self.countryIcon    =   nil
+            }
+            if let parkIconValue    =   value?["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
+                self.parkIcon       =   AssetManager.getImage(parkIconName)
+            } else {
+                self.parkIcon       = nil
+            }
+            
+            completion(true)
+            
+        }) { (error) in
+            print(error.localizedDescription)
+            completion(false)
+        }
+
     }
     
     func loadDB(path: String){
@@ -58,7 +137,7 @@ class Park {
             
             self.country            =   value?["country"]       as? String ?? nil
             self.mapImage           =   value?["mapimage"]      as? String ?? nil
-            self.name               =   value?["name"]          as? String ?? nil
+            self.parkName           =   value?["name"]          as? String ?? nil
             self.info               =   value?["info"]          as? String ?? nil
             
             if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
@@ -80,7 +159,7 @@ class Park {
     func loadDB(value: NSDictionary){
         self.country            =   value["country"]       as? String ?? nil
         self.mapImage           =   value["mapimage"]      as? String ?? nil
-        self.name               =   value["name"]          as? String ?? nil
+        self.parkName           =   value["name"]          as? String ?? nil
         self.info               =   value["info"]          as? String ?? nil
         
         if let countryIconValue =   value["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {

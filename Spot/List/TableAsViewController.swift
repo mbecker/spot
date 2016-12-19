@@ -47,7 +47,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         super.viewDidLoad()
         // TableView
         self.view.backgroundColor = UIColor.white
-        self.tableNode.view.showsVerticalScrollIndicator    = false
+        self.tableNode.view.showsVerticalScrollIndicator    = true
         self.tableNode.allowsSelection                      = true
         self.tableNode.view.backgroundColor                 = UIColor.white
         self.tableNode.view.separatorColor                  = UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00) // Bonjour
@@ -125,23 +125,10 @@ extension TableAsViewController : ASTableDataSource {
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
         let node = ListItemASCellNode(parkItem: self.items2[indexPath.row])
-        node.selectionStyle = .none
-        node._title.attributedText = NSAttributedString(
-            string: self.items2[indexPath.row].name,
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
-                NSForegroundColorAttributeName: UIColor.black,
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.0,
-                ])
-        node._detail.attributedText = NSAttributedString(
-            string: "Latitude: \(self.items2[indexPath.row].latitude) - Longitude \(self.items2[indexPath.row].longitude) + adsasdasdasdasdasdasdadsa ds asd a ds a d as d",
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
-                NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.0,
-                ])
+        node.selectionStyle = .blue
+        
+        // self.items2[indexPath.row].latitude)
+        // self.items2[indexPath.row].longitude
         return node
     }
 }
@@ -149,7 +136,7 @@ extension TableAsViewController : ASTableDataSource {
 extension TableAsViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
-        return ASSizeRange.init(min: CGSize(width: 0, height: 112), max: CGSize(width: 0, height: 112))
+        return ASSizeRange.init(min: CGSize(width: 0, height: 80), max: CGSize(width: 0, height: 80))
     }
     
     

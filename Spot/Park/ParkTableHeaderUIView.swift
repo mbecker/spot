@@ -16,7 +16,7 @@ class ParkTableHeaderUIView: UIView {
     var parkTitleView: ParkTableHeaderTitleUIView
 
     init(park: Park) {
-        self.parkTitleView = ParkTableHeaderTitleUIView(parkName: park.name, frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82))
+        self.parkTitleView = ParkTableHeaderTitleUIView(parkName: park.parkName, frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82))
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82 + 82 + 82 + 82))
         backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
         self.parkTitleView.delegate = self

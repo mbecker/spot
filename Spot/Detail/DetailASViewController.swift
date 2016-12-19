@@ -201,15 +201,18 @@ extension DetailASViewController : ASTableDataSource {
             }
             
         }
+
+        node.selectionStyle = .default
+        node.backgroundColor = UIColor.white
         
         if row == 3 && self._parkItem.latitude != nil && self._parkItem.longitude != nil {
             node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 86 + UIScreen.main.bounds.width * 2 / 3)
-            node.selectionStyle = .blue
         } else {
             node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 86)
-            node.selectionStyle = .gray
         }
         
+//        let node = CountryASCellNode(parkItem: self._parkItem)
+//        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 86)
         
         return node
     }
@@ -237,7 +240,7 @@ class CountryNode: UIView {
         
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 19.09375))
         label.attributedText = NSAttributedString(
-            string: _parkItem.park.name,
+            string: _parkItem.park.parkName,
             attributes: [
                 NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular),
                 NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker

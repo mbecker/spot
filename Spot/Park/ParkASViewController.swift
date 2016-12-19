@@ -26,11 +26,6 @@ protocol SelectParkDelegate {
 class ParkASViewController: ASViewController<ASDisplayNode> {
     
     /**
-     * Firebase
-     */
-    let ref         :   FIRDatabaseReference
-    
-    /**
     * AsyncDisplayKit
     */
     var tableNode: ASTableNode {
@@ -40,27 +35,11 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     /**
      * Data
      */
-    var parkData: Park
+    let park: Park
     var delegate: SelectParkDelegate?
-    var parkName: String
     
-    init() {
-        self.parkName = UserDefaults.standard.object(forKey: UserDefaultTypes.parkpath.rawValue) as? String ?? "addo"
-        self.ref = FIRDatabase.database().reference()
-        let parkSections = [
-            ParkSection(name: "Attractions", path: "park/\(self.parkName)/attractions"),
-            ParkSection(name: "Animals", path: "park/\(self.parkName)/animals")
-        ]
-        parkData = Park(name: "Addo Elephant National Park", path: "parkinfo/\(self.parkName)", sections: parkSections)
-        super.init(node: ASTableNode(style: UITableViewStyle.grouped))
-        tableNode.delegate = self
-        tableNode.dataSource = self
-    }
-    
-    init(park: String, parkName: String, parkSections: [ParkSection]){
-        self.ref = FIRDatabase.database().reference()
-        self.parkName = park
-        self.parkData = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
+    init(park: Park){
+        self.park = park
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -79,20 +58,28 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.backgroundColor = UIColor.white
         self.tableNode.view.separatorColor = UIColor.clear
         
+        loadPark()
         
         /**
          * SETUP DATA
          */
         subscribeMessaging(toTopic: "/topics/addo")
-        loadDataFromDB()
-        
     }
     
-    func loadPark(park: String, parkName: String, parkSections: [ParkSection]){
-        self.parkName = park
-        self.parkData = Park(name: parkName, path: "parkinfo/\(park)", sections: parkSections)
-        self.tableNode.reloadData()
-        loadDataFromDB()        
+    
+    func loadPark(){
+        let parkTableHeader                 = ParkTableHeaderUIView(parkName: self.park.parkName)
+        parkTableHeader.delegate            = self
+        self.tableNode.view.tableHeaderView = parkTableHeader
+        
+        self.park.load { (loaded) in
+            if loaded {
+                let parkTableHeader = ParkTableHeaderUIView.init(park: self.park)
+                parkTableHeader.delegate = self
+                self.tableNode.view.tableHeaderView = parkTableHeader
+                self.tableNode.view.tableFooterView = self.tableFooterView
+            }
+        }
     }
     
     func subscribeMessaging(toTopic: String){
@@ -100,25 +87,6 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         print("-- FIREBASE -- subscribe toTopic \(toTopic)")
         // "/topics/addo"
         FIRMessaging.messaging().subscribe(toTopic: "/topics/addo")
-    }
-    
-    func loadDataFromDB(){
-        let parkTableHeader                 = ParkTableHeaderUIView(parkName: self.parkData.name)
-        parkTableHeader.delegate            = self
-        self.tableNode.view.tableHeaderView = parkTableHeader
-        self.ref.child(self.parkData.path).observeSingleEvent(of: .value, with: { (snapshot) in
-            // Get park value
-            if let value = snapshot.value as? NSDictionary {
-                self.parkData.loadDB(value: value)
-                let parkTableHeader = ParkTableHeaderUIView.init(park: self.parkData)
-                parkTableHeader.delegate = self
-                self.tableNode.view.tableHeaderView = parkTableHeader
-                self.tableNode.view.tableFooterView = self.tableFooterView
-            }
-            
-        }) { (error) in
-            print(error.localizedDescription)
-        }
     }
     
     func mapViewTouched(_ sender:UITapGestureRecognizer){
@@ -220,12 +188,12 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
     @objc fileprivate func didTapAddItems() {
         let firebaseModels = FirebaseModel()
-        firebaseModels.addAnimals(count: 5, parkName: self.parkName)
+        firebaseModels.addAnimals(count: 5, parkName: self.park.parkName)
     }
     
     @objc fileprivate func didTapDeleteItems(){
         let firebaseModel = FirebaseModel()
-        firebaseModel.deleteItems(parkName: self.parkName)
+        firebaseModel.deleteItems(parkName: self.park.parkName)
     }
     
     func sectionHeaderView(text: String, sectionId: Int = 0) -> UIView {
@@ -357,12 +325,12 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return self.parkData.sections.count
+        return self.park.sections.count
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if parkData.sections.indices.contains(section) {
-            return sectionHeaderView(text: parkData.sections[section].name, sectionId: section)
+        if self.park.sections.indices.contains(section) {
+            return sectionHeaderView(text: self.park.sections[section].name, sectionId: section)
         }
         return sectionHeaderView(text: "Section: \(section)")
         
@@ -375,7 +343,7 @@ extension ParkASViewController : ASTableDataSource {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footer = UIView()
         footer.backgroundColor = UIColor.white
-        if section < parkData.sections.count - 1 {
+        if section < self.park.sections.count - 1 {
             // Show not border line for last section
             let borderLine = UIView(frame: CGRect(x: 20, y: 14, width: self.view.bounds.width - 40, height: 1))
             borderLine.backgroundColor = UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00) // Bonjour
@@ -389,7 +357,7 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
-        let node = ParkASCellNode(park: self.parkData, section: indexPath.section)
+        let node = ParkASCellNode(park: self.park, section: indexPath.section)
         node.delegate = self
         return node
     }
