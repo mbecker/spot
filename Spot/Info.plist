@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Save photos of your spots.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Take photos of your spots.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 	<key>MGLMapboxAccessToken</key>
@@ -42,29 +46,25 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    
-    <key>CFBundleURLTypes</key>
-    <array>
-        <dict>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>fb1723736274621750</string>
-            </array>
-        </dict>
-    </array>
-    <key>FacebookAppID</key>
-    <string>1723736274621750</string>
-    <key>FacebookDisplayName</key>
-    <string>safari.digital Spot</string>
-    
-    
-    
-    <key>LSApplicationQueriesSchemes</key>
-    <array>
-        <string>fbapi</string>
-        <string>fb-messenger-api</string>
-        <string>fbauth2</string>
-        <string>fbshareextension</string>
-    </array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1723736274621750</string>
+			</array>
+		</dict>
+	</array>
+	<key>FacebookAppID</key>
+	<string>1723736274621750</string>
+	<key>FacebookDisplayName</key>
+	<string>safari.digital Spot</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fb-messenger-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
 </dict>
 </plist>

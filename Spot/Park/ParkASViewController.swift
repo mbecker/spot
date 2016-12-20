@@ -407,15 +407,3 @@ extension ParkASViewController: SelectParkDelegate {
         
     }
 }
-
-/* FONTS
- UIFontWeightUltraLight,
- UIFontWeightThin,
- UIFontWeightLight,
- UIFontWeightRegular,
- UIFontWeightMedium,
- UIFontWeightSemibold,
- UIFontWeightBold,
- UIFontWeightHeavy,
- UIFontWeightBlack
-*/

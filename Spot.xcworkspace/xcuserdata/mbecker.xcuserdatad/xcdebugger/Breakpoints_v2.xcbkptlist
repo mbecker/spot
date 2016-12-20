@@ -9,29 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Spot/List/ListItemASCellNode.swift"
-            timestampString = "503764315.683556"
+            filePath = "Spot/Detail/DetailASViewController.swift"
+            timestampString = "503938399.436421"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "199"
-            endingLineNumber = "199"
-            landmarkName = "loadImageURL(imgRef:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Spot/List/ListItemASCellNode.swift"
-            timestampString = "503764315.683556"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "210"
-            endingLineNumber = "210"
-            landmarkName = "showError(text:)"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
+            landmarkName = "saveImage()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

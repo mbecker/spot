@@ -88,12 +88,31 @@ class DetailTableHeaderUIView: UIView {
         self._slideShow.setImageInputs(imageSource)
         
         self.addSubview(self._slideShow)
+
+            // ToDO: Like Button for image?
+//        let like = UIButton(frame: CGRect(x: self._slideShow.bounds.width - 12 - 48, y: self._slideShow.bounds.height - 12 - 48, width: 64, height: 64))
+//        like.setImage(#imageLiteral(resourceName: "like98"), for: .normal)
+//        like.setImage(#imageLiteral(resourceName: "likefilledredlight98"), for: .highlighted)
+//        self._slideShow.addSubview(like)
         
-        let like = UIButton(frame: CGRect(x: self._slideShow.bounds.width - 12 - 48, y: self._slideShow.bounds.height - 12 - 48, width: 64, height: 64))
-        like.setImage(#imageLiteral(resourceName: "like98"), for: .normal)
-        like.setImage(#imageLiteral(resourceName: "likefilledredlight98"), for: .highlighted)
-        self._slideShow.addSubview(like)
+        let download = UIButton(frame: CGRect(x: self._slideShow.bounds.width - 12 - 48, y: self._slideShow.bounds.height - 12 - 48, width: 64, height: 64))
+        download.setImage(#imageLiteral(resourceName: "DownloadWhite98"), for: .normal)
+        download.setImage(#imageLiteral(resourceName: "DownloadFilledWhite98"), for: .highlighted)
+        download.addTarget(self._viewController, action: #selector(self._viewController.saveImage), for: UIControlEvents.touchUpInside)
+        self._slideShow.addSubview(download)
         
+    }
+    
+    func getImages() -> [UIImage] {
+        var images = [UIImage]()
+        for item in self._slideShow.slideshowItems {
+            images.append(item.imageView.image!)
+        }
+        return images
+    }
+    
+    func getImage() -> UIImage {
+        return (self._slideShow.currentSlideshowItem?.imageView.image)!
     }
     
     func didTap() {

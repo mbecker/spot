@@ -43,7 +43,21 @@ public class KingfisherSource: NSObject, InputSource {
             }
         }
     }
+}
+
+public class ImageRoundedSource: NSObject, InputSource {
+    let image: UIImage
+    let cornerRadius: CGFloat
+    public init(image: UIImage, cornerRadius: CGFloat) {
+        self.image = image
+        self.cornerRadius = cornerRadius
+    }
     
+    @objc public func load(to imageView: UIImageView, with callback: @escaping (UIImage) -> ()) {
+        print(imageView.bounds)
+        imageView.cornerRadius = self.cornerRadius
+        imageView.image = self.image
+    }
 }
 
 struct BallPulseIndicator: Indicator {

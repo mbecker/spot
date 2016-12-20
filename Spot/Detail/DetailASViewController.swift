@@ -27,9 +27,12 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
     }
     
     let _parkItem: ParkItem2
+    var tableHeader: DetailTableHeaderUIView?
+    let mapNode: MapNode!
     
     init(parkItem: ParkItem2) {
         self._parkItem = parkItem
+        self.mapNode = MapNode(parkItem: self._parkItem)
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -59,17 +62,92 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         
     }
     
+    func changeStatusbarColor(color: UIColor){
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        if statusBar.responds(to: #selector(setter: ASDisplayProperties.backgroundColor)) {
+            statusBar.backgroundColor = color
+        }
+    }
+    
+    func share() {
+        
+        if let image: UIImage = self.tableHeader?.getImage(), let mapImage = self.mapNode.view.image {
+            self.tableHeader?._slideShow.pauseTimerIfNeeded()
+            
+            var text: NSString = NSString(string: "Spotted \(self._parkItem.name)")
+            if let parkName = self._parkItem.park.parkName {
+                text = NSString(string: "Spotted \(self._parkItem.name) at \(parkName)")
+            }
+            let url = NSURL(string: "https://safari.digital/spots/" + self._parkItem.key)
+            var size = image.size
+            let map: UIImage = (mapImage.circle?.resizeImage(newWidth: size.width / 4))!
+            
+            UIGraphicsBeginImageContext(size)
+            
+            let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+            image.draw(in: areaSize)
+            
+            map.draw(in: CGRect(x: size.width - map.size.width - 64, y: size.height - map.size.height - 64, width: map.size.width, height: map.size.height), blendMode: .normal, alpha: 1.0)
+            
+            let newImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
+            
+            let objectsToShare = [text, newImage, url]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            //New Excluded Activities Code
+            activityVC.excludedActivityTypes = [UIActivityType.openInIBooks, UIActivityType.addToReadingList, UIActivityType.assignToContact, UIActivityType.copyToPasteboard, UIActivityType.print, UIActivityType.saveToCameraRoll]
+            self.changeStatusbarColor(color: UIColor.clear)
+            self.present(activityVC, animated: true, completion: nil)
+            
+            activityVC.completionWithItemsHandler = { (activityType: UIActivityType?, completed: Bool, returnedItems: [Any]?, activityError: Error?) in
+                self.changeStatusbarColor(color: UIColor.white)
+                self.tableHeader?._slideShow.unpauseTimerIfNeeded()
+                
+                if let error = activityError {
+                    print(":: ERROR UIActivityViewController ::")
+                    print(error)
+                }
+            }
+            
+        }
+        
+    }
+    
+    func saveImage() {
+        if let image: UIImage = self.tableHeader?.getImage() {
+            self.tableHeader?._slideShow.pauseTimerIfNeeded()
+            
+            let objectsToShare = [image]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            //New Excluded Activities Code
+            activityVC.excludedActivityTypes = [UIActivityType.openInIBooks, UIActivityType.addToReadingList, UIActivityType.postToFacebook, UIActivityType.postToFlickr, UIActivityType.postToVimeo, UIActivityType.postToWeibo, UIActivityType.postToTencentWeibo]
+            self.changeStatusbarColor(color: UIColor.clear)
+            self.present(activityVC, animated: true, completion: nil)
+            
+            activityVC.completionWithItemsHandler = { (activityType: UIActivityType?, completed: Bool, returnedItems: [Any]?, activityError: Error?) in
+                self.changeStatusbarColor(color: UIColor.white)
+                self.tableHeader?._slideShow.unpauseTimerIfNeeded()
+                
+                if let error = activityError {
+                    print(":: ERROR UIActivityViewController ::")
+                    print(error)
+                }
+            }
+            
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let add = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: nil)
-        let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: nil)
+//        let add = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: nil)
+//        let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.share))
         let camera = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: nil)
-        let play = UIBarButtonItem(title: "Play", style: .plain, target: self, action: nil)
-        let tag = UIBarButtonItem(image: #imageLiteral(resourceName: "pricetag66"), style: .plain, target: self, action: nil)
-        let like = UIBarButtonItem(image: #imageLiteral(resourceName: "like66"), style: .plain, target: self, action: nil)
+//        let play = UIBarButtonItem(title: "Play", style: .plain, target: self, action: nil)
+//        let tag = UIBarButtonItem(image: #imageLiteral(resourceName: "pricetag66"), style: .plain, target: self, action: nil)
+        let social = UIBarButtonItem(image: #imageLiteral(resourceName: "ShareFilledBlack66"), style: .plain, target: self, action: #selector(self.share))
         
-        self.navigationItem.rightBarButtonItems = [share, camera]
+        self.navigationItem.rightBarButtonItems = [social, camera]
         
         var urls = [URL]()
         if let publicURL: URL = self._parkItem.urlPublic as URL! {
@@ -92,7 +170,8 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.tableFooterView = tableFooterView
         self.tableNode.view.allowsSelection = true
         if(urls.count > 0){
-            self.tableNode.view.tableHeaderView = DetailTableHeaderUIView.init(title: self._parkItem.name, urls: urls, viewController: self)
+            self.tableHeader = DetailTableHeaderUIView.init(title: self._parkItem.name, urls: urls, viewController: self)
+            self.tableNode.view.tableHeaderView = self.tableHeader
         } else {
             self.tableNode.view.tableHeaderView = tableFooterView
         }
@@ -193,7 +272,7 @@ extension DetailASViewController : ASTableDataSource {
             case 2:
                 return SpottedByNode.init(parkItem: self._parkItem)
             case 3:
-                return MapNode.init(parkItem: self._parkItem)
+                return self.mapNode
             default:
                 let view = UIView()
                 view.backgroundColor = UIColor.white
@@ -449,7 +528,11 @@ class SpottedByNode: UIView {
 }
 
 class MapNode: UIView {
+    
+    let view: UIImageView
+    
     init(parkItem: ParkItem2){
+        view = UIImageView(frame: CGRect(x: 0, y: 86, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 2 / 3))
         super.init(frame: CGRect.zero)
         backgroundColor = UIColor.white
         
@@ -465,14 +548,14 @@ class MapNode: UIView {
                     ])
             addSubview(label)
             
-            let view = UIImageView(frame: CGRect(x: 0, y: 86, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 2 / 3))
+            
             view.backgroundColor = UIColor.white
             addSubview(view)
             
             let options = SnapshotOptions(
                 mapIdentifiers: ["mapbox.streets"],
                 centerCoordinate: CLLocationCoordinate2D(latitude: parkItem.latitude!, longitude: parkItem.longitude!),
-                zoomLevel: 11,
+                zoomLevel: 9,
                 size: view.bounds.size)
             let customMarker = CustomMarker(
                 coordinate: CLLocationCoordinate2D(latitude: parkItem.latitude!, longitude: parkItem.longitude!),

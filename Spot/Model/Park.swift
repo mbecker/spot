@@ -737,7 +737,7 @@ class FirebaseModel {
         let childUpdates = ["/park/\(parkName)/animals//\(key)": post]
         ref.updateChildValues(childUpdates, withCompletionBlock: { (error:Error?, dbref: FIRDatabaseReference) in
             if error != nil {
-                print(error?.localizedDescription)
+                print(error!.localizedDescription)
             } else {
                 print(":: DB :: Added ANIMAL")
             }
@@ -748,7 +748,7 @@ class FirebaseModel {
     func deleteItems(parkName: String){
         self.ref.child("park").child(parkName).child("animals").removeValue(completionBlock: { (error:Error?, dbref: FIRDatabaseReference) in
             if error != nil {
-                print(error?.localizedDescription)
+                print(error!.localizedDescription)
             } else {
                 print(":: DB :: \(parkName) :: Deleted ANIMALS")
             }
