@@ -78,21 +78,21 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
             if let parkName = self._parkItem.park.parkName {
                 text = NSString(string: "Spotted \(self._parkItem.name) at \(parkName)")
             }
-            let url = NSURL(string: "https://safari.digital/spots/" + self._parkItem.key)
+            let url = NSURL(string: "https://safaridigitalapp.appspot-preview.com/spots/\(self._parkItem.park.park!)/\(self._parkItem.type)/\(self._parkItem.key)")
             var size = image.size
-            let map: UIImage = (mapImage.circle?.resizeImage(newWidth: size.width / 4))!
+            let map: UIImage = (mapImage.circle?.resizeImage(newWidth: size.width / 3))!
             
             UIGraphicsBeginImageContext(size)
             
             let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
             image.draw(in: areaSize)
             
-            map.draw(in: CGRect(x: size.width - map.size.width - 64, y: size.height - map.size.height - 64, width: map.size.width, height: map.size.height), blendMode: .normal, alpha: 1.0)
+            map.draw(in: CGRect(x: size.width - map.size.width - 12, y: size.height - map.size.height - 12, width: map.size.width, height: map.size.height), blendMode: .normal, alpha: 1.0)
             
             let newImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
             UIGraphicsEndImageContext()
             
-            let objectsToShare = [text, newImage, url]
+            let objectsToShare = [newImage, text, url] as [Any]
             let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
             //New Excluded Activities Code
             activityVC.excludedActivityTypes = [UIActivityType.openInIBooks, UIActivityType.addToReadingList, UIActivityType.assignToContact, UIActivityType.copyToPasteboard, UIActivityType.print, UIActivityType.saveToCameraRoll]
@@ -150,13 +150,19 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         self.navigationItem.rightBarButtonItems = [social, camera]
         
         var urls = [URL]()
-        if let publicURL: URL = self._parkItem.urlPublic as URL! {
-            urls.append(publicURL)
+        if let imageURL: URL = self._parkItem.image?.resized["375x300"]?.publicURL {
+            urls.append(imageURL)
+        } else if let imageURL: URL = self._parkItem.image?.original.publicURL {
+            urls.append(imageURL)
         }
         
-        if self._parkItem.imagesPublic.count > 0 {
-            for (_, url) in self._parkItem.imagesPublic {
-                urls.append(url)
+        if let images: [Images] = self._parkItem.images, images.count > 0 {
+            for image in images {
+                if let imageURL: URL = image.resized["375x300"]?.publicURL {
+                    urls.append(imageURL)
+                } else if let imageURL: URL = image.original.publicURL {
+                    urls.append(imageURL)
+                }
             }
         }
         

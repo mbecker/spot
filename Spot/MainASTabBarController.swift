@@ -30,9 +30,9 @@ class MainASTabBarController: ASTabBarController {
         
         var parkSections = [ParkSection]()
         if self.selectedPark == "addo" {
-            parkSections.append(ParkSection(name: "Attractions", path: "park/\(self.selectedPark)/attractions"))
+            parkSections.append(ParkSection(name: "Attractions", type: ItemType.attractions, path: "park/\(self.selectedPark)/attractions"))
         }
-        parkSections.append(ParkSection(name: "Animals", path: "park/\(self.selectedPark)/animals"))
+        parkSections.append(ParkSection(name: "Animals", type: ItemType.animals, path: "park/\(self.selectedPark)/animals"))
         
         self.park = Park(park: self.selectedPark, parkName: self.selectedParkName, sections: parkSections)
         
@@ -99,10 +99,10 @@ extension MainASTabBarController: SelectParkDelegate {
         UserDefaults.standard.set(name, forKey: UserDefaultTypes.parkname.rawValue)
         var parkSections = [ParkSection]()
         if park == "addo" {
-            parkSections.append(ParkSection(name: "Attractions", path: "park/\(park)/attractions"))
-            parkSections.append(ParkSection(name: "Animals", path: "park/\(park)/animals"))
+            parkSections.append(ParkSection(name: "Attractions", type: ItemType.attractions, path: "park/\(park)/attractions"))
+            parkSections.append(ParkSection(name: "Animals", type: ItemType.animals, path: "park/\(park)/animals"))
         } else if park == "kruger" {
-            parkSections.append(ParkSection(name: "Animals", path: "park/\(park)/animals"))
+            parkSections.append(ParkSection(name: "Animals", type: ItemType.animals, path: "park/\(park)/animals"))
         }
         
         let park = Park(park: self.selectedPark, parkName: self.selectedParkName, sections: parkSections)

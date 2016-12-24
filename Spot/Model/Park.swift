@@ -20,9 +20,9 @@ enum Databasepaths: String {
     case animals        = "animals"
 }
 
-enum ItemType {
-    case Attraction
-    case Animal
+enum ItemType: String {
+    case attractions    = "attractions"
+    case animals        = "animals"
 }
 
 class Park {
@@ -179,9 +179,31 @@ class Park {
 class ParkSection {
     let name: String
     let path: String
-    init(name: String, path: String) {
-        self.name = name
-        self.path = path
+    let type: ItemType
+    init(name: String, type: ItemType, path: String) {
+        self.name   = name
+        self.type   = type
+        self.path   = path
+    }
+}
+
+struct Image {
+    let publicURL: URL
+    let gcloud: String
+    
+    init(publicURL: String, glcoud: String){
+        self.publicURL = URL(string: publicURL)!
+        self.gcloud = glcoud
+    }
+}
+
+struct Images {
+    let original: Image
+    let resized: [String: Image]
+    
+    init(original: Image, resizedSize: String, resizedImage: Image) {
+        self.original = original
+        self.resized = [resizedSize: resizedImage]
     }
 }
 
@@ -192,17 +214,25 @@ class ParkItem2 {
     
     let key         :   String
     let name        :   String
-    let url         :   String?
-    var urlPublic   :   URL?
+    
+    let image: Images?
+    var images: [Images]?
+    
+    
     let location    :   [String: Double]?
     let latitude    :   Double?
     let longitude   :   Double?
-    let images      :   [String: String]?
+    
+    let type        :   ItemType
     
     
-    var imagesPublic:[String: URL] =   [String: URL]()
+    
     var tags        =   [String]()
     var spottedBy   =   [[String: String]]()
+    
+    
+    
+    
     
     
     /**
@@ -210,9 +240,10 @@ class ParkItem2 {
      */
     var park        :   Park!
     
-    init?(snapshot: FIRDataSnapshot, park: Park) {
+    init?(snapshot: FIRDataSnapshot, type: ItemType, park: Park) {
         
         self.storage      = FIRStorage.storage()
+        self.type         = type
         self.key          = snapshot.key
         self.ref          = snapshot.ref
         let snapshotValue = snapshot.value as! [String: AnyObject]
@@ -263,10 +294,12 @@ class ParkItem2 {
         /**
          * Location
          */
-        if let location = snapshotValue["location"] as? [String: Double] {
-            self.location = location
-            self.latitude = location["latitude"]
-            self.longitude = location["longitude"]
+        if let location = snapshotValue["location"] as? [String: Any] {
+            self.latitude = location["latitude"] as? Double
+            self.longitude = location["longitude"] as? Double
+            self.location = [String: Double]()
+            self.location!["latitude"]  = self.latitude
+            self.location!["longitude"] = self.longitude
         } else {
             self.location = nil
             self.latitude = nil
@@ -274,8 +307,42 @@ class ParkItem2 {
         }
         
         /**
-         * 1. Load public storage urls form stored firebase values for: url and images
+         * 1. Load original image + resized
          */
+        if let imagesFromSnaphsot = snapshotValue["images"] as? [String: Any] {
+            print(":: IMAGES ::")
+            print(imagesFromSnaphsot)
+            let publicImage = imagesFromSnaphsot["public"] as! String;
+            let glcoudIMage = imagesFromSnaphsot["gcloud"] as! String;
+            print(":: PUBLIC IMAGE ::")
+            print(publicImage)
+            print(":: GCLOUD IMAGE ::")
+            print(glcoudIMage)
+            let originalImage = Image(publicURL: imagesFromSnaphsot["public"] as! String, glcoud: imagesFromSnaphsot["gcloud"] as! String)
+            let resized: [String: Any] = imagesFromSnaphsot["resized"] as! [String : Any]
+            let resized375: [String: String] = resized["375x300"] as! [String : String]
+            let resizedImage = Image(publicURL: resized375["public"]!, glcoud: resized375["gcloud"]!)
+            self.image = Images(original: originalImage, resizedSize: "375x300", resizedImage: resizedImage)
+            
+            self.images = [Images]()
+            for (key, value) in imagesFromSnaphsot {
+                if key != "public" && key != "gcloud" && key != "resized" {
+                    let imageInArray: [String: Any] = value as! [String : Any]
+                    let originalImage = Image(publicURL: imageInArray["public"] as! String, glcoud: imageInArray["gcloud"] as! String)
+                    let resized: [String: Any] = imageInArray["resized"] as! [String : Any]
+                    let resized375: [String: String] = resized["375x300"] as! [String : String]
+                    let resizedImage = Image(publicURL: resized375["public"]!, glcoud: resized375["gcloud"]!)
+                    self.images?.append(Images(original: originalImage, resizedSize: "375x300", resizedImage: resizedImage))
+                }
+            }
+            
+        } else {
+            self.image = nil
+            self.images = nil
+        }
+        
+        
+        /*
         self.url        = snapshotValue["url"] as? String ?? nil
         if let urlPublicString = snapshotValue["urlPublic"] as? String {
             self.urlPublic  = URL(string: urlPublicString)!
@@ -285,11 +352,11 @@ class ParkItem2 {
                 self.imagesPublic[name] = URL(string: url)!
             }
         }
-        
+        */
         
         /*
          * Images: Load google storage and public images reference
-         */
+         *
         if let images =  snapshotValue["images"] as? [String: String] {
             self.images = images
             for (name, url) in images {
@@ -316,7 +383,7 @@ class ParkItem2 {
             })
         }
         
-        /**
+        
          * Offline: Store images as public url
          */
         
@@ -331,7 +398,7 @@ class ParkItem2 {
             4.) Save to self.urlPublic and firebase
             5.) NOW the ParkItem loads public storage url
         General assumption: firebase["url"] doesn't change during app's lifecycle
-     */
+ 
     func setUrlPublic(url: URL, overwrite: Bool = false){
         if overwrite {
             self.urlPublic = url
@@ -355,7 +422,7 @@ class ParkItem2 {
             }
         }
     }
-    
+    */
 }
 
 let parks = [

@@ -174,6 +174,17 @@ class ListItemASCellNode: ASCellNode {
     }
     
     func loadImage() {
+        if let imageURL: URL = self._parkItem.image?.resized["375x300"]?.publicURL {
+            self._image.url = imageURL
+        } else if let imageURL: URL = self._parkItem.image?.original.publicURL {
+            self._image.url = imageURL
+        } else {
+            // Show error
+            // self._image.url = URL(string: "https://error.com")
+            self._loadingIndicator.removeFromSupernode()
+            self.showError(text: "Error:\nNo image uploaded")
+        }
+        /*
         if let imageURL: URL = self._parkItem.urlPublic as URL! {
             self._image.url = imageURL
         } else if let imageURL: String = self._parkItem.url as String!, imageURL.characters.count > 0 {
@@ -190,8 +201,10 @@ class ListItemASCellNode: ASCellNode {
             self._loadingIndicator.removeFromSupernode()
             self.showError(text: "Error:\nNo image uploaded")
         }
+         */
     }
     
+    /*
     func loadImageURL(imgRef: FIRStorageReference){
         imgRef.downloadURL(completion: { (storageURL, error) -> Void in
             if error != nil {
@@ -203,6 +216,7 @@ class ListItemASCellNode: ASCellNode {
             }
         })
     }
+     */
     
     func showError(text: String){
         let paragraph = NSMutableParagraphStyle()

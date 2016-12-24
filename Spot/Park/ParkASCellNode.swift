@@ -27,6 +27,7 @@ class ParkASCellNode: ASCellNode {
     let park: Park!
     var items2: [ParkItem2] = [ParkItem2]()
     var nodes = [ItemASCellNode]()
+    let type: ItemType
     weak var delegate:ParkASCellNodeDelegate?
     
     /**
@@ -37,9 +38,10 @@ class ParkASCellNode: ASCellNode {
     
     let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
     
-    init(park: Park, section: Int) {
+    init(park: Park, section: Int, type: ItemType) {
         self.parkSection    = park.sections[section]
         self.park       = park
+        self.type   = type
         self.ref            = FIRDatabase.database().reference()
         self.storage        = FIRStorage.storage()
         
@@ -86,7 +88,7 @@ class ParkASCellNode: ASCellNode {
                 print(snapshot)
             }
             
-            if let item2: ParkItem2 = ParkItem2(snapshot: snapshot, park: self.park) {
+            if let item2: ParkItem2 = ParkItem2(snapshot: snapshot, type: self.type, park: self.park) {
                 OperationQueue.main.addOperation({
                     self.items2.insert(item2, at: 0)
                     let indexPath = IndexPath(item: 0, section: 0)
@@ -100,7 +102,7 @@ class ParkASCellNode: ASCellNode {
         self.ref.child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
             // ParkItem2 is updated; reload item in table array
             for i in 0...self.items2.count-1 {
-                if self.items2[i].key == snapshot.key, let item = ParkItem2(snapshot: snapshot, park: self.park) {
+                if self.items2[i].key == snapshot.key, let item = ParkItem2(snapshot: snapshot, type: self.type, park: self.park) {
                     self.items2[i]  = item
                     let indexPath = IndexPath(item: i, section: 0)
                     self.collectionNode.reloadItems(at: [indexPath])

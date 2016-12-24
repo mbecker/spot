@@ -357,7 +357,7 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
-        let node = ParkASCellNode(park: self.park, section: indexPath.section)
+        let node = ParkASCellNode(park: self.park, section: indexPath.section, type: self.park.sections[indexPath.section].type)
         node.delegate = self
         return node
     }

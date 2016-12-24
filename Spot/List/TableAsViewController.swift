@@ -22,6 +22,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     let page: Int
     let parkSection: ParkSection
     let park: Park
+    let type: ItemType
     var items2: [ParkItem2] = [ParkItem2]()
     weak var delegate:ParkASCellNodeDelegate?
     
@@ -29,9 +30,10 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
      * Data
      */
     
-    init(page: Int, park: Park, parkSection: ParkSection) {
+    init(page: Int, type: ItemType, park: Park, parkSection: ParkSection) {
         self.ref            = FIRDatabase.database().reference()
         self.page           = page
+        self.type           = type
         self.park           = park
         self.parkSection    = parkSection
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
@@ -61,7 +63,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         // Listen for added snapshots
         self.ref.child(self.parkSection.path).observe(.childAdded, with: { (snapshot) -> Void in
             
-            if let item2 = ParkItem2(snapshot: snapshot, park: self.park) {
+            if let item2 = ParkItem2(snapshot: snapshot, type: self.type, park: self.park) {
                 OperationQueue.main.addOperation({
                     self.items2.insert(item2, at: 0)
                     
@@ -78,7 +80,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.ref.child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
             // ParkItem2 is updated; replace item in table array
             for i in 0...self.items2.count-1 {
-                if self.items2[i].key == snapshot.key, let item = ParkItem2(snapshot: snapshot, park: self.park) {
+                if self.items2[i].key == snapshot.key, let item = ParkItem2(snapshot: snapshot, type: self.type, park: self.park) {
                     self.items2[i]  = item
                     let indexPath = IndexPath(item: i, section: 0)
                     self.tableNode.reloadRows(at: [indexPath], with: .fade)
