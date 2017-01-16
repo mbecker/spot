@@ -173,7 +173,7 @@ class CountryASCellNode: ASCellNode {
         
         // Horizontal Stack
         let horizontalStackSpec = ASStackLayoutSpec(direction: .horizontal,
-                                                    spacing: 40,
+                                                    spacing: 0,
                                                     justifyContent: .start,
                                                     alignItems: .center,
                                                     children: [textVerticalStack, imageAbsoluteSpec])

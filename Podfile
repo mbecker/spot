@@ -22,6 +22,8 @@ target 'Spot' do
   pod 'MapboxStatic.swift', :git => 'https://github.com/mapbox/MapboxStatic.swift.git', :branch => 'swift-3'
   pod 'SMSegmentView', :git => 'https://github.com/sima-11/SMSegmentView.git'
   pod 'EZAlertController', '3.2'
+  pod 'ImagePicker'
+  pod 'TOCropViewController'
 
   target 'SpotTests' do
     inherit! :search_paths

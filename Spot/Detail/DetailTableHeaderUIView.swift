@@ -115,6 +115,14 @@ class DetailTableHeaderUIView: UIView {
         return (self._slideShow.currentSlideshowItem?.imageView.image)!
     }
     
+    func getImage(pos: Int) -> UIImage? {
+        print(self._slideShow.slideshowItems.count)
+        if let image: UIImage = self._slideShow.slideshowItems[pos].imageView.image {
+            return image
+        }
+        return nil
+    }
+    
     func didTap() {
         self._slideShow.presentFullScreenController(from: self._viewController)
     }

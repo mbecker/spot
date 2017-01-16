@@ -92,6 +92,7 @@ PODS:
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.0)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.0)
   - GTMSessionFetcher/Core (1.1.7)
+  - ImagePicker (2.0.0)
   - ImageSlideshow (1.0.0-beta.1):
     - ImageSlideshow/Core (= 1.0.0-beta.1)
   - ImageSlideshow/Core (1.0.0-beta.1)
@@ -112,6 +113,7 @@ PODS:
     - PINCache (= 3.0.1-beta.2)
     - PINRemoteImage/Core
   - SMSegmentView (0.0.2)
+  - TOCropViewController (2.0.11)
 
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/facebook/AsyncDisplayKit`)
@@ -124,12 +126,14 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Messaging
   - Firebase/Storage
+  - ImagePicker
   - ImageSlideshow (~> 1.0.0-beta.1)
   - Kingfisher (~> 3.0)
   - MapboxStatic.swift (from `https://github.com/mapbox/MapboxStatic.swift.git`, branch `swift-3`)
   - MXParallaxHeader
   - NVActivityIndicatorView
   - SMSegmentView (from `https://github.com/sima-11/SMSegmentView.git`)
+  - TOCropViewController
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
@@ -173,6 +177,7 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
+  ImagePicker: 81175d36c2852cb543cb4f5d6c19e28f3e8d90eb
   ImageSlideshow: adf31cd12d65c1e78c15d024b9227d56fc46208c
   Kingfisher: 50407d1d5dbc34965009d425a286342ff36a84ea
   MapboxStatic.swift: a3ad6eb4a535718e354ee1928158d921ae59cb1f
@@ -181,7 +186,8 @@ SPEC CHECKSUMS:
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
+  TOCropViewController: fe91aaab9e95d72ac38654d1174c8c8339585ee5
 
-PODFILE CHECKSUM: 09845296790cff43eae052dfc8c98da5c3f8febb
+PODFILE CHECKSUM: 88f15e28827002eea654ef460a90b6a92928f1cb
 
 COCOAPODS: 1.2.0.beta.1

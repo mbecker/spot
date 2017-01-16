@@ -59,6 +59,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>ImagePicker-ImagePicker.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ImagePicker.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>ImageSlideshow-ImageSlideshow.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -119,6 +129,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>TOCropViewController-TOCropViewControllerBundle.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>TOCropViewController.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
@@ -132,12 +152,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>23C140657DB507A57D111A6CFEE976D0</key>
+		<key>09A62655F66AE53A474D64E42E6E9DF9</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>17A80706B089C693C8F5A9C00E419558</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>332F91393FB1DE033D370B4CEDDD5FCF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>3BFF9F651824EF6D7159B996DAA71D25</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -158,6 +188,11 @@
 			<true/>
 		</dict>
 		<key>505A6E3C28CDD43B1C952A08ED17CFCF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5771DE4BEDBC0FB873A7CB28E459940C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -187,6 +222,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>7E0DD3A610CDD550972D0C601549D325</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>854A358F694791FC141F75E15F82BB64</key>
 		<dict>
 			<key>primary</key>
@@ -212,7 +252,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D86D71EEAFDD738C95E6C84825764A91</key>
+		<key>CB1D97F91F39848FC1AC99BDFB5EE6CD</key>
 		<dict>
 			<key>primary</key>
 			<true/>

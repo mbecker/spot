@@ -188,8 +188,11 @@ class ParkSection {
 }
 
 struct Image {
-    let publicURL: URL
-    let gcloud: String
+    var publicURL: URL?
+    var gcloud: String?
+    
+    init() {
+    }
     
     init(publicURL: String, glcoud: String){
         self.publicURL = URL(string: publicURL)!
@@ -312,17 +315,35 @@ class ParkItem2 {
         if let imagesFromSnaphsot = snapshotValue["images"] as? [String: Any] {
             print(":: IMAGES ::")
             print(imagesFromSnaphsot)
-            let publicImage = imagesFromSnaphsot["public"] as! String;
-            let glcoudIMage = imagesFromSnaphsot["gcloud"] as! String;
-            print(":: PUBLIC IMAGE ::")
-            print(publicImage)
-            print(":: GCLOUD IMAGE ::")
-            print(glcoudIMage)
-            let originalImage = Image(publicURL: imagesFromSnaphsot["public"] as! String, glcoud: imagesFromSnaphsot["gcloud"] as! String)
-            let resized: [String: Any] = imagesFromSnaphsot["resized"] as! [String : Any]
-            let resized375: [String: String] = resized["375x300"] as! [String : String]
-            let resizedImage = Image(publicURL: resized375["public"]!, glcoud: resized375["gcloud"]!)
-            self.image = Images(original: originalImage, resizedSize: "375x300", resizedImage: resizedImage)
+            // let publicImage = imagesFromSnaphsot["public"] as? String;
+            // let glcoudIMage = imagesFromSnaphsot["gcloud"] as? String;
+//            print(":: PUBLIC IMAGE ::")
+//            print(publicImage)
+//            print(":: GCLOUD IMAGE ::")
+//            print(glcoudIMage)
+            
+            var originalIMage2 = Image()
+            if let pImage = imagesFromSnaphsot["public"] as? String {
+                originalIMage2.publicURL = URL(string: pImage)!
+            }
+            if let gImage = imagesFromSnaphsot["gcloud"] as? String {
+                originalIMage2.gcloud = gImage
+            }
+            
+            // let originalImage = Image(publicURL: imagesFromSnaphsot["public"] as! String, glcoud: imagesFromSnaphsot["gcloud"] as! String)
+            
+            
+            var resizedImage = Image()
+            if let resized: [String: Any] = imagesFromSnaphsot["resized"] as? [String : Any], let resized375: [String: String] = resized["375x300"] as? [String : String] {
+                if resized375["public"] != nil {
+                    resizedImage.publicURL = URL(string: resized375["public"]!)!
+                }
+                if resized375["gcloud"] != nil {
+                    resizedImage.gcloud = resized375["gcloud"]
+                }
+            }
+            
+            self.image = Images(original: originalIMage2, resizedSize: "375x300", resizedImage: resizedImage)
             
             self.images = [Images]()
             for (key, value) in imagesFromSnaphsot {

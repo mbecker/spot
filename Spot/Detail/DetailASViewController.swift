@@ -71,17 +71,22 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
     
     func share() {
         
-        if let image: UIImage = self.tableHeader?.getImage(), let mapImage = self.mapNode.view.image {
+        if let image: UIImage = self.tableHeader?.getImage(pos: 0) {
             self.tableHeader?._slideShow.pauseTimerIfNeeded()
             
             var text: NSString = NSString(string: "Spotted \(self._parkItem.name)")
             if let parkName = self._parkItem.park.parkName {
                 text = NSString(string: "Spotted \(self._parkItem.name) at \(parkName)")
             }
-            let url = NSURL(string: "https://safaridigitalapp.appspot-preview.com/spots/\(self._parkItem.park.park!)/\(self._parkItem.type)/\(self._parkItem.key)")
+            let url = NSURL(string: "https://safari.digital/spots/\(self._parkItem.park.park!)/\(self._parkItem.type)/\(self._parkItem.key)")
             var size = image.size
-            let map: UIImage = (mapImage.circle?.resizeImage(newWidth: size.width / 3))!
+            var map: UIImage = UIImage()
             
+            if let mapImage = self.mapNode.view.image {
+                map = (mapImage.circle?.resizeImage(newWidth: size.width / 3))!
+            }
+            
+            // Start drawing image
             UIGraphicsBeginImageContext(size)
             
             let areaSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
@@ -91,6 +96,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
             
             let newImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
             UIGraphicsEndImageContext()
+            // End drawing image
             
             let objectsToShare = [newImage, text, url] as [Any]
             let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
@@ -268,24 +274,31 @@ extension DetailASViewController : ASTableDataSource {
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
         let row = indexPath.row
-        let node = ASCellNode { () -> UIView in
-            
-            switch row {
-            case 0:
-                return CountryNode.init(_parkItem: self._parkItem)
-            case 1:
-                return TagsNode.init(parkItem: self._parkItem)
-            case 2:
-                return SpottedByNode.init(parkItem: self._parkItem)
-            case 3:
-                return self.mapNode
-            default:
-                let view = UIView()
-                view.backgroundColor = UIColor.white
-                return view
+        var node: ASCellNode
+        if row == 0 {
+            node =  CountryASCellNode(parkItem: self._parkItem)
+        } else {
+            node = ASCellNode { () -> UIView in
+                
+                switch row {
+                case 0:
+                    return CountryNode.init(_parkItem: self._parkItem)
+                case 1:
+                    return TagsNode.init(parkItem: self._parkItem)
+                case 2:
+                    return SpottedByNode.init(parkItem: self._parkItem)
+                case 3:
+                    return self.mapNode
+                default:
+                    let view = UIView()
+                    view.backgroundColor = UIColor.white
+                    return view
+                }
+                
             }
-            
         }
+        
+        
 
         node.selectionStyle = .default
         node.backgroundColor = UIColor.white
