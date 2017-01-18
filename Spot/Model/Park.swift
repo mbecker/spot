@@ -347,8 +347,7 @@ class ParkItem2 {
             
             self.images = [Images]()
             for (key, value) in imagesFromSnaphsot {
-                if key != "public" && key != "gcloud" && key != "resized" {
-                    let imageInArray: [String: Any] = value as! [String : Any]
+                if key != "public" && key != "gcloud" && key != "resized", let imageInArray: [String: Any] = value as? [String : Any] {
                     let originalImage = Image(publicURL: imageInArray["public"] as! String, glcoud: imageInArray["gcloud"] as! String)
                     let resized: [String: Any] = imageInArray["resized"] as! [String : Any]
                     let resized375: [String: String] = resized["375x300"] as! [String : String]

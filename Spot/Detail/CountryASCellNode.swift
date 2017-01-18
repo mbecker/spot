@@ -150,7 +150,13 @@ class CountryASCellNode: ASCellNode {
         let textVerticalStack               = ASStackLayoutSpec.vertical()
         textVerticalStack.style.flexGrow    = 1.0
         textVerticalStack.style.flexShrink  = 1.0
+        textVerticalStack.alignItems        = .stretch
         
+        
+        textVerticalStack.sizeRange        = ASRelativeSizeRangeMake(
+            ASLayoutSize(width: ASDimension(unit: .points, value: constrainedSize.max.width), height: ASDimension(unit: .points, value: 0)), // min
+            ASLayoutSize(width: ASDimension(unit: .points, value: constrainedSize.max.width), height: ASDimension(unit: .points, value: constrainedSize.max.height)) // max
+        )
         if self._country.attributedText != nil {
             textVerticalStack.children = [self._park, self._country]
         } else {
@@ -177,7 +183,7 @@ class CountryASCellNode: ASCellNode {
                                                     justifyContent: .start,
                                                     alignItems: .center,
                                                     children: [textVerticalStack, imageAbsoluteSpec])
-        horizontalStackSpec.style.alignSelf = .center
+        horizontalStackSpec.style.alignSelf = .start
         horizontalStackSpec.style.flexGrow = 1.0
         
         

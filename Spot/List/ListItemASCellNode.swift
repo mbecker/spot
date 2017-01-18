@@ -94,7 +94,7 @@ class ListItemASCellNode: ASCellNode {
         self._title.attributedText = NSAttributedString(
             string: parkItem.name,
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+                NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
                 NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.0,
@@ -102,7 +102,7 @@ class ListItemASCellNode: ASCellNode {
         self._detail.attributedText = NSAttributedString(
             string: "12mins ago • 5.1km away",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
+                NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
                 NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.0,
@@ -165,7 +165,7 @@ class ListItemASCellNode: ASCellNode {
         
         let verticalTextStackSpec           = ASStackLayoutSpec(direction: .vertical, spacing: 2, justifyContent: .center, alignItems: .start, children: [self._title, self._detail])
         verticalTextStackSpec.style.flexGrow = 1.0
-        verticalTextStackSpec.style.alignSelf = .center
+        verticalTextStackSpec.style.alignSelf = .start
         
         let horizontalStackSpec               = ASStackLayoutSpec(direction: .horizontal, spacing: 16, justifyContent: .start, alignItems: .start, children: [loadingIndicatorOverlaySpec, verticalTextStackSpec])
         horizontalStackSpec.style.flexGrow  = 1.0

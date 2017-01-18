@@ -78,7 +78,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
             if let parkName = self._parkItem.park.parkName {
                 text = NSString(string: "Spotted \(self._parkItem.name) at \(parkName)")
             }
-            let url = NSURL(string: "https://safari.digital/spots/\(self._parkItem.park.park!)/\(self._parkItem.type)/\(self._parkItem.key)")
+            let url = NSURL(string: "https://safaridigitalapp.appspot-preview.com/spots/\(self._parkItem.park.park!)/\(self._parkItem.type)/\(self._parkItem.key)")
             var size = image.size
             var map: UIImage = UIImage()
             
