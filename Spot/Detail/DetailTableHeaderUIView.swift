@@ -115,6 +115,16 @@ class DetailTableHeaderUIView: UIView {
         return (self._slideShow.currentSlideshowItem?.imageView.image)!
     }
     
+    func getFirstImage() -> UIImage {
+        // ToDo: BUG
+        // If the self._slideShow.slideshowItems.count > 1 the element[0] is not the image; it's [1]
+        if self._slideShow.slideshowItems.count > 1 {
+            return self._slideShow.slideshowItems[1].imageView.image!
+        } else {
+            return self._slideShow.slideshowItems[0].imageView.image!
+        }
+    }
+    
     func getImage(pos: Int) -> UIImage? {
         print(self._slideShow.slideshowItems.count)
         if let image: UIImage = self._slideShow.slideshowItems[pos].imageView.image {

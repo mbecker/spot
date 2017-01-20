@@ -82,19 +82,18 @@ class ParkASCellNode: ASCellNode {
         /**
          * FIREBASE
          */
-        self.ref.child(self.parkSection.path).queryLimited(toLast: 20).observe(.childAdded, with: { (snapshot) -> Void in
+        self.ref.child(self.parkSection.path).queryOrdered(byChild: "timestamp").queryLimited(toLast: 20).observe(.childAdded, with: { (snapshot) -> Void in
             
-            if self.parkSection.name == "Animals" {
-                print(snapshot)
-            }
-            
-            if let item2: ParkItem2 = ParkItem2(snapshot: snapshot, type: self.type, park: self.park) {
-                OperationQueue.main.addOperation({
-                    self.items2.insert(item2, at: 0)
-                    let indexPath = IndexPath(item: 0, section: 0)
-                    self.collectionNode.insertItems(at: [indexPath])
-                    self.collectionNode.reloadItems(at: [indexPath])
-                })
+            // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
+            if let item2: ParkItem2 = ParkItem2(snapshot: snapshot, type: self.type, park: self.park), self.items2.contains(where: {$0.key == item2.key}) == false {
+                
+                    OperationQueue.main.addOperation({
+                        self.items2.insert(item2, at: 0)
+                        let indexPath = IndexPath(item: 0, section: 0)
+                        self.collectionNode.insertItems(at: [indexPath])
+                        self.collectionNode.reloadItems(at: [indexPath])
+                    })
+                
             }
             
         })

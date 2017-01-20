@@ -71,7 +71,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
     
     func share() {
         
-        if let image: UIImage = self.tableHeader?.getImage(pos: 0) {
+        if let image: UIImage = self.tableHeader?.getFirstImage() {
             self.tableHeader?._slideShow.pauseTimerIfNeeded()
             
             var text: NSString = NSString(string: "Spotted \(self._parkItem.name)")
