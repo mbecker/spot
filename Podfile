@@ -23,7 +23,8 @@ target 'Spot' do
   pod 'SMSegmentView', :git => 'https://github.com/sima-11/SMSegmentView.git'
   pod 'EZAlertController', '3.2'
   pod 'ImagePicker'
-  pod 'TOCropViewController'
+  pod 'TOCropViewController', '~> 2.0'
+  pod 'PMAlertController'
 
   target 'SpotTests' do
     inherit! :search_paths

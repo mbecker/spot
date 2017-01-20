@@ -8,6 +8,11 @@
 
 import UIKit
 import AsyncDisplayKit
+import ImagePicker
+import TOCropViewController
+import PMAlertController
+import FirebaseDatabase
+import FirebaseStorage
 
 class MainASTabBarController: ASTabBarController {
     
@@ -51,6 +56,7 @@ class MainASTabBarController: ASTabBarController {
         self.listNavigationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
         self.listNavigationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "ic_list_36pt"), tag: 0)
         self.listNavigationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
+        print(":: TABBARITEM SIZE \(self.listNavigationController.tabBarItem.image?.size)")
         
         super.init(nibName: nil, bundle: nil)
         
@@ -74,10 +80,109 @@ class MainASTabBarController: ASTabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tabBar.backgroundImage = UIImage.colorForNavBar(color: UIColor.white)
+        
+        // Camera Button
+        let itemWidth: CGFloat  = 48
+        let itemHeight: CGFloat = 48
+        let cameraButton = UIButton(frame: CGRect(x: self.view.frame.size.width / 2 - itemWidth / 2, y: self.view.frame.size.height - self.tabBar.frame.size.height + self.tabBar.frame.size.height / 2 - itemHeight / 2, width: itemWidth, height: itemHeight))
+        cameraButton.setBackgroundImage(UIImage(named: "Google Bilder-64"), for: .normal)
+        cameraButton.adjustsImageWhenHighlighted = false
+        cameraButton.addTarget(self, action: #selector(upload), for: .touchUpInside)
+        self.view.addSubview(cameraButton)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func upload(sender: UIButton){
+        let imagePicker = ImagePickerController()
+        imagePicker.imageLimit = 1
+        let pickerCropper = ImagePickerCropper(picker: imagePicker, cropperConfigurator: { image in
+            let cropController = TOCropViewController(image: image)
+            cropController.aspectRatioLockEnabled = true
+            cropController.resetAspectRatioEnabled = false
+            cropController.rotateButtonsHidden = true
+            cropController.customAspectRatio = CGSize(width: 3, height: 2)
+            cropController.modalTransitionStyle = .crossDissolve
+            
+            return cropController
+        })
+        
+        pickerCropper.show(from: self) { result in
+            if case let .success(images) = result, let image = images.first {
+                // Get data from JPEG
+                let imageData = UIImageJPEGRepresentation(image, 1.0)
+                
+                let ref: FIRDatabaseReference = FIRDatabase.database().reference()
+                let storage = FIRStorage.storage()
+                let storageRef = storage.reference()
+                
+                // Key for firebase push
+                let key = ref.child("items/addo/animals").childByAutoId().key
+                // Ref for storage
+                let imageOriginalRef = storageRef.child("animals/\(key).jpg")
+                // Create metadata
+                let metadataForImages = FIRStorageMetadata()
+                metadataForImages.contentType = "image/jpeg"
+                
+                // Create upload task
+                let imageOriginalUploadTask = imageOriginalRef.put(imageData!, metadata: metadataForImages)
+                imageOriginalUploadTask.observe(.progress) { snapshot in
+                    // Upload reported progress
+                    if let progress = snapshot.progress {
+                        let percentComplete: Float = Float(progress.completedUnitCount) / Float(progress.totalUnitCount)
+                        print(":: Upload image - \(percentComplete)")
+                    }
+                }
+                imageOriginalUploadTask.observe(.success) { snapshot in
+                    
+                    let item = [
+                        "name": key,
+                        "timestamp": FIRServerValue.timestamp(),
+                        "location": [
+                            "latitude": -23.88065,
+                            "longitude": 31.969589,
+                            "parkName": "Addo National Elephant Park"
+                        ],
+                        "spottedby": [
+                            "123": [
+                                "name": "Michi",
+                                "profile": "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego6.jpg"
+                            ]
+                        ],
+                        "tags": [
+                            "Elephant": "Elephant"
+                        ],
+                        "images": [
+                            "public": "https://storage.cloud.google.com/safaridigitalapp.appspot.com/animals/\(key).jpg"
+                        ]
+                    ] as [String : Any]
+                    
+                    let childUpdates = ["/items/addo/animals/\(key)": item]
+                    ref.updateChildValues(childUpdates, withCompletionBlock: { (error, reference) in
+                        if (error != nil) {
+                            print(":: ERROR - SAVING ITEM TO FIREBASE ::")
+                            print(error)
+                        } else {
+                            // Create queue task
+                            let queueRef = FIRDatabase.database().reference(withPath: "queue/tasks")
+                            let queueKey = queueRef.childByAutoId().key;
+                            let queueData = [
+                                queueKey:
+                                    [
+                                        "ref": "/items/addo/animals/\(key)/images"
+                                ]
+                            ]
+                            queueRef.setValue(queueData)
+                        }
+                    })
+                    
+                }
+                
+                
+            }
+        }
     }
     
 }

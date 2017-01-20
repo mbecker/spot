@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '1883F3C8509509D6BB8939552F231031'
-               BlueprintName = 'TOCropViewController'
+               BlueprintIdentifier = 'D54FDD5C741942E89778C6F1AD56A429'
+               BlueprintName = 'PMAlertController-PMAlertController'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'TOCropViewController.framework'>
+               BuildableName = 'PMAlertController.bundle'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
