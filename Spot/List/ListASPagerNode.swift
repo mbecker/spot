@@ -11,6 +11,7 @@ import AsyncDisplayKit
 import Firebase
 import FirebaseDatabase
 import SMSegmentView
+import Hero
 
 protocol ChangePage {
     func changePage(tab: Int, showSelectedPage: Bool)
@@ -250,6 +251,7 @@ extension ListASPagerNode: ASCollectionDataSource {
 extension ListASPagerNode : ParkASCellNodeDelegate {
     func didSelectPark(_ item: ParkItem2) {
         let detailTableViewConroller = DetailASViewController(parkItem: item)
+        detailTableViewConroller.isHeroEnabled = true
         self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
     }
 }

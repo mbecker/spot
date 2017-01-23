@@ -59,6 +59,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Hero.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>ImagePicker-ImagePicker.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -167,17 +172,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>09AA36097F5EA47C7276F1464079C730</key>
+		<key>0E1DE87455E454B128AD359C80558C79</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>1883F3C8509509D6BB8939552F231031</key>
+		<key>15143042D7DEF405C6119B2D6C400334</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>1CD1AF7F04F6C0EA7ABDD43971903691</key>
+		<key>162734FB8B30BFEB2510F118BEFC1A1B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -197,11 +202,6 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4295F10305CFF708352EAD5A1DF77157</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>44CAD6CE523055ED339E87154473A254</key>
 		<dict>
 			<key>primary</key>
@@ -213,6 +213,16 @@
 			<true/>
 		</dict>
 		<key>505A6E3C28CDD43B1C952A08ED17CFCF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>50F1793B430A190840CB81E07D3DB433</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>57E6E1210536A50D678A134AF00C2743</key>
 		<dict>
 			<key>primary</key>
 			<true/>

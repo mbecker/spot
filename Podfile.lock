@@ -92,6 +92,7 @@ PODS:
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.0)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.0)
   - GTMSessionFetcher/Core (1.1.7)
+  - Hero (0.1.1)
   - ImagePicker (2.0.0)
   - ImageSlideshow (1.0.0-beta.1):
     - ImageSlideshow/Core (= 1.0.0-beta.1)
@@ -127,6 +128,7 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Messaging
   - Firebase/Storage
+  - Hero
   - ImagePicker
   - ImageSlideshow (~> 1.0.0-beta.1)
   - Kingfisher (~> 3.0)
@@ -179,6 +181,7 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
+  Hero: b855122bc80662e7446300ca18c9e4bcb0679540
   ImagePicker: 81175d36c2852cb543cb4f5d6c19e28f3e8d90eb
   ImageSlideshow: adf31cd12d65c1e78c15d024b9227d56fc46208c
   Kingfisher: 50407d1d5dbc34965009d425a286342ff36a84ea
@@ -191,6 +194,6 @@ SPEC CHECKSUMS:
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
   TOCropViewController: fe91aaab9e95d72ac38654d1174c8c8339585ee5
 
-PODFILE CHECKSUM: ffcc35d17c438b2b832faa5c5b39f389a106ceb5
+PODFILE CHECKSUM: a3d6a4047056b1c06e86c11fa664418d8bc00b3d
 
 COCOAPODS: 1.2.0.beta.1

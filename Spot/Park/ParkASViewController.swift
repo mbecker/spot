@@ -257,7 +257,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         print("-- TAGS --")
         print(sender.tag)
         
-        if let vc = self.tabBarController!.viewControllers![1] as? ASNavigationController {
+        if let vc = self.tabBarController!.viewControllers![2] as? ASNavigationController {
             vc.popToRootViewController(animated: false)
             if let view = vc.topViewController as? ChangePage {
                 view.changePage(tab: sender.tag, showSelectedPage: true)
@@ -265,7 +265,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         }
         
         
-        self.tabBarController?.selectedIndex = 1
+        self.tabBarController?.selectedIndex = 2
     }
     
 

@@ -214,34 +214,21 @@ class ParkItem2 {
     
     let ref         :   FIRDatabaseReference
     let storage     :   FIRStorage
-    
     let key         :   String
     let name        :   String
-    
-    let image: Images?
-    var images: [Images]?
-    
-    
+    let image       :   Images?
+    var images      :   [Images]?
     let location    :   [String: Double]?
     let latitude    :   Double?
     let longitude   :   Double?
-    
     let type        :   ItemType
-    
-    
-    
     var tags        =   [String]()
     var spottedBy   =   [[String: String]]()
-    
-    
-    
-    
-    
-    
-    /**
-     * Park informatio
-     */
     var park        :   Park!
+    /**
+     * Park information
+     */
+    
     
     init?(snapshot: FIRDataSnapshot, type: ItemType, park: Park) {
         
@@ -259,11 +246,6 @@ class ParkItem2 {
         }
         
         self.park         = park
-        
-        
-        
-        
-        
         
         /**
          * Tags
@@ -310,27 +292,16 @@ class ParkItem2 {
         }
         
         /**
-         * 1. Load original image + resized
+         * Images
          */
         if let imagesFromSnaphsot = snapshotValue["images"] as? [String: Any] {
-            print(":: IMAGES ::")
-            print(imagesFromSnaphsot)
-            // let publicImage = imagesFromSnaphsot["public"] as? String;
-            // let glcoudIMage = imagesFromSnaphsot["gcloud"] as? String;
-//            print(":: PUBLIC IMAGE ::")
-//            print(publicImage)
-//            print(":: GCLOUD IMAGE ::")
-//            print(glcoudIMage)
-            
-            var originalIMage2 = Image()
-            if let pImage = imagesFromSnaphsot["public"] as? String {
-                originalIMage2.publicURL = URL(string: pImage)!
+            var originalImage = Image()
+            if let publicImageTemp = imagesFromSnaphsot["public"] as? String {
+                originalImage.publicURL = URL(string: publicImageTemp)!
             }
-            if let gImage = imagesFromSnaphsot["gcloud"] as? String {
-                originalIMage2.gcloud = gImage
+            if let gcloudImageTemp = imagesFromSnaphsot["gcloud"] as? String {
+                originalImage.gcloud = gcloudImageTemp
             }
-            
-            // let originalImage = Image(publicURL: imagesFromSnaphsot["public"] as! String, glcoud: imagesFromSnaphsot["gcloud"] as! String)
             
             
             var resizedImage = Image()
@@ -343,16 +314,16 @@ class ParkItem2 {
                 }
             }
             
-            self.image = Images(original: originalIMage2, resizedSize: "375x300", resizedImage: resizedImage)
+            self.image = Images(original: originalImage, resizedSize: "375x300", resizedImage: resizedImage)
             
             self.images = [Images]()
             for (key, value) in imagesFromSnaphsot {
                 if key != "public" && key != "gcloud" && key != "resized", let imageInArray: [String: Any] = value as? [String : Any] {
-                    let originalImage = Image(publicURL: imageInArray["public"] as! String, glcoud: imageInArray["gcloud"] as! String)
+                    let additionalOriginalImage = Image(publicURL: imageInArray["public"] as! String, glcoud: imageInArray["gcloud"] as! String)
                     let resized: [String: Any] = imageInArray["resized"] as! [String : Any]
                     let resized375: [String: String] = resized["375x300"] as! [String : String]
                     let resizedImage = Image(publicURL: resized375["public"]!, glcoud: resized375["gcloud"]!)
-                    self.images?.append(Images(original: originalImage, resizedSize: "375x300", resizedImage: resizedImage))
+                    self.images?.append(Images(original: additionalOriginalImage, resizedSize: "375x300", resizedImage: resizedImage))
                 }
             }
             
@@ -362,87 +333,11 @@ class ParkItem2 {
         }
         
         
-        /*
-        self.url        = snapshotValue["url"] as? String ?? nil
-        if let urlPublicString = snapshotValue["urlPublic"] as? String {
-            self.urlPublic  = URL(string: urlPublicString)!
-        }
-        if let images = snapshotValue["imagesPublic"] as? [String: String] {
-            for (name, url) in images {
-                self.imagesPublic[name] = URL(string: url)!
-            }
-        }
-        */
-        
-        /*
-         * Images: Load google storage and public images reference
-         *
-        if let images =  snapshotValue["images"] as? [String: String] {
-            self.images = images
-            for (name, url) in images {
-                let imgStorageReference = self.storage.reference(forURL: url)
-                imgStorageReference.downloadURL(completion: { (storageURL, error) -> Void in
-                    if error == nil {
-                        self.setImagePublic(name: name, url: storageURL!, overwrite: true)
-                    }
-                })
-            }
-        } else {
-            self.images = nil
-        }
-        
-        if let url: String = self.url, url.characters.count > 0 {
-            let imgStorageReference: FIRStorageReference = self.storage.reference(forURL: url)
-            imgStorageReference.downloadURL(completion: { (storageURL, error) -> Void in
-                if error == nil {
-                    self.setUrlPublic(url: storageURL!, overwrite: true)
-                } else {
-                    print(":: PARK - init - set self.url")
-                    print(error!.localizedDescription)
-                }
-            })
-        }
-        
-        
-         * Offline: Store images as public url
-         */
         
         
     }
     
-    /**
-     *  Only save url pubic if it's not already set; see information flow for public storage image:
-            1.) ParkItem is loaded
-            2.) Loadined into Parktabel
-            3.) Parktable cell loads public storage url
-            4.) Save to self.urlPublic and firebase
-            5.) NOW the ParkItem loads public storage url
-        General assumption: firebase["url"] doesn't change during app's lifecycle
- 
-    func setUrlPublic(url: URL, overwrite: Bool = false){
-        if overwrite {
-            self.urlPublic = url
-            self.ref.child("urlPublic").setValue(url.absoluteString)
-        } else {
-            if self.urlPublic == nil {
-                self.urlPublic = url
-                self.ref.child("urlPublic").setValue(url.absoluteString)
-            }
-        }
-    }
-    
-    func setImagePublic(name: String, url: URL, overwrite: Bool = false){
-        if overwrite {
-            self.imagesPublic[name] = url
-            self.ref.child("imagesPublic").child(name).setValue(url.absoluteString)
-        } else {
-            if !self.imagesPublic.contains(where: { _,_ in key == name }) {
-                self.imagesPublic[name] = url
-                self.ref.child("imagesPublic").child(name).setValue(url.absoluteString)
-            }
-        }
-    }
-    */
+   
 }
 
 let parks = [
@@ -703,39 +598,6 @@ class FirebaseModel {
     init(){
         ref = FIRDatabase.database().reference()
     }
-    
-    /**
-     * Firebase Model
-     "-1234abcd" : {
-        "name" : "Kruger Lions 1",
-        
-        "url" : "gs://safaridigitalapp.appspot.com/animals/maxresdefault.jpg",
-        "images" : {
-            "lion" : "gs://safaridigitalapp.appspot.com/animals/-KVMEIvvabbpUCXJzOYd.jpg"
-        },
-     
-        "location" : {
-            "latitude" : -23.888061,
-            "longitude" : 31.969467
-        },
-     
-        "spottedby" : {
-            "1234abcd" : {
-                "name" : "Mike",
-                "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego3.jpg"
-            },
-            "123efsdf" : {
-                "name" : "Mikki",
-                "profile" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego9.jpg"
-            }
-        },
-     
-        "tags" : {
-            "a1" : "Lion"
-        },
-     
-     },
-     */
     
     let animals = [
         "silver fox",
