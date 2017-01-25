@@ -5,14 +5,26 @@
 //  Created by Mats Becker on 08/11/2016.
 //  Copyright © 2016 safari.digital. All rights reserved.
 //
-
+import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 import UIKit
 
+let CONFIGITEMS = [
+    configItem.showConfig,
+    configItem.shownavbar
+]
+
+enum configItem: String {
+    case showConfig = "Show Config"
+    case shownavbar = "Show Navigationbar"
+}
+
 enum UserDefaultTypes: String {
     case parkpath   = "parkpath"
     case parkname   = "parkname"
+    case showConfig = "showconfig"
+    case showNavBar = "shownavbar"
 }
 
 enum Databasepaths: String {
@@ -23,6 +35,81 @@ enum Databasepaths: String {
 enum ItemType: String {
     case attractions    = "attractions"
     case animals        = "animals"
+}
+
+class User {
+    let ref = FIRDatabase.database().reference()
+    let key:    String
+    let name:   String
+    
+    init() {
+        let user = FIRAuth.auth()!.currentUser!
+        self.key    = user.uid
+        self.name   = user.email ?? user.uid
+        self.ref.child("config").child(self.key).observeSingleEvent(of: .value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            
+            // Show Config
+            if let userDefaultsShowConfig = UserDefaults.standard.object(forKey: UserDefaultTypes.showConfig.rawValue) as? Bool {
+                self.setShowConfig(showConfig: userDefaultsShowConfig)
+            } else {
+                // No UserDefault settings for showConifg (user loged out and all user settings were deleted)
+                if let showConfig = value?[UserDefaultTypes.showConfig.rawValue] as? Bool {
+                    UserDefaults.standard.set(showConfig, forKey: UserDefaultTypes.showConfig.rawValue)
+                } else {
+                    UserDefaults.standard.set(false, forKey: UserDefaultTypes.showConfig.rawValue)
+                }
+            }
+            
+            // Show NavBar
+            if let userDefaultsShowNavBar = UserDefaults.standard.object(forKey: UserDefaultTypes.showNavBar.rawValue) as? Bool {
+                self.setShowNavBar(showNavBar: userDefaultsShowNavBar)
+            } else {
+                // No UserDefault settings for showConifg (user loged out and all user settings were deleted)
+                if let showNavBar = value?[UserDefaultTypes.showNavBar.rawValue] as? Bool {
+                    UserDefaults.standard.set(showNavBar, forKey: UserDefaultTypes.showNavBar.rawValue)
+                } else {
+                    UserDefaults.standard.set(false, forKey: UserDefaultTypes.showNavBar.rawValue)
+                }
+            }
+            
+        })
+    }
+    
+    func getConfig(_configItem: configItem) -> Bool {
+        switch _configItem {
+        case .showConfig:
+            return UserDefaults.standard.object(forKey: UserDefaultTypes.showConfig.rawValue) as? Bool ?? false
+        case .shownavbar:
+            return UserDefaults.standard.object(forKey: UserDefaultTypes.showNavBar.rawValue) as? Bool ?? false
+        }
+    }
+    
+    func setShowConfig(showConfig: Bool){
+        let showConfigItem = ["/config/\(self.key)/\(UserDefaultTypes.showConfig.rawValue)": showConfig]
+        self.ref.updateChildValues(showConfigItem)
+        self.ref.updateChildValues(showConfigItem, withCompletionBlock: { (error, reference) in
+            if((error) != nil){
+                print(error)
+            } else {
+                print(":: USER CONFIG - SAVED showConfig to: \(showConfig)")
+            }
+        })
+        return UserDefaults.standard.set(showConfig, forKey: UserDefaultTypes.showConfig.rawValue)
+    }
+    
+    func setShowNavBar(showNavBar: Bool){
+        let showNavBarItem = ["/config/\(self.key)/\(UserDefaultTypes.showNavBar.rawValue)": showNavBar]
+        self.ref.updateChildValues(showNavBarItem, withCompletionBlock: { (error, reference) in
+            if((error) != nil){
+                print(error)
+            } else {
+                print(":: USER CONFIG - SAVED showNavBarItem to: \(showNavBar)")
+            }
+        })
+        return UserDefaults.standard.set(showNavBar, forKey: UserDefaultTypes.showNavBar.rawValue)
+    }
+    
 }
 
 class Park {

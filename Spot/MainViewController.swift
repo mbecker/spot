@@ -41,7 +41,6 @@ class MainViewController: UIViewController {
         let handle: FIRAuthStateDidChangeListenerHandle = (FIRAuth.auth()?.addStateDidChangeListener() { (auth, user) in
             print(":: FIREBASE HANDLER ::")
             if  user == nil && !(self.navigationController?.topViewController is LoginViewController) {
-                
                 self.present(LoginViewController(), animated: true, completion: nil)
                 // self.navigationController?.pushViewController(LoginViewController(), animated: true)
             } else {

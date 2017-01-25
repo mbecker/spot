@@ -38,6 +38,8 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     let park: Park
     var delegate: SelectParkDelegate?
     
+    var showConfig = false
+    
     init(park: Park){
         self.park = park
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
@@ -77,7 +79,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
                 let parkTableHeader = ParkTableHeaderUIView.init(park: self.park)
                 parkTableHeader.delegate = self
                 self.tableNode.view.tableHeaderView = parkTableHeader
-                self.tableNode.view.tableFooterView = self.tableFooterView
+                self.tableNode.view.tableFooterView = self.tableFooterView()
             }
         }
     }
@@ -110,6 +112,10 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         if statusBar.responds(to: #selector(setter: ASDisplayProperties.backgroundColor)) {
             statusBar.backgroundColor = UIColor.white
         }
+        
+        // User Settings: Change view based on settings
+        self.showConfig = UserDefaults.standard.object(forKey: UserDefaultTypes.showConfig.rawValue) as? Bool ?? false
+        self.tableNode.view.tableFooterView = self.tableFooterView()
     }
     
     override var preferredStatusBarStyle : UIStatusBarStyle {
@@ -121,7 +127,10 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         // Dispose of any resources that can be recreated.
     }
     
-    lazy var tableFooterView: UIView = {
+    func tableFooterView() -> UIView {
+        if(!self.showConfig){
+            return UIView(frame: CGRect.zero)
+        }
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 240))
         view.backgroundColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
         
@@ -166,7 +175,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         view.addSubview(loginButton)
         
         return view
-    }()
+    }
     
     @objc fileprivate func didTapClearCache() {
         ImageCache.default.calculateDiskCacheSize { size in
@@ -257,7 +266,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         print("-- TAGS --")
         print(sender.tag)
         
-        if let vc = self.tabBarController!.viewControllers![2] as? ASNavigationController {
+        if let vc = self.tabBarController!.viewControllers![1] as? ASNavigationController {
             vc.popToRootViewController(animated: false)
             if let view = vc.topViewController as? ChangePage {
                 view.changePage(tab: sender.tag, showSelectedPage: true)
@@ -265,7 +274,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         }
         
         
-        self.tabBarController?.selectedIndex = 2
+        self.tabBarController?.selectedIndex = 1
     }
     
 

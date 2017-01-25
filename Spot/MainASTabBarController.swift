@@ -16,16 +16,15 @@ import FirebaseStorage
 
 class MainASTabBarController: UITabBarController {
     
+    var _user: User!
+    var park: Park
     var selectedPark    : String
     var selectedParkName: String
-    var park: Park
+    
     var parkController  : ParkASViewController!
     var listController  : ListASPagerNode!
     let cameraDummyView = UIViewController()
     let progressView = UIProgressView()
-    
-    var parkNavgationController: ASNavigationController
-    var listNavigationController: ASNavigationController
     
     init() {
         /**
@@ -43,37 +42,59 @@ class MainASTabBarController: UITabBarController {
         
         self.park = Park(park: self.selectedPark, parkName: self.selectedParkName, sections: parkSections)
         
+        self._user = User()
+        
+        super.init(nibName: nil, bundle: nil)
+        self.delegate                   = self // UITabBarControllerDelegate to identify CameraDummyView: tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController)
+        initTabBar(park: self.park)
+    }
+    
+    func initTabBar(park: Park){
         /**
          * Initialize ViewControllers for TabBar
          */
-        self.parkController             = ParkASViewController(park: self.park)
-        self.listController             = ListASPagerNode(park: self.park)
-        
-        self.parkNavgationController = ASNavigationController(rootViewController: self.parkController)
-        self.parkNavgationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
-        self.parkNavgationController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "logoTabBar"), tag: 0)
-        self.parkNavgationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
-        
-        self.listNavigationController = ASNavigationController(rootViewController: self.listController)
-        self.listNavigationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
-        self.listNavigationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "ic_list_36pt"), tag: 0)
-        self.listNavigationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
-        
-        // Item - Camera
-        self.cameraDummyView.tabBarItem = UITabBarItem(title: nil, image: UIImage(named: "camera"), selectedImage: UIImage(named: "camera"))
-        self.cameraDummyView.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
-        
-        super.init(nibName: nil, bundle: nil)
-        
-        self.delegate                   = self // UITabBarControllerDelegate
+        self.parkController     = ParkASViewController(park: park)
         self.parkController.delegate    = self // SelectParkDelegate
+        self.listController     = ListASPagerNode(park: park)
+        // List View Controller: Pop to parent view
+        if let vc = self.listController.parent as? ASNavigationController {
+            vc.popToRootViewController(animated: false)
+        }
         
-        self.setViewControllers([self.parkNavgationController, self.cameraDummyView, self.listNavigationController], animated: false)
+        /*
+         * Initialize TabBar
+         */
+        self.tabBar.unselectedItemTintColor = UIColor.flatBlack
+        self.tabBar.tintColor = UIColor.crimson
+        /*
+         * Initialize Tabitems for TabBar
+         */
+        // TabBar Item: Park
+        let parkNavgationController = ASNavigationController(rootViewController: self.parkController)
+        parkNavgationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
+        parkNavgationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "logoTabBar"), tag: 0)
+        parkNavgationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
+        // TabBar Item: List
+        let listNavigationController = ASNavigationController(rootViewController: self.listController)
+        listNavigationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
+        listNavigationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "ic_list_36pt"), tag: 0)
+        listNavigationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
+        // TabBar Item: Map
+        let mapNavigationController = UIViewController()
+        mapNavigationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "mapTabBar"), tag: 0)
+        mapNavigationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
+        // TabBar Item: User
+        let userNavigationController = ASNavigationController(rootViewController: UserSettingsASViewController(user: self._user))
+        userNavigationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
+        userNavigationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "user"), tag: 0)
+        userNavigationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
+        // TabBar Item: Camera
+        cameraDummyView.tabBarItem = UITabBarItem(title: nil, image: #imageLiteral(resourceName: "camera"), tag: 1)
+        cameraDummyView.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
+        // Set TabBar Items
+        self.setViewControllers([parkNavgationController, listNavigationController, cameraDummyView, mapNavigationController, userNavigationController], animated: false)
         
-        self.tabBar.unselectedItemTintColor = UIColor(red:0.15, green:0.15, blue:0.15, alpha:1.00) // Flat black
-        self.tabBar.tintColor = UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00) // Alizarin Crimson
-    }
-    
+    }    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -100,7 +121,7 @@ class MainASTabBarController: UITabBarController {
         super.didReceiveMemoryWarning()
     }
     
-    func upload(){
+    func showCameraAndUpload(){
         let imagePicker = ImagePickerController()
         imagePicker.imageLimit = 1
         let pickerCropper = ImagePickerCropper(picker: imagePicker, cropperConfigurator: { image in
@@ -228,8 +249,7 @@ class MainASTabBarController: UITabBarController {
 extension MainASTabBarController : UITabBarControllerDelegate {
     public func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if viewController == self.cameraDummyView {
-            upload()
-            return false
+            showCameraAndUpload()
         }
         return true
     }
@@ -258,32 +278,7 @@ extension MainASTabBarController: SelectParkDelegate {
             parkSections.append(ParkSection(name: "Animals", type: ItemType.animals, path: "park/\(park)/animals"))
         }
         
-        let park = Park(park: self.selectedPark, parkName: self.selectedParkName, sections: parkSections)
-        
-        self.parkController = ParkASViewController(park: park)
-        self.listController = ListASPagerNode(park: park)
-        
-        self.parkNavgationController = ASNavigationController(rootViewController: self.parkController)
-        self.listNavigationController = ASNavigationController(rootViewController: self.listController)
-        
-        if let vc = self.listController.parent as? ASNavigationController {
-            vc.popToRootViewController(animated: false)
-        }
-        
-        self.parkNavgationController = ASNavigationController(rootViewController: self.parkController)
-        self.parkNavgationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
-        self.parkNavgationController.tabBarItem = UITabBarItem(title: "", image: UIImage(named: "logoTabBar"), tag: 0)
-        self.parkNavgationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
-        
-        self.listNavigationController = ASNavigationController(rootViewController: self.listController)
-        self.listNavigationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
-        self.listNavigationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "ic_list_36pt"), tag: 0)
-        self.listNavigationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
-
-        self.parkController.delegate    = self
-        self.setViewControllers([self.parkNavgationController, self.cameraDummyView, self.listNavigationController], animated: false)
-//
-//        self.tabBar.unselectedItemTintColor = UIColor(red:0.15, green:0.15, blue:0.15, alpha:1.00) // Flat black
-//        self.tabBar.tintColor = UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00) // Alizarin Crimson
+        self.park = Park(park: self.selectedPark, parkName: self.selectedParkName, sections: parkSections)
+        initTabBar(park: self.park)
     }
 }
