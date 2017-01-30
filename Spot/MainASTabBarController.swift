@@ -124,19 +124,34 @@ class MainASTabBarController: UITabBarController {
     func showCameraAndUpload(){
         let imagePicker = ImagePickerController()
         imagePicker.imageLimit = 1
-        let pickerCropper = ImagePickerCropper(picker: imagePicker, cropperConfigurator: { image in
-            let cropController = TOCropViewController(image: image)
-            cropController.aspectRatioLockEnabled = true
-            cropController.resetAspectRatioEnabled = false
-            cropController.rotateButtonsHidden = false
-            cropController.customAspectRatio = CGSize(width: 3, height: 2)
-            cropController.modalTransitionStyle = .crossDissolve
-            
-            return cropController
+        
+        let spotTag = SpotPicker(picker: imagePicker, spotConfigurator: { image in
+            let spotViewController = CameraSpotViewController(image: image)
+            return spotViewController
         })
         
-        pickerCropper.show(from: self) { result in
+//        spotTag.show(from: self, completion: { result in
+//            if case let .success(images) = result, let image = images.first {
+//                let imageView = UIImageView(frame: CGRect(x: self.view.frame.width / 2 - image.size.width / 2, y: self.view.frame.height / 2 - image.size.height / 2, width: image.size.width, height: image.size.height))
+//                imageView.image = image
+//                self.view.addSubview(imageView)
+//            }
+//        })
+        
+//        let pickerCropper = ImagePickerCropper(picker: imagePicker, cropperConfigurator: { image in
+//            let cropController = TOCropViewController(image: image)
+//            cropController.aspectRatioLockEnabled = true
+//            cropController.resetAspectRatioEnabled = false
+//            cropController.rotateButtonsHidden = false
+//            cropController.customAspectRatio = CGSize(width: 3, height: 2)
+//            cropController.modalTransitionStyle = .crossDissolve
+//            
+//            return cropController
+//        })
+//        
+        spotTag.show(from: self) { result in
             if case let .success(images) = result, let image = images.first {
+                
                 // Add Progressview to tabbar
                 self.tabBar.addSubview(self.progressView)
                 
@@ -242,6 +257,9 @@ class MainASTabBarController: UITabBarController {
                 
             }
         }
+        // End spotTag.show
+        
+        
     }
     
 }
@@ -250,6 +268,7 @@ extension MainASTabBarController : UITabBarControllerDelegate {
     public func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if viewController == self.cameraDummyView {
             showCameraAndUpload()
+            return false
         }
         return true
     }
