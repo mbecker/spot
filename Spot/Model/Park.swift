@@ -10,6 +10,11 @@ import FirebaseDatabase
 import FirebaseStorage
 import UIKit
 
+func getSafariDigitalSpotURL(park: String, type: String, key: String) -> NSURL {
+    let safaridigitalurl = "https://safari.digital/spots/"
+    return NSURL(string: safaridigitalurl + "\(park)/\(type)/\(key)")!
+}
+
 let CONFIGITEMS = [
     configItem.showConfig,
     configItem.shownavbar

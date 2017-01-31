@@ -23,28 +23,28 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     /**
      * AsyncDisplayKit
      */
-    var pagerNode: ASPagerNode {
+    var _pagerNode: ASPagerNode {
         return node as! ASPagerNode
     }
     
     /**
      * Firebase
      */
-    let ref         :   FIRDatabaseReference
-    
-    var segmentView: SMSegmentView!
+    let _ref:   FIRDatabaseReference
+    let _park:  Park
+    let _segmentView: SMSegmentView!
     var margin: CGFloat = 10.0
     var seletionBar: UIView = UIView()
     var selectedPage: Int = 0
     var showSelectedPage: Bool = false
     var dataLoaded: Bool = false
     
-    var park: Park
+    
     
     
     init(park: Park){
-        self.ref = FIRDatabase.database().reference()
-        self.park = park
+        self._ref    = FIRDatabase.database().reference()
+        self._park   = park
         
         let appearance = SMSegmentAppearance()
         appearance.segmentOnSelectionColour = UIColor.white
@@ -69,18 +69,18 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
             NSParagraphStyleAttributeName: paragraph,
         ]
         
-        self.segmentView = SMSegmentView(frame: CGRect.zero, dividerColour: UIColor.clear, dividerWidth: 1.0, segmentAppearance: appearance)
+        self._segmentView = SMSegmentView(frame: CGRect.zero, dividerColour: UIColor.clear, dividerWidth: 1.0, segmentAppearance: appearance)
         
-        for parkSection in self.park.sections {
-            self.segmentView.addSegmentWithTitle(parkSection.name, onSelectionImage: nil, offSelectionImage: nil)
+        for parkSection in self._park.sections {
+            self._segmentView.addSegmentWithTitle(parkSection.name, onSelectionImage: nil, offSelectionImage: nil)
         }
 
         super.init(node: ASPagerNode.init())
         
-        self.segmentView.selectedSegmentIndex   = 0
+        self._segmentView.selectedSegmentIndex   = 0
         
-        self.pagerNode.delegate     = self
-        self.pagerNode.dataSource   = self
+        self._pagerNode.delegate     = self
+        self._pagerNode.dataSource   = self
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -88,12 +88,12 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     }
     
     func initSelectionBar(){
-        if self.park.sections.count > 1 {
+        if self._park.sections.count > 1 {
             self.seletionBar.removeFromSuperview()
-            self.seletionBar.frame = CGRect(x: 0.0, y: self.segmentView.bounds.height - 2, width: self.segmentView.bounds.width/CGFloat(self.segmentView.numberOfSegments), height: 2.0)
+            self.seletionBar.frame = CGRect(x: 0.0, y: self._segmentView.bounds.height - 2, width: self._segmentView.bounds.width/CGFloat(self._segmentView.numberOfSegments), height: 2.0)
             self.seletionBar.backgroundColor = UIColor.black
-            self.placeSelectionBar()
-            self.segmentView.addSubview(self.seletionBar)
+            // self.placeSelectionBar(posX: 0)
+            self._segmentView.addSubview(self.seletionBar)
         }
     }
     
@@ -114,7 +114,7 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         shadowImageView?.isHidden = false
-        self.segmentView.removeFromSuperview()
+        self._segmentView.removeFromSuperview()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -127,41 +127,41 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         shadowImageView?.isHidden = false
         
         if self.showSelectedPage && !self.dataLoaded{
-            self.pagerNode.reloadData {
+            self._pagerNode.reloadData {
                 self.dataLoaded = true
                 self.showSelectedPage = false
-                self.segmentView.selectedSegmentIndex = self.selectedPage
-                self.pagerNode.scrollToPage(at: self.selectedPage, animated: false)
+                self._segmentView.selectedSegmentIndex = self.selectedPage
+                self._pagerNode.scrollToPage(at: self.selectedPage, animated: false)
             }
         } else if self.showSelectedPage {
             self.showSelectedPage = false
-            self.segmentView.selectedSegmentIndex = self.selectedPage
-            self.pagerNode.scrollToPage(at: self.selectedPage, animated: false)
+            self._segmentView.selectedSegmentIndex = self.selectedPage
+            self._pagerNode.scrollToPage(at: self.selectedPage, animated: false)
         }
         
-        self.navigationController!.navigationBar.addSubview(self.segmentView)
-        
+        self.navigationController!.navigationBar.addSubview(self._segmentView)
+        // self.isScrolling = false
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
-        self.pagerNode.view.backgroundColor = UIColor.clear
-        self.pagerNode.view.isScrollEnabled = false
+        self._pagerNode.view.backgroundColor = UIColor.clear
+        self._pagerNode.view.isScrollEnabled = true
         
         /*
          Init SMsegmentView
          Set divider colour and width here if there is a need
          */
         let segmentFrame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.navigationController!.navigationBar.bounds.height)
-        self.segmentView.frame = segmentFrame
-        self.segmentView.backgroundColor = UIColor.clear
+        self._segmentView.frame = segmentFrame
+        self._segmentView.backgroundColor = UIColor.clear
         
-        self.segmentView.layer.cornerRadius = 0.0
-        self.segmentView.layer.borderColor = UIColor(white: 0.85, alpha: 1.0).cgColor
-        self.segmentView.layer.borderWidth = 0.0
+        self._segmentView.layer.cornerRadius = 0.0
+        self._segmentView.layer.borderColor = UIColor(white: 0.85, alpha: 1.0).cgColor
+        self._segmentView.layer.borderWidth = 0.0
         
-        self.segmentView.addTarget(self, action: #selector(selectSegmentInSegmentView(segmentView:)), for: .valueChanged)
+        self._segmentView.addTarget(self, action: #selector(selectSegmentInSegmentView(segmentView:)), for: .valueChanged)
         // self.navigationController!.navigationBar.addSubview(self.segmentView)
         
         /**
@@ -171,20 +171,25 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         
     }
     
-    func placeSelectionBar() {
-        var barFrame = self.seletionBar.frame
-        barFrame.origin.x = barFrame.size.width * CGFloat(self.selectedPage)
-        self.seletionBar.frame = barFrame
-    }
+//    func placeSelectionBar(posX: CGFloat) {
+//        if !self.isScrolling {
+//            self.isScrolling = true
+//            var barFrame = self.seletionBar.frame
+//            barFrame.origin.x = barFrame.size.width * posX / self.view.bounds.width
+//            self.seletionBar.frame = barFrame
+//        }
+//    }
     
     func selectSegmentInSegmentView(segmentView: SMSegmentView) {
-        self.selectedPage = segmentView.selectedSegmentIndex
-        UIView.animate(withDuration: 0.3, animations: {
-            self.placeSelectionBar()
-        })
-        self.pagerNode.scrollToPage(at: self.selectedPage, animated: true)
+        let selectedPage = segmentView.selectedSegmentIndex
+        let scrollViewEndPosX: CGFloat = self.view.bounds.width * CGFloat(selectedPage)
+//        UIView.animate(withDuration: 0.3, animations: {
+//                self.placeSelectionBar(posX: scrollViewEndPosX)
+//        })
+        self._pagerNode.scrollToPage(at: selectedPage, animated: true)
+        self.selectedPage = selectedPage
     }
-    
+    // var isScrolling = false
 }
 
 extension ListASPagerNode: ChangePage {
@@ -199,7 +204,8 @@ extension ListASPagerNode: ChangePage {
         default:
             self.selectedPage = 0
         }
-        self.placeSelectionBar()
+        // let scrollViewEndPosX: CGFloat = self.view.bounds.width * CGFloat(tab)
+        // self.placeSelectionBar(posX: scrollViewEndPosX)
     }
     
 }
@@ -209,17 +215,48 @@ extension ListASPagerNode: ASPagerDelegate {
         return ASSizeRange(min: CGSize(width: 10, height: 100), max: CGSize(width: self.view.bounds.width, height: self.view.bounds.height))
     }
     
+    // Called at: User drags scrollview; scrollview anomation ends
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let scrollViewContentOffsetX = scrollView.contentOffset.x
+        let pageWidth = self.view.bounds.width * 0.5
+        if scrollViewContentOffsetX > pageWidth {
+            self.selectedPage = 1
+            self._segmentView.selectedSegmentIndex = 1
+        } else {
+            self.selectedPage = 0
+            self._segmentView.selectedSegmentIndex = 0
+        }
+    }
+    // Called at: self._pagerNode.scrollToPage(at: selectedPage, animated: true)
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        // self.isScrolling = false
+        let scrollViewContentOffsetX = scrollView.contentOffset.x
+        let pageWidth = self.view.bounds.width - 1
+        if scrollViewContentOffsetX > pageWidth {
+            self.selectedPage = 1
+            self._segmentView.selectedSegmentIndex = 1
+        } else {
+            self.selectedPage = 0
+            self._segmentView.selectedSegmentIndex = 0
+        }
+    }
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        print(scrollView.contentOffset.x)
+        var barFrame = self.seletionBar.frame
+        barFrame.origin.x = barFrame.size.width * CGFloat(scrollView.contentOffset.x) / self.view.bounds.width
+        self.seletionBar.frame = barFrame
+    }
 }
 extension ListASPagerNode: ASPagerDataSource {
     func numberOfPages(in pagerNode: ASPagerNode) -> Int {
-        return self.park.sections.count
+        return self._park.sections.count
     }
     
     func pagerNode(_ pagerNode: ASPagerNode, nodeAt index: Int) -> ASCellNode {
-        let parkSection = self.park.sections[index]
+        let parkSection = self._park.sections[index]
         let page        = index
         let node = ASCellNode(viewControllerBlock: { () -> UIViewController in
-            let view = TableAsViewController(page: page, type: self.park.sections[page].type, park: self.park, parkSection: self.park.sections[page])
+            let view = TableAsViewController(page: page, type: parkSection.type, park: self._park, parkSection: self._park.sections[page])
             view.delegate = self
             return view
         }, didLoad: nil)
@@ -237,7 +274,7 @@ extension ListASPagerNode: ASCollectionDataSource {
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, numberOfItemsInSection section: Int) -> Int {
-        return self.park.sections.count
+        return self._park.sections.count
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {
@@ -250,7 +287,7 @@ extension ListASPagerNode: ASCollectionDataSource {
 
 extension ListASPagerNode : ParkASCellNodeDelegate {
     func didSelectPark(_ item: ParkItem2) {
-        let detailTableViewConroller = DetailASViewController(parkItem: item)
+        let detailTableViewConroller = DetailASViewController(park: self._park, parkItem: item)
         detailTableViewConroller.isHeroEnabled = true
         self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
     }

@@ -35,13 +35,13 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     /**
      * Data
      */
-    let park: Park
+    let _park: Park
     var delegate: SelectParkDelegate?
     
     var showConfig = false
     
     init(park: Park){
-        self.park = park
+        self._park = park
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -70,13 +70,13 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
     
     func loadPark(){
-        let parkTableHeader                 = ParkTableHeaderUIView(parkName: self.park.parkName)
+        let parkTableHeader                 = ParkTableHeaderUIView(parkName: self._park.parkName)
         parkTableHeader.delegate            = self
         self.tableNode.view.tableHeaderView = parkTableHeader
         
-        self.park.load { (loaded) in
+        self._park.load { (loaded) in
             if loaded {
-                let parkTableHeader = ParkTableHeaderUIView.init(park: self.park)
+                let parkTableHeader = ParkTableHeaderUIView.init(park: self._park)
                 parkTableHeader.delegate = self
                 self.tableNode.view.tableHeaderView = parkTableHeader
                 self.tableNode.view.tableFooterView = self.tableFooterView()
@@ -197,12 +197,12 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
     @objc fileprivate func didTapAddItems() {
         let firebaseModels = FirebaseModel()
-        firebaseModels.addAnimals(count: 5, parkName: self.park.parkName)
+        firebaseModels.addAnimals(count: 5, parkName: self._park.parkName)
     }
     
     @objc fileprivate func didTapDeleteItems(){
         let firebaseModel = FirebaseModel()
-        firebaseModel.deleteItems(parkName: self.park.parkName)
+        firebaseModel.deleteItems(parkName: self._park.parkName)
     }
     
     func sectionHeaderView(text: String, sectionId: Int = 0) -> UIView {
@@ -334,12 +334,12 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return self.park.sections.count
+        return self._park.sections.count
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if self.park.sections.indices.contains(section) {
-            return sectionHeaderView(text: self.park.sections[section].name, sectionId: section)
+        if self._park.sections.indices.contains(section) {
+            return sectionHeaderView(text: self._park.sections[section].name, sectionId: section)
         }
         return sectionHeaderView(text: "Section: \(section)")
         
@@ -352,7 +352,7 @@ extension ParkASViewController : ASTableDataSource {
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footer = UIView()
         footer.backgroundColor = UIColor.white
-        if section < self.park.sections.count - 1 {
+        if section < self._park.sections.count - 1 {
             // Show not border line for last section
             let borderLine = UIView(frame: CGRect(x: 20, y: 14, width: self.view.bounds.width - 40, height: 1))
             borderLine.backgroundColor = UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00) // Bonjour
@@ -366,7 +366,7 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
-        let node = ParkASCellNode(park: self.park, section: indexPath.section, type: self.park.sections[indexPath.section].type)
+        let node = ParkASCellNode(park: self._park, section: indexPath.section, type: self._park.sections[indexPath.section].type)
         node.delegate = self
         return node
     }
@@ -386,7 +386,7 @@ extension ParkASViewController : ASTableDelegate {
 
 extension ParkASViewController : ParkASCellNodeDelegate {
     func didSelectPark(_ item: ParkItem2) {
-        let detailTableViewConroller = DetailASViewController(parkItem: item)
+        let detailTableViewConroller = DetailASViewController(park: self._park, parkItem: item)
         self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
     }
 }

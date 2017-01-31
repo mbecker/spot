@@ -26,13 +26,15 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         return node as! ASTableNode
     }
     
-    let _parkItem: ParkItem2
-    var tableHeader: DetailTableHeaderUIView?
-    let mapNode: MapNode!
+    let _parkItem:      ParkItem2
+    let _park:          Park
+    var _tableHeader:   DetailTableHeaderUIView?
+    let _mapNode:       MapNode!
     
-    init(parkItem: ParkItem2) {
-        self._parkItem = parkItem
-        self.mapNode = MapNode(parkItem: self._parkItem)
+    init(park: Park, parkItem: ParkItem2) {
+        self._park      = park
+        self._parkItem  = parkItem
+        self._mapNode    = MapNode(parkItem: self._parkItem)
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -71,18 +73,18 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
     
     func share() {
         
-        if let image: UIImage = self.tableHeader?.getFirstImage() {
-            self.tableHeader?._slideShow.pauseTimerIfNeeded()
+        if let image: UIImage = self._tableHeader?.getFirstImage() {
+            self._tableHeader?._slideShow.pauseTimerIfNeeded()
             
             var text: NSString = NSString(string: "Spotted \(self._parkItem.name)")
             if let parkName = self._parkItem.park.parkName {
                 text = NSString(string: "Spotted \(self._parkItem.name) at \(parkName)")
             }
-            let url = NSURL(string: "https://safaridigitalapp.appspot-preview.com/spots/\(self._parkItem.park.park!)/\(self._parkItem.type)/\(self._parkItem.key)")
-            var size = image.size
+            let url = getSafariDigitalSpotURL(park: self._park.park, type: self._parkItem.type.rawValue, key: self._parkItem.key)
+            let size = image.size
             var map: UIImage = UIImage()
             
-            if let mapImage = self.mapNode.view.image {
+            if let mapImage = self._mapNode.view.image {
                 map = (mapImage.circle?.resizeImage(newWidth: size.width / 3))!
             }
             
@@ -107,7 +109,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
             
             activityVC.completionWithItemsHandler = { (activityType: UIActivityType?, completed: Bool, returnedItems: [Any]?, activityError: Error?) in
                 self.changeStatusbarColor(color: UIColor.white)
-                self.tableHeader?._slideShow.unpauseTimerIfNeeded()
+                self._tableHeader?._slideShow.unpauseTimerIfNeeded()
                 
                 if let error = activityError {
                     print(":: ERROR UIActivityViewController ::")
@@ -120,8 +122,8 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
     }
     
     func saveImage() {
-        if let image: UIImage = self.tableHeader?.getImage() {
-            self.tableHeader?._slideShow.pauseTimerIfNeeded()
+        if let image: UIImage = self._tableHeader?.getImage() {
+            self._tableHeader?._slideShow.pauseTimerIfNeeded()
             
             let objectsToShare = [image]
             let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
@@ -132,7 +134,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
             
             activityVC.completionWithItemsHandler = { (activityType: UIActivityType?, completed: Bool, returnedItems: [Any]?, activityError: Error?) in
                 self.changeStatusbarColor(color: UIColor.white)
-                self.tableHeader?._slideShow.unpauseTimerIfNeeded()
+                self._tableHeader?._slideShow.unpauseTimerIfNeeded()
                 
                 if let error = activityError {
                     print(":: ERROR UIActivityViewController ::")
@@ -182,8 +184,8 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.tableFooterView = tableFooterView
         self.tableNode.view.allowsSelection = true
         if(urls.count > 0){
-            self.tableHeader = DetailTableHeaderUIView.init(title: self._parkItem.name, urls: urls, viewController: self)
-            self.tableNode.view.tableHeaderView = self.tableHeader
+            self._tableHeader = DetailTableHeaderUIView.init(title: self._parkItem.name, urls: urls, viewController: self)
+            self.tableNode.view.tableHeaderView = self._tableHeader
         } else {
             self.tableNode.view.tableHeaderView = tableFooterView
         }
@@ -288,7 +290,7 @@ extension DetailASViewController : ASTableDataSource {
                 case 2:
                     return SpottedByNode.init(parkItem: self._parkItem)
                 case 3:
-                    return self.mapNode
+                    return self._mapNode
                 default:
                     let view = UIView()
                     view.backgroundColor = UIColor.white
