@@ -710,9 +710,9 @@
 		D14D8D321DD25420009AC39B /* Park */ = {
 			isa = PBXGroup;
 			children = (
-				D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */,
-				D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */,
 				D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */,
+				D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */,
+				D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */,
 				D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */,
 				D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */,
 			);
@@ -745,6 +745,7 @@
 				D176F8151E3FD54000F34F41 /* CameraSpotViewController.swift */,
 			);
 			name = Camera;
+			path = Camera;
 			sourceTree = "<group>";
 		};
 		D181BED51DF9A89800112CEB /* Backup */ = {
@@ -846,12 +847,12 @@
 		D1C757941DF00B0E0029E882 /* Detail */ = {
 			isa = PBXGroup;
 			children = (
+				D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */,
 				D1C757971DF0580F0029E882 /* DetailASViewController.swift */,
 				D1C757991DF05D4E0029E882 /* DetailTableHeaderUIView.swift */,
-				D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */,
-				D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */,
 				D1A1E5A31E4254CE004F463D /* ParkDetailViewController.swift */,
 				D1A1E5A41E4254CE004F463D /* ParkDetailViewController.xib */,
+				D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
