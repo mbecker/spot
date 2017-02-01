@@ -8,9 +8,6 @@
 
 import UIKit
 import AsyncDisplayKit
-import Firebase
-import FirebaseDatabase
-import FirebaseMessaging
 import Kingfisher
 import Mapbox
 import MapboxStatic

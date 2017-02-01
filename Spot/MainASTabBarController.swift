@@ -214,6 +214,14 @@ class MainASTabBarController: UITabBarController {
                         ]
                     ] as [String : Any]
                     
+                    if self._user.getConfig(configItem: .add100Entries){
+                        
+                    }
+                    
+                    func writeToFirebase(){
+                        
+                    }
+                    
                     let childUpdates = ["/items/\(parkKey)/\(itemType)/\(itemKey)": item]
                     ref.updateChildValues(childUpdates, withCompletionBlock: { (error, reference) in
                         if (error != nil) {
@@ -250,7 +258,8 @@ class MainASTabBarController: UITabBarController {
                                 }
                             }
                         }
-                    })
+                    }) // End ref.updateChildValues
+                    
                     
                 }
                 

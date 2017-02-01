@@ -13,6 +13,7 @@ class ParkTableHeaderUIView: UIView {
     
     let parkTitle = UILabel()
     var delegate: SelectParkDelegate?
+    var delegateMap: SelectParkMapDelegate?
     var parkTitleView: ParkTableHeaderTitleUIView
 
     init(park: Park) {
@@ -25,6 +26,7 @@ class ParkTableHeaderUIView: UIView {
         //addTitleView(parkName: park.name)
         // addMapView()
         let mapView = ParkTableHeaderMapUIImageView.init(park: park, frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: self.bounds.height - 82 - 20 - 20))
+        mapView.delegate = self
         addSubview(mapView)
         
     }
@@ -53,6 +55,12 @@ extension ParkTableHeaderUIView: SelectParkDelegate {
     
     func selectPark(park: String, name: String) {
         
+    }
+}
+
+extension ParkTableHeaderUIView: SelectParkMapDelegate {
+    func selectParkMap() {
+        self.delegateMap?.selectParkMap()
     }
 }
 

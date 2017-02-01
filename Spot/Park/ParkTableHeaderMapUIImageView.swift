@@ -16,6 +16,7 @@ class ParkTableHeaderMapUIImageView: UIImageView {
 
     var ref: FIRDatabaseReference!
     var park: Park
+    var delegate: SelectParkMapDelegate?
     
     init(park: Park, frame: CGRect) {
         self.park = park
@@ -35,8 +36,9 @@ class ParkTableHeaderMapUIImageView: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // User clicked on map: Push ParkDetailUIViewController via ParkAsViewController (delegate to "ParkTableHeaderUIView" -> "ParkAsViewController")
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("touchesEnded...")
+        self.delegate?.selectParkMap()
     }
     
     func addInfo() -> () {

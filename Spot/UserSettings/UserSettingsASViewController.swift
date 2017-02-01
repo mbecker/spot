@@ -162,6 +162,8 @@ extension UserSettingsASViewController : ASTableDataSource {
                 return SettingsNode.init(user: self._user, configItem: CONFIGITEMS[0])
             case 1:
                 return SettingsNode.init(user: self._user, configItem: CONFIGITEMS[1])
+            case 2:
+                return SettingsNode.init(user: self._user, configItem: CONFIGITEMS[2])
             default:
                 let view = UIView()
                 view.backgroundColor = UIColor.white
@@ -218,7 +220,7 @@ class SettingsNode: UIView {
         
         let switchControl = UISwitch()
         switchControl.center = view.center
-        switchControl.setOn(_user.getConfig(_configItem: _configItem), animated: false)
+        switchControl.setOn(_user.getConfig(configItem: self._configItem), animated: false)
         // switchControl.tintColor = UIColor.blue
         switchControl.onTintColor = UIColor.crimson
         // switchControl.thumbTintColor = UIColor.crimson
@@ -243,6 +245,8 @@ class SettingsNode: UIView {
             self._user.setShowConfig(showConfig: sender.isOn)
         case .shownavbar:
             self._user.setShowNavBar(showNavBar: sender.isOn)
+        case .add100Entries:
+            self._user.setConfig(configItem: self._configItem, set: sender.isOn)
         }
         
     }

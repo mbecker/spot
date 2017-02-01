@@ -13,7 +13,6 @@
 		D1079F061DD2A637007CCE07 /* KingfisherCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1079F051DD2A637007CCE07 /* KingfisherCache.swift */; };
 		D1079F091DD2A754007CCE07 /* ActivityIndicatorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1079F081DD2A754007CCE07 /* ActivityIndicatorNode.swift */; };
 		D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */; };
-		D117AEFC1DFC9AE100525345 /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D117AEFB1DFC9AE100525345 /* MainNavigationController.swift */; };
 		D12D64F51DEF44CA0096A847 /* ParkTableHeaderUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */; };
 		D12D64F71DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */; };
 		D12D64FB1DEF70500096A847 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64FA1DEF70500096A847 /* UIButton.swift */; };
@@ -28,6 +27,8 @@
 		D181BED91DF9DA0600112CEB /* ListItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D181BED81DF9DA0600112CEB /* ListItemASCellNode.swift */; };
 		D181BEDB1DF9F46A00112CEB /* 2016-12-08_2.json in Resources */ = {isa = PBXBuildFile; fileRef = D181BEDA1DF9F46A00112CEB /* 2016-12-08_2.json */; };
 		D18DB6C41E37E60A00D536BC /* UserSettingsASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */; };
+		D1A1E5A51E4254CE004F463D /* ParkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1E5A31E4254CE004F463D /* ParkDetailViewController.swift */; };
+		D1A1E5A61E4254CE004F463D /* ParkDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D1A1E5A41E4254CE004F463D /* ParkDetailViewController.xib */; };
 		D1A3E9621E314BB600E0C591 /* ImagePickerCropper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
 		D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */; };
@@ -352,7 +353,6 @@
 		D1079F081DD2A754007CCE07 /* ActivityIndicatorNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorNode.swift; sourceTree = "<group>"; };
 		D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemASCellNode.swift; sourceTree = "<group>"; };
 		D10A7F7E1DD282C100741BF0 /* Spot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spot.entitlements; sourceTree = "<group>"; };
-		D117AEFB1DFC9AE100525345 /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
 		D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkTableHeaderUIView.swift; sourceTree = "<group>"; };
 		D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkTableHeaderMapUIImageView.swift; sourceTree = "<group>"; };
 		D12D64FA1DEF70500096A847 /* UIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
@@ -367,6 +367,8 @@
 		D181BED81DF9DA0600112CEB /* ListItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListItemASCellNode.swift; sourceTree = "<group>"; };
 		D181BEDA1DF9F46A00112CEB /* 2016-12-08_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "2016-12-08_2.json"; sourceTree = "<group>"; };
 		D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSettingsASViewController.swift; sourceTree = "<group>"; };
+		D1A1E5A31E4254CE004F463D /* ParkDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkDetailViewController.swift; sourceTree = "<group>"; };
+		D1A1E5A41E4254CE004F463D /* ParkDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ParkDetailViewController.xib; sourceTree = "<group>"; };
 		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerCropper.swift; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -708,9 +710,9 @@
 		D14D8D321DD25420009AC39B /* Park */ = {
 			isa = PBXGroup;
 			children = (
-				D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */,
-				D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */,
 				D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */,
+				D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */,
+				D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */,
 				D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */,
 				D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */,
 			);
@@ -804,7 +806,6 @@
 				D1AFD85F1DCF8B4C0082A6EF /* Info.plist */,
 				D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */,
 				D15405A91DF8745600EAE971 /* MainASTabBarController.swift */,
-				D117AEFB1DFC9AE100525345 /* MainNavigationController.swift */,
 				D1C3003A1DFDA742004CCDE5 /* MainViewController.swift */,
 				D10A7F7E1DD282C100741BF0 /* Spot.entitlements */,
 				D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */,
@@ -845,10 +846,12 @@
 		D1C757941DF00B0E0029E882 /* Detail */ = {
 			isa = PBXGroup;
 			children = (
-				D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */,
 				D1C757971DF0580F0029E882 /* DetailASViewController.swift */,
 				D1C757991DF05D4E0029E882 /* DetailTableHeaderUIView.swift */,
+				D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */,
 				D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */,
+				D1A1E5A31E4254CE004F463D /* ParkDetailViewController.swift */,
+				D1A1E5A41E4254CE004F463D /* ParkDetailViewController.xib */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -1353,6 +1356,7 @@
 				D1FB27DB1DF400CC0023F0F2 /* np.png in Resources */,
 				D1FB279E1DF400CB0023F0F2 /* hn.png in Resources */,
 				D1FB22321DF2BB050023F0F2 /* butterfly-with-a-heart-on-frontal-wing-on-side-view.png in Resources */,
+				D1A1E5A61E4254CE004F463D /* ParkDetailViewController.xib in Resources */,
 				D181BEDB1DF9F46A00112CEB /* 2016-12-08_2.json in Resources */,
 				D1FB223E1DF2BB050023F0F2 /* goat.png in Resources */,
 				D1FB27C11DF400CC0023F0F2 /* lv.png in Resources */,
@@ -1757,7 +1761,7 @@
 				D1E4E64C1E0977D90084A229 /* UIImage.swift in Sources */,
 				D1C7579A1DF05D4E0029E882 /* DetailTableHeaderUIView.swift in Sources */,
 				D1FB21EE1DF2B95D0023F0F2 /* AssetManager.swift in Sources */,
-				D117AEFC1DFC9AE100525345 /* MainNavigationController.swift in Sources */,
+				D1A1E5A51E4254CE004F463D /* ParkDetailViewController.swift in Sources */,
 				D1079F061DD2A637007CCE07 /* KingfisherCache.swift in Sources */,
 				D15405A61DF8054200EAE971 /* ListASPagerNode.swift in Sources */,
 				D1C757981DF0580F0029E882 /* DetailASViewController.swift in Sources */,

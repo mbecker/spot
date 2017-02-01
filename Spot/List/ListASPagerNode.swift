@@ -126,14 +126,13 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         }
         shadowImageView?.isHidden = false
         
-        if self.showSelectedPage && !self.dataLoaded{
-            self._pagerNode.reloadData {
-                self.dataLoaded = true
-                self.showSelectedPage = false
-                self._segmentView.selectedSegmentIndex = self.selectedPage
-                self._pagerNode.scrollToPage(at: self.selectedPage, animated: false)
+        if self.showSelectedPage {
+            if !self.dataLoaded {
+                // User cliked on "See all"; this is the first time that's why the data must be loaded
+                self._pagerNode.reloadData {
+                    self.dataLoaded = true
+                }
             }
-        } else if self.showSelectedPage {
             self.showSelectedPage = false
             self._segmentView.selectedSegmentIndex = self.selectedPage
             self._pagerNode.scrollToPage(at: self.selectedPage, animated: false)
@@ -171,25 +170,12 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         
     }
     
-//    func placeSelectionBar(posX: CGFloat) {
-//        if !self.isScrolling {
-//            self.isScrolling = true
-//            var barFrame = self.seletionBar.frame
-//            barFrame.origin.x = barFrame.size.width * posX / self.view.bounds.width
-//            self.seletionBar.frame = barFrame
-//        }
-//    }
-    
     func selectSegmentInSegmentView(segmentView: SMSegmentView) {
         let selectedPage = segmentView.selectedSegmentIndex
         let scrollViewEndPosX: CGFloat = self.view.bounds.width * CGFloat(selectedPage)
-//        UIView.animate(withDuration: 0.3, animations: {
-//                self.placeSelectionBar(posX: scrollViewEndPosX)
-//        })
         self._pagerNode.scrollToPage(at: selectedPage, animated: true)
         self.selectedPage = selectedPage
     }
-    // var isScrolling = false
 }
 
 extension ListASPagerNode: ChangePage {
@@ -199,13 +185,14 @@ extension ListASPagerNode: ChangePage {
         switch tab {
         case 0:
             self.selectedPage = 0
+            self._segmentView.selectedSegmentIndex = 0
         case 1:
             self.selectedPage = 1
+            self._segmentView.selectedSegmentIndex = 1
         default:
             self.selectedPage = 0
+            self._segmentView.selectedSegmentIndex = 0
         }
-        // let scrollViewEndPosX: CGFloat = self.view.bounds.width * CGFloat(tab)
-        // self.placeSelectionBar(posX: scrollViewEndPosX)
     }
     
 }

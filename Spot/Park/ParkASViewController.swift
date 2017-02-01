@@ -22,6 +22,9 @@ protocol SelectParkDelegate {
     func selectPark()
     func selectPark(park: String, name: String)
 }
+protocol SelectParkMapDelegate {
+    func selectParkMap()
+}
 
 class ParkASViewController: ASViewController<ASDisplayNode> {
     
@@ -72,12 +75,14 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     func loadPark(){
         let parkTableHeader                 = ParkTableHeaderUIView(parkName: self._park.parkName)
         parkTableHeader.delegate            = self
+        parkTableHeader.delegateMap         = self
         self.tableNode.view.tableHeaderView = parkTableHeader
         
         self._park.load { (loaded) in
             if loaded {
                 let parkTableHeader = ParkTableHeaderUIView.init(park: self._park)
-                parkTableHeader.delegate = self
+                parkTableHeader.delegate            = self
+                parkTableHeader.delegateMap         = self
                 self.tableNode.view.tableHeaderView = parkTableHeader
                 self.tableNode.view.tableFooterView = self.tableFooterView()
             }
@@ -414,5 +419,12 @@ extension ParkASViewController: SelectParkDelegate {
     
     func selectPark(park: String, name: String) {
         
+    }
+}
+
+extension ParkASViewController: SelectParkMapDelegate {
+    func selectParkMap() {
+        let parkDetailUIViewController = ParkDetailViewController(park: self._park)
+        self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
     }
 }

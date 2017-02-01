@@ -17,12 +17,14 @@ func getSafariDigitalSpotURL(park: String, type: String, key: String) -> NSURL {
 
 let CONFIGITEMS = [
     configItem.showConfig,
-    configItem.shownavbar
+    configItem.shownavbar,
+    configItem.add100Entries
 ]
 
 enum configItem: String {
-    case showConfig = "Show Config"
-    case shownavbar = "Show Navigationbar"
+    case showConfig     = "Show Config"
+    case shownavbar     = "Show Navigationbar"
+    case add100Entries  = "Add 100 Entries"
 }
 
 enum UserDefaultTypes: String {
@@ -81,12 +83,14 @@ class User {
         })
     }
     
-    func getConfig(_configItem: configItem) -> Bool {
-        switch _configItem {
+    func getConfig(configItem: configItem) -> Bool {
+        switch configItem {
         case .showConfig:
             return UserDefaults.standard.object(forKey: UserDefaultTypes.showConfig.rawValue) as? Bool ?? false
         case .shownavbar:
             return UserDefaults.standard.object(forKey: UserDefaultTypes.showNavBar.rawValue) as? Bool ?? false
+        default:
+            return UserDefaults.standard.object(forKey: configItem.rawValue) as? Bool ?? false
         }
     }
     
@@ -115,6 +119,22 @@ class User {
         return UserDefaults.standard.set(showNavBar, forKey: UserDefaultTypes.showNavBar.rawValue)
     }
     
+    func setAdd100Entries(add: Bool){
+        
+    }
+    
+    func setConfig(configItem: configItem, set: Bool){
+        let item = ["/config/\(self.key)/\(configItem.rawValue)": set]
+        self.ref.updateChildValues(item, withCompletionBlock: { (error, reference) in
+            if((error) != nil){
+                print(error)
+            } else {
+                print(":: USER CONFIG - SAVED \(configItem.rawValue) to: \(set)")
+            }
+        })
+        return UserDefaults.standard.set(set, forKey: configItem.rawValue)
+    }
+    
 }
 
 class Park {
@@ -128,6 +148,7 @@ class Park {
     var parkIcon    :   UIImage?
     var mapImage    :   String?
     var info        :   String?
+    var markdown    :   String?
     
     init(park: String, parkName: String, sections: [ParkSection]) {
         self.ref        = FIRDatabase.database().reference()
@@ -141,6 +162,7 @@ class Park {
         self.parkIcon       = nil
         self.mapImage       = nil
         self.info           = nil
+        self.markdown       = nil
     }
     
     init(park: String, parkName: String, sections: [ParkSection], completion: @escaping (_ result: Bool) -> Void) {
@@ -155,6 +177,7 @@ class Park {
         self.parkIcon       = nil
         self.mapImage       = nil
         self.info           = nil
+        self.markdown       = nil
         
         loadDB(path: path) { (loaded) in
             if loaded {
@@ -172,6 +195,7 @@ class Park {
             self.mapImage           =   value?["mapimage"]      as? String ?? nil
             self.parkName           =   value?["name"]          as? String ?? nil
             self.info               =   value?["info"]          as? String ?? nil
+            self.markdown           =   value?["markdown"]      as? String ?? nil
             
             if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
                 self.countryIcon    =   AssetManager.getImage(countryIconName)
@@ -201,6 +225,7 @@ class Park {
             self.mapImage           =   value?["mapimage"]      as? String ?? nil
             self.parkName           =   value?["name"]          as? String ?? nil
             self.info               =   value?["info"]          as? String ?? nil
+            self.markdown           =   value?["markdown"]      as? String ?? nil
             
             if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
                 self.countryIcon    =   AssetManager.getImage(countryIconName)
@@ -231,6 +256,7 @@ class Park {
             self.mapImage           =   value?["mapimage"]      as? String ?? nil
             self.parkName           =   value?["name"]          as? String ?? nil
             self.info               =   value?["info"]          as? String ?? nil
+            self.markdown           =   value?["markdown"]      as? String ?? nil
             
             if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
                 self.countryIcon    =   AssetManager.getImage(countryIconName)
@@ -253,6 +279,7 @@ class Park {
         self.mapImage           =   value["mapimage"]      as? String ?? nil
         self.parkName           =   value["name"]          as? String ?? nil
         self.info               =   value["info"]          as? String ?? nil
+        self.markdown           =   value["markdown"]      as? String ?? nil
         
         if let countryIconValue =   value["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
             self.countryIcon    =   AssetManager.getImage(countryIconName)
