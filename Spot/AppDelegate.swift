@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // [END register_for_notifications]
         
         FIRApp.configure()
-        FIRDatabase.database().persistenceEnabled = true
+        FIRDatabase.database().persistenceEnabled = false
         
         // Add observer for InstanceID token refresh callback.
         NotificationCenter.default.addObserver(self,

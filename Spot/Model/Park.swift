@@ -157,12 +157,34 @@ class Park {
         self.path       = "parkinfo/\(park)"
         self.sections   = sections
         
-        self.country        = nil
-        self.countryIcon    = nil
-        self.parkIcon       = nil
-        self.mapImage       = nil
-        self.info           = nil
-        self.markdown       = nil
+        self.ref.child("parkinfo").child(park).observeSingleEvent(of: .value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            self.country            =   value?["country"]       as? String ?? nil
+            self.mapImage           =   value?["mapimage"]      as? String ?? nil
+            self.parkName           =   value?["name"]          as? String ?? nil
+            self.info               =   value?["info"]          as? String ?? nil
+            self.markdown           =   value?["markdown"]      as? String ?? nil
+            
+            if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
+                self.countryIcon    =   AssetManager.getImage(countryIconName)
+            } else {
+                self.countryIcon    =   nil
+            }
+            if let parkIconValue    =   value?["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
+                self.parkIcon       =   AssetManager.getImage(parkIconName)
+            } else {
+                self.parkIcon       = nil
+            }
+            
+        }) { (error) in
+            print(error.localizedDescription)
+            self.country        = nil
+            self.countryIcon    = nil
+            self.parkIcon       = nil
+            self.mapImage       = nil
+            self.info           = nil
+            self.markdown       = nil
+        }
     }
     
     init(park: String, parkName: String, sections: [ParkSection], completion: @escaping (_ result: Bool) -> Void) {
