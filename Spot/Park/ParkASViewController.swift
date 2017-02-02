@@ -424,6 +424,9 @@ extension ParkASViewController: SelectParkDelegate {
 
 extension ParkASViewController: SelectParkMapDelegate {
     func selectParkMap() {
+        let backItem = UIBarButtonItem()
+        backItem.title = ""
+        self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
         let parkDetailUIViewController = ParkDetailViewController(park: self._park)
         self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
     }

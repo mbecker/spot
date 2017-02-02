@@ -26,6 +26,7 @@ target 'Spot' do
   pod 'TOCropViewController', '~> 2.0'
   pod 'PMAlertController'
   pod 'Hero'
+  pod 'Down'
 
   target 'SpotTests' do
     inherit! :search_paths

@@ -9,10 +9,12 @@
 import UIKit
 import Firebase
 import FirebaseDatabase
+import Down
 
 class ParkDetailViewController: UIViewController {
     
     private var shadowImageView: UIImageView?
+    let _scrollView = UIScrollView()
     let _park:          Park
     let _ref = FIRDatabaseReference()
     
@@ -42,6 +44,9 @@ class ParkDetailViewController: UIViewController {
         let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
         self.navigationController?.navigationBar.backIndicatorImage = backImage
         self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+        self.navigationController?.navigationItem.backBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
+        self.navigationController?.navigationItem.leftBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
+
         self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
         
     }
@@ -71,8 +76,15 @@ class ParkDetailViewController: UIViewController {
         super.viewDidLoad()
         self.navigationController?.visibleViewController?.title = self._park.parkName
         
-        label.text = self._park.markdown
-        
+        self._scrollView.frame = self.view.bounds
+        self.view.addSubview(self._scrollView);
+        let frame: CGRect = CGRect(x: 0, y: 0, width: self._scrollView.bounds.width, height: self._scrollView.bounds.height - (self.tabBarController?.tabBar.frame.height)! - 48)
+        do {
+            let downView = try DownView(frame: frame, markdownString: self._park.markdown!)
+            self._scrollView.addSubview(downView)
+        } catch {
+            print("Error: DownView")
+        }
     }
 
     override func didReceiveMemoryWarning() {

@@ -14,6 +14,7 @@ PODS:
   - Bolts/AppLinks (1.8.4):
     - Bolts/Tasks
   - Bolts/Tasks (1.8.4)
+  - Down (0.3)
   - EZAlertController (3.2)
   - FacebookCore (0.2.0):
     - Bolts (~> 1.8)
@@ -119,6 +120,7 @@ PODS:
 
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/facebook/AsyncDisplayKit`)
+  - Down
   - EZAlertController (= 3.2)
   - FacebookCore
   - FacebookLogin
@@ -162,6 +164,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AsyncDisplayKit: 4d4403eb61b2b667866e98ca8b7fab6cec497b68
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
+  Down: dea228f55b736ea0a7b96e02dd14b33600ce83a2
   EZAlertController: 633be01320bed47720be54054df47667d61c2481
   FacebookCore: 2cb3f0fbff218e9d3119cec84bae983b232412de
   FacebookLogin: c9d606504735780a9e3002465a615512e0a691a5
@@ -194,6 +197,6 @@ SPEC CHECKSUMS:
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
   TOCropViewController: fe91aaab9e95d72ac38654d1174c8c8339585ee5
 
-PODFILE CHECKSUM: a3d6a4047056b1c06e86c11fa664418d8bc00b3d
+PODFILE CHECKSUM: 4a85d666f72cb027212ce03fedfe248b68995c75
 
 COCOAPODS: 1.2.0.beta.1
