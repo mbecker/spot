@@ -11,7 +11,6 @@ import NVActivityIndicatorView
 import Firebase
 import FirebaseAuth
 import RealmSwift
-import Whisper
 
 class MainNavigationController: UINavigationController, NVActivityIndicatorViewable {
     
@@ -121,10 +120,12 @@ extension MainNavigationController: FormCountriesDelegate {
                     self.stopAnimating()
                     self.showTabBarController(park: park!)
                 } else {
+                    self.stopAnimating()
                     // Error in fecthing park details from firebae; show message
-                    let message = Message(title: "Error loading park", backgroundColor: UIColor(red:0.92, green:0.20, blue:0.29, alpha:1.00))
+                    let murmur = Murmur(title: "Error loading park")
                     // Show and hide a message after delay
-                    show(whisper: message, to: self, action: .show)
+                    Whisper.show(whistle: murmur, action: .show(2.5))
+                    
                 }
             })
         }

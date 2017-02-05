@@ -114,8 +114,8 @@ PODS:
     - PINRemoteImage/Core
   - PMAlertController (2.0.1)
   - SMSegmentView (0.0.2)
+  - SwiftMessages (3.1.4)
   - TOCropViewController (2.0.11)
-  - Whisper (4.0.0)
 
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/facebook/AsyncDisplayKit`)
@@ -136,8 +136,8 @@ DEPENDENCIES:
   - NVActivityIndicatorView
   - PMAlertController
   - SMSegmentView (from `https://github.com/sima-11/SMSegmentView.git`)
+  - SwiftMessages
   - TOCropViewController (~> 2.0)
-  - Whisper
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
@@ -191,9 +191,9 @@ SPEC CHECKSUMS:
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
   PMAlertController: 8f809a67e740bd6ce1bb7d6017c12c94e997f64b
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
+  SwiftMessages: 08386e74abe1b32fa8ac2075edb4043c56db709d
   TOCropViewController: fe91aaab9e95d72ac38654d1174c8c8339585ee5
-  Whisper: 08be92623311f8e53201e62e17f6d7b9599a4714
 
-PODFILE CHECKSUM: 2575071c9daad50bfc17e7683dd2766ccb4f1aac
+PODFILE CHECKSUM: 5a3482b98f21ed14365f90ff1843ae6ccc377cfa
 
 COCOAPODS: 1.2.0.beta.1

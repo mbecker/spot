@@ -279,7 +279,6 @@ extension ListASPagerNode: ASCollectionDataSource {
 extension ListASPagerNode : ParkASCellNodeDelegate {
     func didSelectPark(_ item: ParkItem2) {
         let detailTableViewConroller = DetailASViewController(park: self._park, parkItem: item)
-        detailTableViewConroller.isHeroEnabled = true
         self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
     }
 }
