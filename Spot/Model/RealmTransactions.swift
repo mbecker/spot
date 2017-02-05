@@ -88,6 +88,14 @@ class RealmTransactions {
                         completion(nil)
                     }
                 })
+            } else {
+                // RealmMarkdown object exists in database and was not longer than 2 days
+                if let markdownObject: Markdown = Markdown(realmMarkdown: currentObject){
+                    park.markdown = markdownObject
+                    completion(markdownObject)
+                } else {
+                    completion(nil)
+                }
             }
         } else {
             loadFirebase(firebaseLoaded: { (markdown) in

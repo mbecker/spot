@@ -11,6 +11,7 @@ import NVActivityIndicatorView
 import Firebase
 import FirebaseAuth
 import RealmSwift
+import SwiftMessages
 
 class MainNavigationController: UINavigationController, NVActivityIndicatorViewable {
     
@@ -20,7 +21,10 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIApplication.shared.isStatusBarHidden = true
+        //Status bar style and visibility
+        UIApplication.shared.isStatusBarHidden = false
+        UIApplication.shared.statusBarStyle = .default
+        // Navigationbar
         self.navigationController?.navigationBar.isHidden = true
     }
 
@@ -107,28 +111,39 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
 
 extension MainNavigationController: FormCountriesDelegate {
     func didSelect(country: Country) {
-        let loadingParkIndicator = NVActivityIndicatorView(frame: CGRect(x: self.view.bounds.width / 2 - 44, y: self.view.bounds.height / 2 - 22, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
-        loadingParkIndicator.backgroundColor = UIColor.white
-        self.view.addSubview(loadingParkIndicator)
+        //Status bar style and visibility
+        UIApplication.shared.isStatusBarHidden = true
         
-        self.dismiss(animated: true) {
-            //loadingParkIndicator.startAnimating()
-            self.startAnimating(CGSize(width: self.view.bounds.height, height: 44), message: "Loading Park ...", type: NVActivityIndicatorType.ballPulse, color: UIColor.white, padding: 0.0, displayTimeThreshold: nil, minimumDisplayTime: nil)
-            self.realmTransactions.loadParkFromFirebaseAndSaveToRealm(key: country.key, completion: { (park) in
-                if park != nil {
-                    // loadingParkIndicator.removeFromSuperview()
-                    self.stopAnimating()
-                    self.showTabBarController(park: park!)
-                } else {
-                    self.stopAnimating()
-                    // Error in fecthing park details from firebae; show message
-                    let murmur = Murmur(title: "Error loading park")
-                    // Show and hide a message after delay
-                    Whisper.show(whistle: murmur, action: .show(2.5))
-                    
-                }
-            })
-        }
+        self.startAnimating(CGSize(width: self.view.bounds.height, height: 44), message: "Loading Park ...", type: NVActivityIndicatorType.ballPulse, color: UIColor.white, padding: 0.0, displayTimeThreshold: nil, minimumDisplayTime: nil)
+
+        self.realmTransactions.loadParkFromFirebaseAndSaveToRealm(key: country.key, completion: { (park) in
+            if park != nil {
+                // loadingParkIndicator.removeFromSuperview()
+                self.stopAnimating()
+                //Status bar style and visibility
+                UIApplication.shared.isStatusBarHidden = false
+                self.showTabBarController(park: park!)
+                self.dismiss(animated: false, completion: nil)
+            } else {
+                self.stopAnimating()
+                //Status bar style and visibility
+                UIApplication.shared.isStatusBarHidden = false
+                self.dismiss(animated: false, completion: nil)
+                
+                // Error in fecthing park details from firebae; show message
+                var config = SwiftMessages.Config()
+                // Slide up from the bottom.
+                config.presentationStyle = .bottom
+                let view = MessageView.viewFromNib(layout: .MessageView)
+                view.titleLabel?.text = "Error loading park"
+                view.bodyLabel?.removeFromSuperview()
+                view.button?.removeFromSuperview()
+                view.iconImageView?.removeFromSuperview()
+                view.iconLabel?.removeFromSuperview()
+                view.backgroundColor = UIColor.white
+                SwiftMessages.show(config: config, view: view)
+            }
+        })
         
     }
 }

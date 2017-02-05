@@ -96,7 +96,9 @@ class ParkASCellNode: ASCellNode {
                 
             }
             
-        })
+        }) { (error) in
+            print(error.localizedDescription)
+        }
         
         self.ref.child("park").child(self.park.key).child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
             // ParkItem2 is updated; reload item in table array

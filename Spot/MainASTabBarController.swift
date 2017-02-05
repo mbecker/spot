@@ -154,7 +154,7 @@ class MainASTabBarController: UITabBarController {
                 // ToDo: Get park string key from photo / camera tags
                 let parkKey         = "addo"
                 let parkFullName    = "Addo National Elephant Park"
-                let itemType        = "animals"
+                let itemType        = "community"
                 
                 // Key for firebase push
                 let itemKey = ref.child("items/\(parkKey)/\(itemType)").childByAutoId().key
@@ -198,7 +198,7 @@ class MainASTabBarController: UITabBarController {
                             "Elephant": "Elephant"
                         ],
                         "images": [
-                            "public": "https://storage.cloud.google.com/safaridigitalapp.appspot.com/animals/\(itemKey).jpg"
+                            "public": "https://storage.cloud.google.com/safaridigitalapp.appspot.com/\(itemType)/\(itemKey).jpg"
                         ]
                     ] as [String : Any]
                     
@@ -219,7 +219,7 @@ class MainASTabBarController: UITabBarController {
                             let queueData = [
                                 queueKey:
                                     [
-                                        "ref": "/items/\(parkKey)/animals/\(itemKey)/images"
+                                        "ref": "/items/\(parkKey)/\(itemType)/\(itemKey)/images"
                                 ]
                             ]
                             queueRef.setValue(queueData) { (error, ref) -> Void in

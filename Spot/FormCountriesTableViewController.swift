@@ -17,7 +17,8 @@ class FormCountriesTableViewController: UITableViewController {
     let NO_PARKS_FOUND = "No Parks found ..."
     let LOADING_COUNTRIES = "Loading countries ..."
     
-    var showNoParksFound = false
+    var initialLoad = true
+    var showNoParksFound = true
     var showGPSfetching = true
     var showGPSError = false
     
@@ -29,24 +30,37 @@ class FormCountriesTableViewController: UITableViewController {
     var formCountriesDelegate: FormCountriesDelegate?
     
     func filterContentForSearchText(searchText: String, scope: String = "All") {
+        filteredCountries.removeAll()
         filteredCountries = parksAll.filter { park in
-            let stringToSearchIn: String
+            var stringToSearchIn: String
             if let detail: String = park.detail {
-                stringToSearchIn = park.country + park.name + detail + park.code
+                stringToSearchIn = park.country + " " + park.name + " " + detail + " " + park.code
             } else {
-                stringToSearchIn = park.country + park.name + park.code
+                stringToSearchIn = park.country + " " + park.name + " " + park.code
             }
+            stringToSearchIn = park.name
+            // return stringToSearchIn.lowercased().contains(searchText.lowercased())
             
-            return stringToSearchIn.lowercased().contains(searchText.lowercased())
+            print(stringToSearchIn.lowercased())
+            print(searchText.lowercased())
+            print(park.name)
+            if stringToSearchIn.lowercased().range(of:searchText.lowercased()) != nil {
+                return true
+            }
+            return false
         }
-        if filteredCountries.count == 0 {
+        if filteredCountries.count == 0 && !initialLoad {
             showNoParksFound = true
+            tableView.reloadData()
         } else {
+            
             showNoParksFound = false
         }
-        if searchText.characters.count > 0 {
+        if filteredCountries.count > 0 {
+            initialLoad = false
             tableView.reloadData()
         }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -120,6 +134,9 @@ class FormCountriesTableViewController: UITableViewController {
             return parksClose.count
         default:
             if searchController.isActive && searchController.searchBar.text != "" {
+                if filteredCountries.count == 0 {
+                    return 1
+                }
                 return filteredCountries.count
             }
             if parksAll.count == 0 {
@@ -173,7 +190,7 @@ class FormCountriesTableViewController: UITableViewController {
                         cell.selectionStyle = .none
                         cell.textLabel!.text = NO_PARKS_FOUND
                     } else {
-                        cell.textLabel!.text = parksAll[indexPath.row].name + ", " + parksAll[indexPath.row].country
+                        cell.textLabel!.text = filteredCountries[indexPath.row].name + ", " + filteredCountries[indexPath.row].country
                     }
                 } else {
                     cell.textLabel!.text = parksAll[indexPath.row].name + ", " + parksAll[indexPath.row].country
@@ -192,6 +209,8 @@ class FormCountriesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.searchController.isActive = false
+        tableView.becomeFirstResponder()
         switch indexPath.section {
         case 0:
             self.formCountriesDelegate?.didSelect(country: parksClose[indexPath.row])

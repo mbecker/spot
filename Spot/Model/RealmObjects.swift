@@ -44,6 +44,8 @@ class RealmParkSection: Object {
             return ItemType.animals
         } else if self.type == ItemType.attractions.rawValue {
             return ItemType.attractions
+        } else if self.type == ItemType.community.rawValue {
+            return ItemType.community
         }
         return ItemType.item
     }

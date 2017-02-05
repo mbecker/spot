@@ -32,10 +32,14 @@ class UserSettingsASViewController: ASViewController<ASDisplayNode> {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        //Status bar style and visibility
+        UIApplication.shared.isStatusBarHidden = false
+        UIApplication.shared.statusBarStyle = .default
+        // Navigationbar
         self.navigationController?.navigationBar.isHidden = false
         
         // Hide navigationBar hairline at the bottom
-        
         self.navigationController!.navigationBar.topItem?.title = "Profile"
         self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
         

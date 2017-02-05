@@ -121,7 +121,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         
         //Status bar style and visibility
         UIApplication.shared.isStatusBarHidden = false
-        UIApplication.shared.statusBarStyle = .lightContent
+        UIApplication.shared.statusBarStyle = .default
         
         //Change status bar color
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView

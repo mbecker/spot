@@ -124,6 +124,13 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        //Status bar style and visibility
+        UIApplication.shared.isStatusBarHidden = false
+        UIApplication.shared.statusBarStyle = .default
+        // Navigationbar
+        self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.navigationBar.backgroundColor = UIColor.white
+        
         // Hide navigationBar hairline at the bottom
         if shadowImageView == nil {
             shadowImageView = findShadowImage(under: navigationController!.navigationBar)
@@ -186,17 +193,19 @@ extension ListASPagerNode: ChangePage {
     
     func changePage(tab: Int, showSelectedPage: Bool){
         self.showSelectedPage = showSelectedPage
-        switch tab {
-        case 0:
-            self.selectedPage = 0
-            self._segmentView.selectedSegmentIndex = 0
-        case 1:
-            self.selectedPage = 1
-            self._segmentView.selectedSegmentIndex = 1
-        default:
-            self.selectedPage = 0
-            self._segmentView.selectedSegmentIndex = 0
-        }
+        self.selectedPage = tab
+        self._segmentView.selectedSegmentIndex = tab
+//        switch tab {
+//        case 0:
+//            self.selectedPage = 0
+//            self._segmentView.selectedSegmentIndex = 0
+//        case 1:
+//            self.selectedPage = 1
+//            self._segmentView.selectedSegmentIndex = 1
+//        default:
+//            self.selectedPage = 0
+//            self._segmentView.selectedSegmentIndex = 0
+//        }
     }
     
 }
@@ -209,27 +218,27 @@ extension ListASPagerNode: ASPagerDelegate {
     // Called at: User drags scrollview; scrollview anomation ends
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let scrollViewContentOffsetX = scrollView.contentOffset.x
-        let pageWidth = self.view.bounds.width * 0.5
-        if scrollViewContentOffsetX > pageWidth {
-            self.selectedPage = 1
-            self._segmentView.selectedSegmentIndex = 1
-        } else {
-            self.selectedPage = 0
-            self._segmentView.selectedSegmentIndex = 0
-        }
+        let pageIndex: Int = Int(scrollViewContentOffsetX) / Int(self.view.bounds.width)
+        self.selectedPage = pageIndex
+        self._segmentView.selectedSegmentIndex = pageIndex
     }
+    
     // Called at: self._pagerNode.scrollToPage(at: selectedPage, animated: true)
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         // self.isScrolling = false
         let scrollViewContentOffsetX = scrollView.contentOffset.x
-        let pageWidth = self.view.bounds.width - 1
-        if scrollViewContentOffsetX > pageWidth {
-            self.selectedPage = 1
-            self._segmentView.selectedSegmentIndex = 1
-        } else {
-            self.selectedPage = 0
-            self._segmentView.selectedSegmentIndex = 0
-        }
+//        let pageWidth = self.view.bounds.width - 1
+//        if scrollViewContentOffsetX > pageWidth {
+//            self.selectedPage = 1
+//            self._segmentView.selectedSegmentIndex = 1
+//        } else {
+//            self.selectedPage = 0
+//            self._segmentView.selectedSegmentIndex = 0
+//        }
+        
+        let pageIndex: Int = Int(scrollViewContentOffsetX) / Int(self.view.bounds.width)
+        self.selectedPage = pageIndex
+        self._segmentView.selectedSegmentIndex = pageIndex
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print(scrollView.contentOffset.x)

@@ -40,6 +40,7 @@ enum Databasepaths: String {
 }
 
 enum ItemType: String {
+    case community = "community"
     case ad     = "ad"
     case item   = "item"
     case animals = "animals"
