@@ -12,6 +12,14 @@
 		68F7505CAD00059C815E1A07 /* Pods_SpotUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7932AC7FAB0E4D4A016EF0BF /* Pods_SpotUITests.framework */; };
 		D1079F061DD2A637007CCE07 /* KingfisherCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1079F051DD2A637007CCE07 /* KingfisherCache.swift */; };
 		D1079F091DD2A754007CCE07 /* ActivityIndicatorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1079F081DD2A754007CCE07 /* ActivityIndicatorNode.swift */; };
+		D10A1FAE1E45D22000E2B7AA /* RealmObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FAD1E45D22000E2B7AA /* RealmObjects.swift */; };
+		D10A1FB11E45D8C500E2B7AA /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FAF1E45D8C500E2B7AA /* Realm.framework */; };
+		D10A1FB21E45D8C500E2B7AA /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FAF1E45D8C500E2B7AA /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D10A1FB31E45D8C500E2B7AA /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */; };
+		D10A1FB41E45D8C500E2B7AA /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D10A1FB61E45E17100E2B7AA /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FB51E45E17100E2B7AA /* MainNavigationController.swift */; };
+		D10A1FCD1E476EE100E2B7AA /* RealmTransactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCC1E476EE100E2B7AA /* RealmTransactions.swift */; };
+		D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */; };
 		D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */; };
 		D12D64F51DEF44CA0096A847 /* ParkTableHeaderUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */; };
 		D12D64F71DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */; };
@@ -27,8 +35,6 @@
 		D181BED91DF9DA0600112CEB /* ListItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D181BED81DF9DA0600112CEB /* ListItemASCellNode.swift */; };
 		D181BEDB1DF9F46A00112CEB /* 2016-12-08_2.json in Resources */ = {isa = PBXBuildFile; fileRef = D181BEDA1DF9F46A00112CEB /* 2016-12-08_2.json */; };
 		D18DB6C41E37E60A00D536BC /* UserSettingsASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */; };
-		D1A1E5A51E4254CE004F463D /* ParkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A1E5A31E4254CE004F463D /* ParkDetailViewController.swift */; };
-		D1A1E5A61E4254CE004F463D /* ParkDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D1A1E5A41E4254CE004F463D /* ParkDetailViewController.xib */; };
 		D1A3E9621E314BB600E0C591 /* ImagePickerCropper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
 		D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */; };
@@ -39,9 +45,9 @@
 		D1AFD8841DCF8D6B0082A6EF /* ParkASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */; };
 		D1C10B0C1E03EA70000CF2C7 /* CountryASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */; };
 		D1C10B0E1E041B48000CF2C7 /* SeparatorASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */; };
-		D1C3003B1DFDA742004CCDE5 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C3003A1DFDA742004CCDE5 /* MainViewController.swift */; };
 		D1C757981DF0580F0029E882 /* DetailASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C757971DF0580F0029E882 /* DetailASViewController.swift */; };
 		D1C7579A1DF05D4E0029E882 /* DetailTableHeaderUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C757991DF05D4E0029E882 /* DetailTableHeaderUIView.swift */; };
+		D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C83AB71E452EE0002030A5 /* FormCountriesTableViewController.swift */; };
 		D1C9438F1DFB19600008C38F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C9438E1DFB19600008C38F /* LoginViewController.swift */; };
 		D1C9439C1DFB1EFB0008C38F /* login1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C943911DFB1EFB0008C38F /* login1.jpg */; };
 		D1C9439D1DFB1EFB0008C38F /* login1@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C943921DFB1EFB0008C38F /* login1@2x.jpg */; };
@@ -332,7 +338,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D10A1FB21E45D8C500E2B7AA /* Realm.framework in Embed Frameworks */,
 				D1FB21E61DF1867B0023F0F2 /* Mapbox.framework in Embed Frameworks */,
+				D10A1FB41E45D8C500E2B7AA /* RealmSwift.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -351,6 +359,12 @@
 		B47C30E572AAB91468E4563A /* Pods-Spot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Spot/Pods-Spot.debug.xcconfig"; sourceTree = "<group>"; };
 		D1079F051DD2A637007CCE07 /* KingfisherCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherCache.swift; sourceTree = "<group>"; };
 		D1079F081DD2A754007CCE07 /* ActivityIndicatorNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorNode.swift; sourceTree = "<group>"; };
+		D10A1FAD1E45D22000E2B7AA /* RealmObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmObjects.swift; sourceTree = "<group>"; };
+		D10A1FAF1E45D8C500E2B7AA /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
+		D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
+		D10A1FB51E45E17100E2B7AA /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
+		D10A1FCC1E476EE100E2B7AA /* RealmTransactions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmTransactions.swift; sourceTree = "<group>"; };
+		D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkDetailViewController.swift; sourceTree = "<group>"; };
 		D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemASCellNode.swift; sourceTree = "<group>"; };
 		D10A7F7E1DD282C100741BF0 /* Spot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spot.entitlements; sourceTree = "<group>"; };
 		D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkTableHeaderUIView.swift; sourceTree = "<group>"; };
@@ -367,8 +381,6 @@
 		D181BED81DF9DA0600112CEB /* ListItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListItemASCellNode.swift; sourceTree = "<group>"; };
 		D181BEDA1DF9F46A00112CEB /* 2016-12-08_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "2016-12-08_2.json"; sourceTree = "<group>"; };
 		D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSettingsASViewController.swift; sourceTree = "<group>"; };
-		D1A1E5A31E4254CE004F463D /* ParkDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkDetailViewController.swift; sourceTree = "<group>"; };
-		D1A1E5A41E4254CE004F463D /* ParkDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ParkDetailViewController.xib; sourceTree = "<group>"; };
 		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerCropper.swift; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -385,9 +397,9 @@
 		D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkASViewController.swift; sourceTree = "<group>"; };
 		D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryASCellNode.swift; sourceTree = "<group>"; };
 		D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeparatorASCellNode.swift; sourceTree = "<group>"; };
-		D1C3003A1DFDA742004CCDE5 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D1C757971DF0580F0029E882 /* DetailASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailASViewController.swift; sourceTree = "<group>"; };
 		D1C757991DF05D4E0029E882 /* DetailTableHeaderUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailTableHeaderUIView.swift; sourceTree = "<group>"; };
+		D1C83AB71E452EE0002030A5 /* FormCountriesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormCountriesTableViewController.swift; sourceTree = "<group>"; };
 		D1C9438E1DFB19600008C38F /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D1C943911DFB1EFB0008C38F /* login1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = login1.jpg; sourceTree = "<group>"; };
 		D1C943921DFB1EFB0008C38F /* login1@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "login1@2x.jpg"; sourceTree = "<group>"; };
@@ -658,7 +670,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D10A1FB11E45D8C500E2B7AA /* Realm.framework in Frameworks */,
 				3FC6BFE43A7EFEA4EDDFBB53 /* Pods_Spot.framework in Frameworks */,
+				D10A1FB31E45D8C500E2B7AA /* RealmSwift.framework in Frameworks */,
 				D1FB21E51DF1867B0023F0F2 /* Mapbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -713,8 +727,8 @@
 				D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */,
 				D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */,
 				D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */,
-				D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */,
 				D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */,
+				D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */,
 			);
 			path = Park;
 			sourceTree = "<group>";
@@ -725,6 +739,8 @@
 				D1FB21EF1DF2B9FF0023F0F2 /* Data */,
 				D1079F051DD2A637007CCE07 /* KingfisherCache.swift */,
 				D14D8D361DD25945009AC39B /* Park.swift */,
+				D10A1FAD1E45D22000E2B7AA /* RealmObjects.swift */,
+				D10A1FCC1E476EE100E2B7AA /* RealmTransactions.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -744,7 +760,6 @@
 			children = (
 				D176F8151E3FD54000F34F41 /* CameraSpotViewController.swift */,
 			);
-			name = Camera;
 			path = Camera;
 			sourceTree = "<group>";
 		};
@@ -768,6 +783,8 @@
 		D1AFD8441DCF8B4C0082A6EF = {
 			isa = PBXGroup;
 			children = (
+				D10A1FAF1E45D8C500E2B7AA /* Realm.framework */,
+				D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */,
 				D181BED51DF9A89800112CEB /* Backup */,
 				DDA65F846428B1631ABE11B3 /* Frameworks */,
 				460F9C23519C54D102A8F871 /* Pods */,
@@ -792,6 +809,7 @@
 		D1AFD84F1DCF8B4C0082A6EF /* Spot */ = {
 			isa = PBXGroup;
 			children = (
+				D1C83AB61E452EBD002030A5 /* Forms */,
 				D176F8121E3FD4DF00F34F41 /* Camera */,
 				D1C757941DF00B0E0029E882 /* Detail */,
 				D1AFD8851DCF90A90082A6EF /* Extension */,
@@ -807,9 +825,9 @@
 				D1AFD85F1DCF8B4C0082A6EF /* Info.plist */,
 				D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */,
 				D15405A91DF8745600EAE971 /* MainASTabBarController.swift */,
-				D1C3003A1DFDA742004CCDE5 /* MainViewController.swift */,
 				D10A7F7E1DD282C100741BF0 /* Spot.entitlements */,
 				D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */,
+				D10A1FB51E45E17100E2B7AA /* MainNavigationController.swift */,
 			);
 			path = Spot;
 			sourceTree = "<group>";
@@ -850,11 +868,18 @@
 				D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */,
 				D1C757971DF0580F0029E882 /* DetailASViewController.swift */,
 				D1C757991DF05D4E0029E882 /* DetailTableHeaderUIView.swift */,
-				D1A1E5A31E4254CE004F463D /* ParkDetailViewController.swift */,
-				D1A1E5A41E4254CE004F463D /* ParkDetailViewController.xib */,
 				D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */,
+				D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */,
 			);
 			path = Detail;
+			sourceTree = "<group>";
+		};
+		D1C83AB61E452EBD002030A5 /* Forms */ = {
+			isa = PBXGroup;
+			children = (
+				D1C83AB71E452EE0002030A5 /* FormCountriesTableViewController.swift */,
+			);
+			name = Forms;
 			sourceTree = "<group>";
 		};
 		D1C9438D1DFB18090008C38F /* Login */ = {
@@ -1357,7 +1382,6 @@
 				D1FB27DB1DF400CC0023F0F2 /* np.png in Resources */,
 				D1FB279E1DF400CB0023F0F2 /* hn.png in Resources */,
 				D1FB22321DF2BB050023F0F2 /* butterfly-with-a-heart-on-frontal-wing-on-side-view.png in Resources */,
-				D1A1E5A61E4254CE004F463D /* ParkDetailViewController.xib in Resources */,
 				D181BEDB1DF9F46A00112CEB /* 2016-12-08_2.json in Resources */,
 				D1FB223E1DF2BB050023F0F2 /* goat.png in Resources */,
 				D1FB27C11DF400CC0023F0F2 /* lv.png in Resources */,
@@ -1681,7 +1705,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"";
+			shellScript = "bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"\nbash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework/strip-frameworks.sh\"";
 		};
 		DF619D5D541C620C3BA9CF27 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1754,15 +1778,18 @@
 				D1AFD8841DCF8D6B0082A6EF /* ParkASViewController.swift in Sources */,
 				D1D7813D1DD3AA390024B2A9 /* UIViewExtension.swift in Sources */,
 				D176F8161E3FD54000F34F41 /* CameraSpotViewController.swift in Sources */,
+				D10A1FCD1E476EE100E2B7AA /* RealmTransactions.swift in Sources */,
 				D12D64F51DEF44CA0096A847 /* ParkTableHeaderUIView.swift in Sources */,
 				D1A3E9621E314BB600E0C591 /* ImagePickerCropper.swift in Sources */,
-				D1C3003B1DFDA742004CCDE5 /* MainViewController.swift in Sources */,
 				D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */,
 				D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */,
 				D1E4E64C1E0977D90084A229 /* UIImage.swift in Sources */,
+				D10A1FB61E45E17100E2B7AA /* MainNavigationController.swift in Sources */,
+				D10A1FAE1E45D22000E2B7AA /* RealmObjects.swift in Sources */,
+				D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */,
+				D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */,
 				D1C7579A1DF05D4E0029E882 /* DetailTableHeaderUIView.swift in Sources */,
 				D1FB21EE1DF2B95D0023F0F2 /* AssetManager.swift in Sources */,
-				D1A1E5A51E4254CE004F463D /* ParkDetailViewController.swift in Sources */,
 				D1079F061DD2A637007CCE07 /* KingfisherCache.swift in Sources */,
 				D15405A61DF8054200EAE971 /* ListASPagerNode.swift in Sources */,
 				D1C757981DF0580F0029E882 /* DetailASViewController.swift in Sources */,

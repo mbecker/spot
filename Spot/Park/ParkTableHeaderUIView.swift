@@ -15,19 +15,22 @@ class ParkTableHeaderUIView: UIView {
     var delegate: SelectParkDelegate?
     var delegateMap: SelectParkMapDelegate?
     var parkTitleView: ParkTableHeaderTitleUIView
+    var mapView: ParkTableHeaderMapUIImageView?
 
     init(park: Park) {
-        self.parkTitleView = ParkTableHeaderTitleUIView(parkName: park.parkName, frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82))
-        super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82 + 82 + 82 + 82))
+        self.parkTitleView = ParkTableHeaderTitleUIView(parkName: park.name, frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82))
+        super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 328))
+        
+        
         backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
         self.parkTitleView.delegate = self
         addSubview(self.parkTitleView)
         
         //addTitleView(parkName: park.name)
         // addMapView()
-        let mapView = ParkTableHeaderMapUIImageView.init(park: park, frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: self.bounds.height - 82 - 20 - 20))
-        mapView.delegate = self
-        addSubview(mapView)
+        self.mapView = ParkTableHeaderMapUIImageView.init(park: park, frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: self.bounds.height - 122))
+        self.mapView?.delegate = self
+        addSubview(self.mapView!)
         
     }
     

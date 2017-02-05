@@ -7,7 +7,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Take photos of your spots.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
+	<false/>
 	<key>MGLMapboxAccessToken</key>
 	<string>pk.eyJ1IjoibWJlY2tlciIsImEiOiJjaWt2MDZxbDkwMDFzd3ptNXF3djVhYW42In0.9Lavn2fn_0tg-QVrPhwEzA</string>
 	<key>UIStatusBarHidden</key>

@@ -40,8 +40,8 @@ class ParkASCellNode: ASCellNode {
     
     init(park: Park, section: Int, type: ItemType) {
         self.parkSection    = park.sections[section]
-        self.park       = park
-        self.type   = type
+        self.park           = park
+        self.type           = type
         self.ref            = FIRDatabase.database().reference()
         self.storage        = FIRStorage.storage()
         
@@ -82,7 +82,7 @@ class ParkASCellNode: ASCellNode {
         /**
          * FIREBASE
          */
-        self.ref.child(self.parkSection.path).queryOrdered(byChild: "timestamp").queryLimited(toLast: 20).observe(.childAdded, with: { (snapshot) -> Void in
+        self.ref.child("park").child(self.park.key).child(self.parkSection.path).queryOrdered(byChild: "timestamp").queryLimited(toLast: 20).observe(.childAdded, with: { (snapshot) -> Void in
             
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
             if let item2: ParkItem2 = ParkItem2(snapshot: snapshot, type: self.type, park: self.park), self.items2.contains(where: {$0.key == item2.key}) == false {
@@ -98,7 +98,7 @@ class ParkASCellNode: ASCellNode {
             
         })
         
-        self.ref.child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
+        self.ref.child("park").child(self.park.key).child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
             // ParkItem2 is updated; reload item in table array
             for i in 0...self.items2.count-1 {
                 if self.items2[i].key == snapshot.key, let item = ParkItem2(snapshot: snapshot, type: self.type, park: self.park) {

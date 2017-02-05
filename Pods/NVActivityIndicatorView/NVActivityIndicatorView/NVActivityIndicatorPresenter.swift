@@ -116,6 +116,9 @@ public class NVActivityIndicatorPresenter {
     // MARK: - Helpers
     
     private func show(with activityData: ActivityData) {
+        
+        UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
+        
         let activityContainer: UIView = UIView(frame: UIScreen.main.bounds)
         
         activityContainer.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
@@ -134,7 +137,7 @@ public class NVActivityIndicatorPresenter {
         
         let width = activityContainer.frame.size.width / 3
         if let message = activityData.message , !message.isEmpty {
-            let label = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: 30))
+            let label = UILabel(frame: CGRect(x: 0, y: 0, width: activityContainer.frame.size.width, height: 30))
             label.center = CGPoint(
                 x: activityIndicatorView.center.x,
                 y: activityIndicatorView.center.y + actualSize.height)
@@ -154,6 +157,7 @@ public class NVActivityIndicatorPresenter {
             where item.restorationIdentifier == restorationIdentifier {
                 item.removeFromSuperview()
         }
+        UIApplication.shared.statusBarStyle = UIStatusBarStyle.lightContent
         showTimer?.invalidate()
         showTimer = nil
     }

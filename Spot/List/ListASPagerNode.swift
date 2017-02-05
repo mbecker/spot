@@ -11,7 +11,6 @@ import AsyncDisplayKit
 import Firebase
 import FirebaseDatabase
 import SMSegmentView
-import Hero
 
 protocol ChangePage {
     func changePage(tab: Int, showSelectedPage: Bool)
@@ -71,10 +70,15 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         
         self._segmentView = SMSegmentView(frame: CGRect.zero, dividerColour: UIColor.clear, dividerWidth: 1.0, segmentAppearance: appearance)
         
-        for parkSection in self._park.sections {
-            self._segmentView.addSegmentWithTitle(parkSection.name, onSelectionImage: nil, offSelectionImage: nil)
+        if let parkSections: [ParkSection] = self._park.sections {
+            for parkSection in parkSections {
+                self._segmentView.addSegmentWithTitle(parkSection.name, onSelectionImage: nil, offSelectionImage: nil)
+            }
+        } else {
+            // park.sections is nil
+            // ToDo: Show Error page
         }
-
+        
         super.init(node: ASPagerNode.init())
         
         self._segmentView.selectedSegmentIndex   = 0

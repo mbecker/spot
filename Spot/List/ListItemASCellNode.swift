@@ -9,7 +9,6 @@
 import UIKit
 import AsyncDisplayKit
 import FirebaseStorage
-import Hero
 
 class ListItemASCellNode: ASCellNode {
     

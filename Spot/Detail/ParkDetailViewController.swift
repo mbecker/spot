@@ -7,18 +7,17 @@
 //
 
 import UIKit
-import Firebase
-import FirebaseDatabase
 import Down
+import Kingfisher
+import NVActivityIndicatorView
 
 class ParkDetailViewController: UIViewController {
     
     private var shadowImageView: UIImageView?
-    let _scrollView = UIScrollView()
-    let _park:          Park
-    let _ref = FIRDatabaseReference()
     
-    @IBOutlet var label: UILabel!
+    let _park: Park
+    
+    var loadingIndicatorView: NVActivityIndicatorView?
     
     init(park: Park){
         self._park = park
@@ -46,16 +45,9 @@ class ParkDetailViewController: UIViewController {
         self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
         self.navigationController?.navigationItem.backBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
         self.navigationController?.navigationItem.leftBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
-
+        
         self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
         
-    }
-    
-    func changeStatusbarColor(color: UIColor){
-        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        if statusBar.responds(to: #selector(setter: UIView.backgroundColor)) {
-            statusBar.backgroundColor = color
-        }
     }
     
     private func findShadowImage(under view: UIView) -> UIImageView? {
@@ -70,37 +62,54 @@ class ParkDetailViewController: UIViewController {
         }
         return nil
     }
-
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.visibleViewController?.title = self._park.parkName
         
-        self._scrollView.frame = self.view.bounds
-        self.view.addSubview(self._scrollView);
-        let frame: CGRect = CGRect(x: 0, y: 0, width: self._scrollView.bounds.width, height: self._scrollView.bounds.height - (self.tabBarController?.tabBar.frame.height)! - 48)
+        self.navigationController?.visibleViewController?.title = self._park.name
+        self.view.backgroundColor = UIColor.white
+        
+        self.loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: self.view.bounds.width / 2 - 44, y: self.view.bounds.height / 2 - 22 - self.navigationController!.navigationBar.bounds.height, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
+        
+        self.loadingIndicatorView!.startAnimating()
+        self.view.addSubview(self.loadingIndicatorView!)
+        
+        /**
+         * Markdown
+         */
+        if let markdown: String = self._park.markdown?.markdown {
+            showMarkdown(markdown: markdown)
+        } else {
+            let realmTransactions = RealmTransactions()
+            realmTransactions.loadMarkdownFromFirebaseAndSaveToRealm(park: self._park, completion: { (result) in
+                if let markdown: String = result?.markdown {
+                    self.showMarkdown(markdown: markdown)
+                }
+            })
+        }
+    }
+    
+    func showMarkdown(markdown: String){
         do {
-            let downView = try DownView(frame: frame, markdownString: self._park.markdown!)
-            self._scrollView.addSubview(downView)
+            let downViewFrame: CGRect = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height)
+            let downView = try DownView(frame: downViewFrame, markdownString: markdown)
+            downView.delegate = self
+            self.view.addSubview(downView)
         } catch {
             print("Error: DownView")
         }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
+}
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+extension ParkDetailViewController: DownViewProtocol {
+    func didFinish(){
+        self.loadingIndicatorView?.removeFromSuperview()
     }
-    */
-
 }

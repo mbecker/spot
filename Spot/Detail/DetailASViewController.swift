@@ -73,11 +73,8 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         if let image: UIImage = self._tableHeader?.getFirstImage() {
             self._tableHeader?._slideShow.pauseTimerIfNeeded()
             
-            var text: NSString = NSString(string: "Spotted \(self._parkItem.name)")
-            if let parkName = self._parkItem.park.parkName {
-                text = NSString(string: "Spotted \(self._parkItem.name) at \(parkName)")
-            }
-            let url = getSafariDigitalSpotURL(park: self._park.park, type: self._parkItem.type.rawValue, key: self._parkItem.key)
+            var text: NSString = NSString(string: "Spotted \(self._parkItem.name) at \(self._park.name)")
+            let url = getSafariDigitalSpotURL(park: self._park.key, type: self._parkItem.type.rawValue, key: self._parkItem.key)
             let size = image.size
             var map: UIImage = UIImage()
             
@@ -274,31 +271,28 @@ extension DetailASViewController : ASTableDataSource {
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
         let row = indexPath.row
         var node: ASCellNode
-        if row == 0 {
-            node =  CountryASCellNode(parkItem: self._parkItem)
-        } else {
-            node = ASCellNode { () -> UIView in
-                
-                switch row {
-                case 0:
-                    return CountryNode.init(_parkItem: self._parkItem)
-                case 1:
-                    return TagsNode.init(parkItem: self._parkItem)
-                case 2:
-                    return SpottedByNode.init(parkItem: self._parkItem)
-                case 3:
-                    return self._mapNode
-                default:
-                    let view = UIView()
-                    view.backgroundColor = UIColor.white
-                    return view
-                }
-                
+        
+        switch row {
+        case 0:
+            node = CountryASCellNode(park: self._park)
+        case 1:
+            node = ASCellNode{ () -> UIView in
+                    return TagsNode(parkItem: self._parkItem)
             }
+        case 2:
+            node = ASCellNode{ () -> UIView in
+                return SpottedByNode(parkItem: self._parkItem)
+            }
+        case 3:
+            node = ASCellNode{ () -> UIView in
+                return self._mapNode
+            }
+        default:
+            let textCellNode = ASTextCellNode()
+            textCellNode.text = "Not found"
+            return textCellNode
         }
-        
-        
-
+    
         node.selectionStyle = .default
         node.backgroundColor = UIColor.white
         
@@ -307,9 +301,6 @@ extension DetailASViewController : ASTableDataSource {
         } else {
             node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 86)
         }
-        
-//        let node = CountryASCellNode(parkItem: self._parkItem)
-//        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 86)
         
         return node
     }
@@ -324,69 +315,6 @@ extension DetailASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at: \(indexPath)")
-    }
-}
-
-class CountryNode: UIView {
-    init(_parkItem: ParkItem2) {
-        super.init(frame: CGRect.zero)
-        backgroundColor = UIColor.white
-        let height: CGFloat = 19.09375 + 4 + 14.3203125
-        let view = UIView(frame: CGRect(x: 20, y: 86 / 2 - height / 2, width: UIScreen.main.bounds.width - 20 - 32 - 20, height: height))
-        addSubview(view)
-        
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 19.09375))
-        label.attributedText = NSAttributedString(
-            string: _parkItem.park.parkName,
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular),
-                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.6,
-                ])
-        
-        view.addSubview(label)
-        
-        let info = UILabel(frame: CGRect(x: 0, y: label.bounds.height + 4, width: view.bounds.width, height: 14.3203125))
-        if _parkItem.park.country != nil {
-            info.attributedText = NSAttributedString(
-                string: (_parkItem.park.country ?? "").isEmpty ? "No country defined" : _parkItem.park.country!,
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
-                    NSForegroundColorAttributeName: UIColor(red:0.28, green:0.28, blue:0.28, alpha:1.00), // Charcoal
-                    NSBackgroundColorAttributeName: UIColor.clear,
-                    NSKernAttributeName: 0.6,
-                    ])
-        }
-        view.addSubview(info)
-        
-        /**
-         * Images for country and park
-         */
-        if _parkItem.park.countryIcon != nil {
-            let countryIconView = UIImageView(frame: CGRect(x: UIScreen.main.bounds.width - 20 - 32 - 16, y: 86 / 2 - 32 / 2, width: 32, height: 32))
-            countryIconView.image = _parkItem.park.countryIcon
-            countryIconView.layer.cornerRadius = 16
-            countryIconView.clipsToBounds = true
-            addSubview(countryIconView)
-        }
-        
-        if _parkItem.park.parkIcon != nil {
-            let parkLogo = UIImageView(frame: CGRect(x: UIScreen.main.bounds.width - 20 - 32, y: 86 / 2 - 32 / 2, width: 32, height: 32))
-            parkLogo.image = _parkItem.park.parkIcon
-            parkLogo.layer.cornerRadius = 16
-            parkLogo.clipsToBounds = true
-            addSubview(parkLogo)
-        }
-        
-        let borderBottomView = UIView(frame: CGRect(x: 20, y: 85, width: UIScreen.main.bounds.width - 40, height: 1))
-        borderBottomView.backgroundColor = UIColor(red:0.92, green:0.92, blue:0.92, alpha:1.00) // Lilly White
-        addSubview(borderBottomView)
-        
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

@@ -18,13 +18,13 @@ func getSafariDigitalSpotURL(park: String, type: String, key: String) -> NSURL {
 let CONFIGITEMS = [
     configItem.showConfig,
     configItem.shownavbar,
-    configItem.add100Entries
+    configItem.showWhiteHeader
 ]
 
 enum configItem: String {
     case showConfig     = "Show Config"
     case shownavbar     = "Show Navigationbar"
-    case add100Entries  = "Add 100 Entries"
+    case showWhiteHeader  = "Show White Header"
 }
 
 enum UserDefaultTypes: String {
@@ -40,8 +40,10 @@ enum Databasepaths: String {
 }
 
 enum ItemType: String {
-    case attractions    = "attractions"
-    case animals        = "animals"
+    case ad     = "ad"
+    case item   = "item"
+    case animals = "animals"
+    case attractions = "attractions"
 }
 
 class User {
@@ -137,197 +139,6 @@ class User {
     
 }
 
-class Park {
-    let ref         :   FIRDatabaseReference
-    let park        :   String!
-    var parkName        :   String!
-    let path        :   String!
-    let sections    :   [ParkSection]!
-    var country     :   String?
-    var countryIcon :   UIImage?
-    var parkIcon    :   UIImage?
-    var mapImage    :   String?
-    var info        :   String?
-    var markdown    :   String?
-    
-    init(park: String, parkName: String, sections: [ParkSection]) {
-        self.ref        = FIRDatabase.database().reference()
-        self.park       = park
-        self.parkName   = parkName
-        self.path       = "parkinfo/\(park)"
-        self.sections   = sections
-        
-        self.ref.child("parkinfo").child(park).observeSingleEvent(of: .value, with: { (snapshot) in
-            let value = snapshot.value as? NSDictionary
-            self.country            =   value?["country"]       as? String ?? nil
-            self.mapImage           =   value?["mapimage"]      as? String ?? nil
-            self.parkName           =   value?["name"]          as? String ?? nil
-            self.info               =   value?["info"]          as? String ?? nil
-            self.markdown           =   value?["markdown"]      as? String ?? nil
-            
-            if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
-                self.countryIcon    =   AssetManager.getImage(countryIconName)
-            } else {
-                self.countryIcon    =   nil
-            }
-            if let parkIconValue    =   value?["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
-                self.parkIcon       =   AssetManager.getImage(parkIconName)
-            } else {
-                self.parkIcon       = nil
-            }
-            
-        }) { (error) in
-            print(error.localizedDescription)
-            self.country        = nil
-            self.countryIcon    = nil
-            self.parkIcon       = nil
-            self.mapImage       = nil
-            self.info           = nil
-            self.markdown       = nil
-        }
-    }
-    
-    init(park: String, parkName: String, sections: [ParkSection], completion: @escaping (_ result: Bool) -> Void) {
-        self.ref        = FIRDatabase.database().reference()
-        self.park       = park
-        self.parkName   = parkName
-        self.path       = "parkinfo/\(park)"
-        self.sections   = sections
-        
-        self.country        = nil
-        self.countryIcon    = nil
-        self.parkIcon       = nil
-        self.mapImage       = nil
-        self.info           = nil
-        self.markdown       = nil
-        
-        loadDB(path: path) { (loaded) in
-            if loaded {
-                completion(true)
-            } else {
-                completion(false)
-            }
-        }
-    }
-    
-    func load(completion: @escaping (_ result: Bool) -> Void) {
-        self.ref.child(path).observeSingleEvent(of: .value, with: { (snapshot) in
-            let value = snapshot.value as? NSDictionary
-            self.country            =   value?["country"]       as? String ?? nil
-            self.mapImage           =   value?["mapimage"]      as? String ?? nil
-            self.parkName           =   value?["name"]          as? String ?? nil
-            self.info               =   value?["info"]          as? String ?? nil
-            self.markdown           =   value?["markdown"]      as? String ?? nil
-            
-            if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
-                self.countryIcon    =   AssetManager.getImage(countryIconName)
-            } else {
-                self.countryIcon    =   nil
-            }
-            if let parkIconValue    =   value?["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
-                self.parkIcon       =   AssetManager.getImage(parkIconName)
-            } else {
-                self.parkIcon       = nil
-            }
-            
-            completion(true)
-            
-        }) { (error) in
-            print(error.localizedDescription)
-            completion(false)
-        }
-    }
-    
-    func loadDB(path: String, completion: @escaping (_ result: Bool) -> Void) {
-        self.ref.child(path).observeSingleEvent(of: .value, with: { (snapshot) in
-            // Get park value
-            let value = snapshot.value as? NSDictionary
-            
-            self.country            =   value?["country"]       as? String ?? nil
-            self.mapImage           =   value?["mapimage"]      as? String ?? nil
-            self.parkName           =   value?["name"]          as? String ?? nil
-            self.info               =   value?["info"]          as? String ?? nil
-            self.markdown           =   value?["markdown"]      as? String ?? nil
-            
-            if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
-                self.countryIcon    =   AssetManager.getImage(countryIconName)
-            } else {
-                self.countryIcon    =   nil
-            }
-            if let parkIconValue    =   value?["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
-                self.parkIcon       =   AssetManager.getImage(parkIconName)
-            } else {
-                self.parkIcon       = nil
-            }
-            
-            completion(true)
-            
-        }) { (error) in
-            print(error.localizedDescription)
-            completion(false)
-        }
-
-    }
-    
-    func loadDB(path: String){
-        self.ref.child(path).observeSingleEvent(of: .value, with: { (snapshot) in
-            // Get park value
-            let value = snapshot.value as? NSDictionary
-            
-            self.country            =   value?["country"]       as? String ?? nil
-            self.mapImage           =   value?["mapimage"]      as? String ?? nil
-            self.parkName           =   value?["name"]          as? String ?? nil
-            self.info               =   value?["info"]          as? String ?? nil
-            self.markdown           =   value?["markdown"]      as? String ?? nil
-            
-            if let countryIconValue =   value?["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
-                self.countryIcon    =   AssetManager.getImage(countryIconName)
-            } else {
-                self.countryIcon    =   nil
-            }
-            if let parkIconValue    =   value?["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
-                self.parkIcon       =   AssetManager.getImage(parkIconName)
-            } else {
-                self.parkIcon       = nil
-            }
-            
-        }) { (error) in
-            print(error.localizedDescription)
-        }
-    }
-    
-    func loadDB(value: NSDictionary){
-        self.country            =   value["country"]       as? String ?? nil
-        self.mapImage           =   value["mapimage"]      as? String ?? nil
-        self.parkName           =   value["name"]          as? String ?? nil
-        self.info               =   value["info"]          as? String ?? nil
-        self.markdown           =   value["markdown"]      as? String ?? nil
-        
-        if let countryIconValue =   value["countryicon"]   as? String, let countryIconName: String = countries[countryIconValue] {
-            self.countryIcon    =   AssetManager.getImage(countryIconName)
-        } else {
-            self.countryIcon    =   nil
-        }
-        if let parkIconValue    =   value["parkicon"]      as? String, let parkIconName: String = parks[parkIconValue] {
-            self.parkIcon       =   AssetManager.getImage(parkIconName)
-        } else {
-            self.parkIcon       = nil
-        }
-    }
-
-}
-
-class ParkSection {
-    let name: String
-    let path: String
-    let type: ItemType
-    init(name: String, type: ItemType, path: String) {
-        self.name   = name
-        self.type   = type
-        self.path   = path
-    }
-}
-
 struct Image {
     var publicURL: URL?
     var gcloud: String?
@@ -365,7 +176,8 @@ class ParkItem2 {
     let type        :   ItemType
     var tags        =   [String]()
     var spottedBy   =   [[String: String]]()
-    var park        :   Park!
+    var park        :   Park?
+    var realmPark: RealmPark?
     /**
      * Park information
      */
@@ -477,6 +289,115 @@ class ParkItem2 {
         
         
     }
+    
+    init?(snapshot: FIRDataSnapshot, type: ItemType, realmPark: RealmPark) {
+        
+        self.storage      = FIRStorage.storage()
+        self.realmPark         = realmPark
+        self.type         = type
+        self.key          = snapshot.key
+        self.ref          = snapshot.ref
+        let snapshotValue = snapshot.value as! [String: AnyObject]
+        
+        
+        if let name: String = snapshotValue["name"] as? String {
+            self.name = name
+        } else {
+            return nil
+        }
+        
+        
+        
+        /**
+         * Tags
+         */
+        if let tags: [String:String] = snapshotValue["tags"] as? [String:String] {
+            for (_, tag) in tags {
+                self.tags.append(tag)
+            }
+        }
+        
+        /**
+         * Sotted By
+         */
+        
+        if let spotted: [String: AnyObject] = snapshotValue["spottedby"] as? [String: AnyObject] {
+            for (key, user) in spotted {
+                var spot = [String: String]()
+                spot["id"] = key
+                
+                if let name: String = user["name"] as? String {
+                    spot["name"] = name
+                }
+                
+                if let profile: String = user["profile"] as? String {
+                    spot["profile"] = profile
+                }
+                self.spottedBy.append(spot)
+            }
+        }
+        
+        /**
+         * Location
+         */
+        if let location = snapshotValue["location"] as? [String: Any] {
+            self.latitude = location["latitude"] as? Double
+            self.longitude = location["longitude"] as? Double
+            self.location = [String: Double]()
+            self.location!["latitude"]  = self.latitude
+            self.location!["longitude"] = self.longitude
+        } else {
+            self.location = nil
+            self.latitude = nil
+            self.longitude = nil
+        }
+        
+        /**
+         * Images
+         */
+        if let imagesFromSnaphsot = snapshotValue["images"] as? [String: Any] {
+            var originalImage = Image()
+            if let publicImageTemp = imagesFromSnaphsot["public"] as? String {
+                originalImage.publicURL = URL(string: publicImageTemp)!
+            }
+            if let gcloudImageTemp = imagesFromSnaphsot["gcloud"] as? String {
+                originalImage.gcloud = gcloudImageTemp
+            }
+            
+            
+            var resizedImage = Image()
+            if let resized: [String: Any] = imagesFromSnaphsot["resized"] as? [String : Any], let resized375: [String: String] = resized["375x300"] as? [String : String] {
+                if resized375["public"] != nil {
+                    resizedImage.publicURL = URL(string: resized375["public"]!)!
+                }
+                if resized375["gcloud"] != nil {
+                    resizedImage.gcloud = resized375["gcloud"]
+                }
+            }
+            
+            self.image = Images(original: originalImage, resizedSize: "375x300", resizedImage: resizedImage)
+            
+            self.images = [Images]()
+            for (key, value) in imagesFromSnaphsot {
+                if key != "public" && key != "gcloud" && key != "resized", let imageInArray: [String: Any] = value as? [String : Any] {
+                    let additionalOriginalImage = Image(publicURL: imageInArray["public"] as! String, glcoud: imageInArray["gcloud"] as! String)
+                    let resized: [String: Any] = imageInArray["resized"] as! [String : Any]
+                    let resized375: [String: String] = resized["375x300"] as! [String : String]
+                    let resizedImage = Image(publicURL: resized375["public"]!, glcoud: resized375["gcloud"]!)
+                    self.images?.append(Images(original: additionalOriginalImage, resizedSize: "375x300", resizedImage: resizedImage))
+                }
+            }
+            
+        } else {
+            self.image = nil
+            self.images = nil
+        }
+        
+        
+        
+        
+    }
+
     
    
 }

@@ -93,14 +93,12 @@ PODS:
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.0)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.0)
   - GTMSessionFetcher/Core (1.1.7)
-  - Hero (0.1.1)
   - ImagePicker (2.0.0)
   - ImageSlideshow (1.0.0-beta.1):
     - ImageSlideshow/Core (= 1.0.0-beta.1)
   - ImageSlideshow/Core (1.0.0-beta.1)
   - Kingfisher (3.2.0)
   - MapboxStatic.swift (0.6.1)
-  - MXParallaxHeader (0.6.0)
   - NVActivityIndicatorView (3.0)
   - PINCache (3.0.1-beta.2):
     - PINCache/Arc-exception-safe (= 3.0.1-beta.2)
@@ -117,6 +115,7 @@ PODS:
   - PMAlertController (2.0.1)
   - SMSegmentView (0.0.2)
   - TOCropViewController (2.0.11)
+  - Whisper (4.0.0)
 
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/facebook/AsyncDisplayKit`)
@@ -130,16 +129,15 @@ DEPENDENCIES:
   - Firebase/Database
   - Firebase/Messaging
   - Firebase/Storage
-  - Hero
   - ImagePicker
   - ImageSlideshow (~> 1.0.0-beta.1)
   - Kingfisher (~> 3.0)
   - MapboxStatic.swift (from `https://github.com/mapbox/MapboxStatic.swift.git`, branch `swift-3`)
-  - MXParallaxHeader
   - NVActivityIndicatorView
   - PMAlertController
   - SMSegmentView (from `https://github.com/sima-11/SMSegmentView.git`)
   - TOCropViewController (~> 2.0)
+  - Whisper
 
 EXTERNAL SOURCES:
   AsyncDisplayKit:
@@ -184,19 +182,18 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
-  Hero: b855122bc80662e7446300ca18c9e4bcb0679540
   ImagePicker: 81175d36c2852cb543cb4f5d6c19e28f3e8d90eb
   ImageSlideshow: adf31cd12d65c1e78c15d024b9227d56fc46208c
   Kingfisher: 50407d1d5dbc34965009d425a286342ff36a84ea
   MapboxStatic.swift: a3ad6eb4a535718e354ee1928158d921ae59cb1f
-  MXParallaxHeader: 2997592b8349baf8557ae0e4346f6b17e141de39
   NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
   PMAlertController: 8f809a67e740bd6ce1bb7d6017c12c94e997f64b
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
   TOCropViewController: fe91aaab9e95d72ac38654d1174c8c8339585ee5
+  Whisper: 08be92623311f8e53201e62e17f6d7b9599a4714
 
-PODFILE CHECKSUM: 4a85d666f72cb027212ce03fedfe248b68995c75
+PODFILE CHECKSUM: 2575071c9daad50bfc17e7683dd2766ccb4f1aac
 
 COCOAPODS: 1.2.0.beta.1

@@ -25,6 +25,10 @@ extension UIColor {
         return UIColor(red:0.80, green:0.82, blue:0.85, alpha:1.00)
     }
     
+    public class var lavenderGey: UIColor {
+        return UIColor(red:0.78, green:0.78, blue:0.80, alpha:1.00) // Lavender Grey
+    }
+    
     public class var crimson: UIColor {
         return UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00) // Alizarin Crimson
         // Hex: #EB1938
@@ -33,7 +37,12 @@ extension UIColor {
     public class var flatBlack: UIColor {
         return UIColor(red:0.15, green:0.15, blue:0.15, alpha:1.00) // Flat black
     }
+    
+    public class var scarlet: UIColor {
+        return UIColor(red:1.00, green:0.15, blue:0.29, alpha:1.00) // scarlet
+    }
 }
+
 extension UIColor {
     var hexString: String? {
         var red: CGFloat = 0

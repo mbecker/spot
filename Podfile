@@ -16,7 +16,6 @@ target 'Spot' do
   pod 'FacebookLogin'
   pod 'FacebookShare'
   pod 'Kingfisher', '~> 3.0'
-  pod 'MXParallaxHeader'
   pod 'NVActivityIndicatorView'
   pod 'ImageSlideshow', '~> 1.0.0-beta.1'
   pod 'MapboxStatic.swift', :git => 'https://github.com/mapbox/MapboxStatic.swift.git', :branch => 'swift-3'
@@ -25,8 +24,8 @@ target 'Spot' do
   pod 'ImagePicker'
   pod 'TOCropViewController', '~> 2.0'
   pod 'PMAlertController'
-  pod 'Hero'
   pod 'Down'
+  pod 'Whisper'
 
   target 'SpotTests' do
     inherit! :search_paths

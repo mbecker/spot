@@ -5,7 +5,6 @@ import FirebaseDatabase
 import FirebaseMessaging
 import Kingfisher
 import NVActivityIndicatorView
-import Hero
 
 class TableAsViewController: ASViewController<ASDisplayNode> {
     
@@ -62,7 +61,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.view.addSubview(self.loadingIndicatorView)
         
         // Listen for added snapshots
-        self.ref.child(self.parkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
+        self.ref.child("park").child(self.park.key).child(self.parkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
             if let item2 = ParkItem2(snapshot: snapshot, type: self.type, park: self.park), self.items2.contains(where: {$0.key == item2.key}) == false {
                 OperationQueue.main.addOperation({
@@ -76,7 +75,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
             
         })
         // Update changed ParkItem2
-        self.ref.child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
+        self.ref.child("park").child(self.park.key).child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
             // ParkItem2 is updated; replace item in table array
             for i in 0...self.items2.count-1 {
                 if self.items2[i].key == snapshot.key, let item = ParkItem2(snapshot: snapshot, type: self.type, park: self.park) {

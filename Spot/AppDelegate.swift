@@ -17,6 +17,8 @@ import UserNotifications
 
 import FBSDKCoreKit
 
+import RealmSwift
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -24,6 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        // Delete realm database file
+        // try! FileManager.default.removeItem(at: Realm.Configuration().fileURL!)
         
         // set badge count to 0
         UIApplication.shared.applicationIconBadgeNumber = 0
@@ -72,7 +76,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white
-        window.rootViewController = UINavigationController(rootViewController: MainViewController())
+        //window.rootViewController = UINavigationController(rootViewController: MainViewController())
+        window.rootViewController = MainNavigationController(rootViewController: LoginViewController())
         window.makeKeyAndVisible()
         self.window = window
         

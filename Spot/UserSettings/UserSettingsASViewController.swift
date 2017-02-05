@@ -8,6 +8,9 @@
 
 import UIKit
 import AsyncDisplayKit
+import FirebaseAuth
+import FacebookLogin
+import FacebookCore
 
 class UserSettingsASViewController: ASViewController<ASDisplayNode> {
     //AsyncDisplayKit
@@ -15,7 +18,6 @@ class UserSettingsASViewController: ASViewController<ASDisplayNode> {
         return node as! ASTableNode
     }
     let _user: User
-    private var shadowImageView: UIImageView?
     
     init(user: User){
         self._user = user
@@ -31,30 +33,14 @@ class UserSettingsASViewController: ASViewController<ASDisplayNode> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = false
-        self.navigationController?.navigationBar.backgroundColor = UIColor.white
         
         // Hide navigationBar hairline at the bottom
-        if shadowImageView == nil {
-            shadowImageView = findShadowImage(under: navigationController!.navigationBar)
-        }
-        shadowImageView?.isHidden = false
         
         self.navigationController!.navigationBar.topItem?.title = "Profile"
-        // Hide text "Back"
-        let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
-        self.navigationController?.navigationBar.backIndicatorImage = backImage
-        self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
         self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
-        
         
     }
     
-    func changeStatusbarColor(color: UIColor){
-        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
-        if statusBar.responds(to: #selector(setter: ASDisplayProperties.backgroundColor)) {
-            statusBar.backgroundColor = color
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,25 +56,11 @@ class UserSettingsASViewController: ASViewController<ASDisplayNode> {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        shadowImageView?.isHidden = false
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    private func findShadowImage(under view: UIView) -> UIImageView? {
-        if view is UIImageView && view.bounds.size.height <= 1 {
-            return (view as! UIImageView)
-        }
-        
-        for subview in view.subviews {
-            if let imageView = findShadowImage(under: subview) {
-                return imageView
-            }
-        }
-        return nil
     }
     
     lazy var tableFooterView: UIView = {
@@ -126,7 +98,7 @@ class UserSettingsASViewController: ASViewController<ASDisplayNode> {
 
 extension UserSettingsASViewController : ASTableDataSource {
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
-        return CONFIGITEMS.count
+        return CONFIGITEMS.count + 1
     }
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
@@ -164,6 +136,8 @@ extension UserSettingsASViewController : ASTableDataSource {
                 return SettingsNode.init(user: self._user, configItem: CONFIGITEMS[1])
             case 2:
                 return SettingsNode.init(user: self._user, configItem: CONFIGITEMS[2])
+            case 3:
+                return LogoutNode()
             default:
                 let view = UIView()
                 view.backgroundColor = UIColor.white
@@ -186,6 +160,43 @@ extension UserSettingsASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at: \(indexPath)")
+    }
+}
+
+class LogoutNode: UIView {
+    init() {
+        super.init(frame: CGRect.zero)
+        backgroundColor = UIColor.white
+        let height: CGFloat = 64
+        let view = UIView(frame: CGRect(x: 20, y: 0, width: UIScreen.main.bounds.width - 20 - 32 - 20, height: height))
+        addSubview(view)
+        let loginButton = LoginButton(readPermissions: [ .publicProfile, .email, .userFriends ])
+        loginButton.center = view.center
+        loginButton.delegate = self
+        view.addSubview(loginButton)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
+
+extension LogoutNode: LoginButtonDelegate {
+    func loginButtonDidLogOut(_ loginButton: LoginButton) {
+        print(":: FACEBOOK LOGOUT ::")
+        let firebaseAuth = FIRAuth.auth()
+        do {
+            try firebaseAuth?.signOut()
+        } catch let signOutError as NSError {
+            print(":: FIREBASE LOGOUT ::")
+            print ("Error signing out: %@", signOutError)
+        }
+        
+    }
+    
+    func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
+        // We don't use this login button to login; only for logut
     }
 }
 
@@ -245,7 +256,7 @@ class SettingsNode: UIView {
             self._user.setShowConfig(showConfig: sender.isOn)
         case .shownavbar:
             self._user.setShowNavBar(showNavBar: sender.isOn)
-        case .add100Entries:
+        case .showWhiteHeader:
             self._user.setConfig(configItem: self._configItem, set: sender.isOn)
         }
         

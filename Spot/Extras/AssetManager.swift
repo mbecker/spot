@@ -26,10 +26,6 @@ open class AssetManager {
         let traitCollection = UITraitCollection(displayScale: 3)
         var bundle = Bundle(for: AssetManager.self)
         
-        if let resource = bundle.resourcePath, let resourceBundle = Bundle(path: resource + "/ImagePicker.bundle") {
-            bundle = resourceBundle
-        }
-        
         return UIImage(named: name, in: bundle, compatibleWith: traitCollection) ?? UIImage()
     }
     

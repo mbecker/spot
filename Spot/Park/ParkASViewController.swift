@@ -11,12 +11,9 @@ import AsyncDisplayKit
 import Firebase
 import FirebaseDatabase
 import FirebaseMessaging
-import FirebaseAuth
+
 import Kingfisher
 import EZAlertController
-
-import FacebookLogin
-import FacebookCore
 
 protocol SelectParkDelegate {
     func selectPark()
@@ -39,12 +36,14 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
      * Data
      */
     let _park: Park
+    let _user: User
     var delegate: SelectParkDelegate?
     
     var showConfig = false
     
-    init(park: Park){
+    init(park: Park, user: User){
         self._park = park
+        self._user = user
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -73,20 +72,32 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
     
     func loadPark(){
-        let parkTableHeader                 = ParkTableHeaderUIView(parkName: self._park.parkName)
+        let parkTableHeader                 = ParkTableHeaderUIView(park: self._park)
         parkTableHeader.delegate            = self
         parkTableHeader.delegateMap         = self
-        self.tableNode.view.tableHeaderView = parkTableHeader
-        
-        self._park.load { (loaded) in
-            if loaded {
-                let parkTableHeader = ParkTableHeaderUIView.init(park: self._park)
-                parkTableHeader.delegate            = self
-                parkTableHeader.delegateMap         = self
-                self.tableNode.view.tableHeaderView = parkTableHeader
-                self.tableNode.view.tableFooterView = self.tableFooterView()
-            }
+        if self._user.getConfig(configItem: .showWhiteHeader) {
+            parkTableHeader.backgroundColor = UIColor.white
         }
+        
+        
+        self.tableNode.view.tableHeaderView = parkTableHeader
+        self.tableNode.view.tableFooterView = self.tableFooterView()
+        
+        if let mapImageString: String = self._park.mapURL, let mapImageURL: URL = URL(string: mapImageString) {
+            parkTableHeader.mapView?.stopAndRemoveLoadingIndicator()
+            let processor = RoundCornerImageProcessor(cornerRadius: 10)
+            parkTableHeader.mapView?.kf.indicatorType = .activity
+            parkTableHeader.mapView?.kf.setImage(with: mapImageURL, placeholder: nil, options: [.processor(processor)], progressBlock: nil, completionHandler: { image, error, cacheType, imageURL in
+                if error != nil {
+                    print(error!)
+                    // ToDo: Map Image can't be download; show error?
+                } else {
+                    
+                    self._park.mapImage = image
+                }
+            })
+        }
+        
     }
     
     func subscribeMessaging(toTopic: String){
@@ -133,82 +144,9 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     }
     
     func tableFooterView() -> UIView {
-        if(!self.showConfig){
-            return UIView(frame: CGRect.zero)
-        }
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 240))
-        view.backgroundColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
-        
-        let buttonClearCache = UIButton(frame: CGRect(x: 20, y: 20, width: 150, height: 50))
-        buttonClearCache.setBackgroundColor(color: UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00), forState: .normal)
-        buttonClearCache.setBackgroundColor(color: UIColor(red:0.83, green:0.29, blue:0.31, alpha:1.00), forState: .highlighted)
-        buttonClearCache.setTitle("Clear Cache", for: .normal)
-        buttonClearCache.addTarget(self, action: #selector(didTapClearCache), for: .touchUpInside)
-        
-        let addItems = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 20 - 150, y: 20, width: 150, height: 50))
-        addItems.setBackgroundColor(color: UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00), forState: .normal)
-        addItems.setBackgroundColor(color: UIColor(red:0.83, green:0.29, blue:0.31, alpha:1.00), forState: .highlighted)
-        addItems.setTitle("Add items", for: .normal)
-        addItems.addTarget(self, action: #selector(didTapAddItems), for: .touchUpInside)
-        
-        let deleteItems = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 20 - 150, y: 90, width: 150, height: 50))
-        deleteItems.setBackgroundColor(color: UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00), forState: .normal)
-        deleteItems.setBackgroundColor(color: UIColor(red:0.83, green:0.29, blue:0.31, alpha:1.00), forState: .highlighted)
-        deleteItems.setTitle("Delete items", for: .normal)
-        deleteItems.addTarget(self, action: #selector(didTapDeleteItems), for: .touchUpInside)
-        
-        let loginButton = LoginButton(readPermissions: [ .publicProfile, .email, .userFriends ])
-        loginButton.center = view.center
-        loginButton.delegate = self
-        
-        let fbPhoto = UIImageView(frame: CGRect(x: 20, y: view.bounds.height - 20 - 60, width: 60, height: 60))
-        var handle: FIRAuthStateDidChangeListenerHandle!
-        handle = FIRAuth.auth()?.addStateDidChangeListener() { (auth, user) in
-            print(":: FIREBASE HANDLER ::")
-            print(auth)
-            if let image = user?.photoURL {
-                let processor = RoundCornerImageProcessor(cornerRadius: 30)
-                fbPhoto.kf.setImage(with: image, placeholder: nil, options: [.processor(processor)])
-            } else {
-                fbPhoto.image = nil
-            }
-        }
-        view.addSubview(fbPhoto)
-        view.addSubview(buttonClearCache)
-        view.addSubview(addItems)
-        view.addSubview(deleteItems)
-        view.addSubview(loginButton)
-        
-        return view
+        return UIView(frame: CGRect.zero)
     }
     
-    @objc fileprivate func didTapClearCache() {
-        ImageCache.default.calculateDiskCacheSize { size in
-            let alert = UIAlertController(title: "Cache", message: "Used disk size: \(size / 1024 / 1024) MB", preferredStyle: UIAlertControllerStyle.alert)
-            alert.addAction(UIAlertAction(title: "Clear cache", style: UIAlertActionStyle.destructive, handler: { action in
-                // Clear memory cache right away.
-                ImageCache.default.clearMemoryCache()
-                
-                // Clear disk cache. This is an async operation.
-                ImageCache.default.clearDiskCache()
-            }))
-            
-            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil))
-            
-            self.present(alert, animated: true, completion: nil)
-            
-        }
-    }
-    
-    @objc fileprivate func didTapAddItems() {
-        let firebaseModels = FirebaseModel()
-        firebaseModels.addAnimals(count: 5, parkName: self._park.parkName)
-    }
-    
-    @objc fileprivate func didTapDeleteItems(){
-        let firebaseModel = FirebaseModel()
-        firebaseModel.deleteItems(parkName: self._park.parkName)
-    }
     
     func sectionHeaderView(text: String, sectionId: Int = 0) -> UIView {
         let view = UIView(frame: CGRect.zero)
@@ -229,28 +167,28 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         detailButton.setAttributedTitle(NSAttributedString(
             string: "See all",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular),
-                NSForegroundColorAttributeName: UIColor(red:1.00, green:0.22, blue:0.22, alpha:1.00), // iOS Red
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
+                NSForegroundColorAttributeName: UIColor.scarlet,
                 NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.0,
+                NSKernAttributeName: 0.6,
             ])
             , for: .normal)
         detailButton.setAttributedTitle(NSAttributedString(
             string: "See all",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular),
-                NSForegroundColorAttributeName: UIColor(red:1.00, green:0.22, blue:0.22, alpha:1.00).withAlphaComponent(0.6), // iOS Red
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
+                NSForegroundColorAttributeName: UIColor.scarlet,
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.0,
             ])
             , for: .highlighted)
         
-        detailButton.setImage(UIImage(named: "next48")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        detailButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
-        detailButton.tintColor = UIColor(red:1.00, green:0.22, blue:0.22, alpha:1.00)
-        detailButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-        detailButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-        detailButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        // detailButton.setImage(UIImage(named: "next48")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        // detailButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
+        detailButton.tintColor = UIColor.scarlet
+        // detailButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        // detailButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+        // detailButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
         detailButton.tag = sectionId
         detailButton.addTarget(self, action: #selector(self.pushDetail(sender:)), for: UIControlEvents.touchUpInside)
         
@@ -284,53 +222,6 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
 
 
-}
-
-extension ParkASViewController: LoginButtonDelegate {
-    func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
-        
-//        let grantedPermissions:     Set<Permission>
-//        let declinedPermissions:    Set<Permission>
-//        let token:                  AccessToken
-        
-        switch result {
-        case .success(let grantedPermissions, let declinedPermissions, let token):
-            let credential = FIRFacebookAuthProvider.credential(withAccessToken: token.authenticationToken)
-            FIRAuth.auth()?.signIn(with: credential) { (user, error) in
-                // ...
-                if let error = error {
-                    print(error)
-                    return
-                }
-                print(":: FIREBASE :: LOGGED IN ")
-                print("displayname: \(user!.displayName)")
-                print("email: \(user!.email)")
-                print("image: \(user!.photoURL)")
-            }
-            break
-        case .cancelled:
-            print(":: FACEBOOK LOGIN CANCELLED ::")
-            break
-        case .failed(let error):
-            print(":: FACEBOOK LOGIN ERROR ::")
-            print(error)
-            break
-        }
-        
-        
-    }
-    
-    func loginButtonDidLogOut(_ loginButton: LoginButton) {
-        print(":: FACEBOOK LOGOUT ::")
-        let firebaseAuth = FIRAuth.auth()
-        do {
-            try firebaseAuth?.signOut()
-        } catch let signOutError as NSError {
-            print(":: FIREBASE LOGOUT ::")
-            print ("Error signing out: %@", signOutError)
-        }
-        
-    }
 }
 
 extension ParkASViewController : ASTableDataSource {
@@ -398,23 +289,7 @@ extension ParkASViewController : ParkASCellNodeDelegate {
 
 extension ParkASViewController: SelectParkDelegate {
     func selectPark() {
-        EZAlertController.alert("Park", message: "Select park", buttons: ["Addo", "Kruger"], tapBlock: { (alertAction, position) -> Void in
-            var park: String!
-            var parkName: String!
-            switch position {
-            case 0:
-                park = "addo"
-                parkName = "Addo Elephant National Park"
-            case 1:
-                park = "kruger"
-                parkName = "Kruger National Park"
-            default:
-                park = "addo"
-                parkName = "Addo Elephant National Park"
-            }
-            self.delegate?.selectPark(park: park, name: parkName)
-        })
-        
+            self.delegate?.selectPark()
     }
     
     func selectPark(park: String, name: String) {

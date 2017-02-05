@@ -10,8 +10,14 @@ import WebKit
 
 // MARK: - Public API
 
-open class DownView: WKWebView {
+public protocol DownViewProtocol {
+    func didFinish()
+}
 
+open class DownView: WKWebView {
+    
+    public var delegate: DownViewProtocol?
+    
     /**
      Initializes a web view with the results of rendering a CommonMark Markdown string
 
@@ -24,7 +30,7 @@ open class DownView: WKWebView {
     
     public init(frame: CGRect, markdownString: String, openLinksInBrowser: Bool = true) throws {
         super.init(frame: frame, configuration: WKWebViewConfiguration())
-
+        self.scrollView.delegate = self
         if openLinksInBrowser { navigationDelegate = self }
         try loadHTMLView(markdownString)
     }
@@ -79,4 +85,15 @@ extension DownView: WKNavigationDelegate {
         }
     }
     
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        self.delegate?.didFinish()
+    }
+    
 }
+
+extension DownView: UIScrollViewDelegate {
+    public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return nil
+    }
+}
+
