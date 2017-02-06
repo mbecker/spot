@@ -112,9 +112,9 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
 extension MainNavigationController: FormCountriesDelegate {
     func didSelect(country: Country) {
         //Status bar style and visibility
-        UIApplication.shared.isStatusBarHidden = true
+        UIApplication.shared.isStatusBarHidden = false
         
-        self.startAnimating(CGSize(width: self.view.bounds.height, height: 44), message: "Loading Park ...", type: NVActivityIndicatorType.ballPulse, color: UIColor.white, padding: 0.0, displayTimeThreshold: nil, minimumDisplayTime: nil)
+        self.startAnimating(CGSize(width: self.view.bounds.height, height: 44), message: "Loading Park ...", type: NVActivityIndicatorType.ballPulse, color: UIColor.white, padding: 0.0, displayTimeThreshold: 0, minimumDisplayTime: 2000)
 
         self.realmTransactions.loadParkFromFirebaseAndSaveToRealm(key: country.key, completion: { (park) in
             if park != nil {
@@ -130,18 +130,22 @@ extension MainNavigationController: FormCountriesDelegate {
                 UIApplication.shared.isStatusBarHidden = false
                 self.dismiss(animated: false, completion: nil)
                 
-                // Error in fecthing park details from firebae; show message
-                var config = SwiftMessages.Config()
-                // Slide up from the bottom.
-                config.presentationStyle = .bottom
-                let view = MessageView.viewFromNib(layout: .MessageView)
-                view.titleLabel?.text = "Error loading park"
-                view.bodyLabel?.removeFromSuperview()
-                view.button?.removeFromSuperview()
-                view.iconImageView?.removeFromSuperview()
-                view.iconLabel?.removeFromSuperview()
-                view.backgroundColor = UIColor.white
-                SwiftMessages.show(config: config, view: view)
+                let image = UIImage(named:"Dinosaur-66")?.withRenderingMode(.alwaysTemplate)
+                let info = MessageView.viewFromNib(layout: .MessageView)
+                info.configureTheme(.error)
+                info.button?.isHidden = true
+                info.iconLabel?.isHidden = true
+                info.configureContent(title: "Error", body: "We couldn't load the park ...", iconImage: image!)
+                info.iconImageView?.isHidden = false
+                info.iconImageView?.tintColor = UIColor.white
+                info.configureIcon(withSize: CGSize(width: 30, height: 30), contentMode: .scaleAspectFill)
+                info.backgroundView.backgroundColor = UIColor(red:0.93, green:0.33, blue:0.39, alpha:1.00)
+                var infoConfig = SwiftMessages.defaultConfig
+                infoConfig.presentationStyle = .bottom
+                infoConfig.duration = .seconds(seconds: 2)
+                
+                
+                SwiftMessages.show(config: infoConfig, view: info)
             }
         })
         

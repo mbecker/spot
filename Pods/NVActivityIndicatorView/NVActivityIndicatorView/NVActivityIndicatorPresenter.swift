@@ -117,25 +117,29 @@ public class NVActivityIndicatorPresenter {
     
     private func show(with activityData: ActivityData) {
         
-        UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
+        let width = UIScreen.main.bounds.width * 2 / 3
+        let height = width * 6 / 8
         
-        let activityContainer: UIView = UIView(frame: UIScreen.main.bounds)
+        let frame = CGRect(x: UIScreen.main.bounds.width / 2 - width / 2, y: UIScreen.main.bounds.height / 2 - height / 2, width:  width, height: height)
+        let activityContainer: UIView = UIView(frame: frame)
+        activityContainer.layer.cornerRadius = 10
         
         activityContainer.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         activityContainer.restorationIdentifier = restorationIdentifier
         
-        let actualSize = activityData.size
+        var actualSize = activityData.size
+        actualSize.width = width
         let activityIndicatorView = NVActivityIndicatorView(
-            frame: CGRect(x: 0, y: 0, width: actualSize.width, height: actualSize.height),
+            frame: CGRect(x: 0, y: frame.height / 2 - actualSize.height, width: actualSize.width, height: actualSize.height),
             type: activityData.type,
             color: activityData.color,
             padding: activityData.padding)
         
-        activityIndicatorView.center = activityContainer.center
+        // activityIndicatorView.center = activityContainer.center
         activityIndicatorView.startAnimating()
         activityContainer.addSubview(activityIndicatorView)
         
-        let width = activityContainer.frame.size.width / 3
+        // let width = activityContainer.frame.size.width / 3
         if let message = activityData.message , !message.isEmpty {
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: activityContainer.frame.size.width, height: 30))
             label.center = CGPoint(
@@ -157,7 +161,7 @@ public class NVActivityIndicatorPresenter {
             where item.restorationIdentifier == restorationIdentifier {
                 item.removeFromSuperview()
         }
-        UIApplication.shared.statusBarStyle = UIStatusBarStyle.lightContent
+        
         showTimer?.invalidate()
         showTimer = nil
     }

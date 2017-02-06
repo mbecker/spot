@@ -54,6 +54,20 @@ class ListItemASCellNode: ASCellNode {
         }
     }
     
+    override func __setSelected(fromUIKit selected: Bool) {
+        if !selected {
+            self.backgroundColor = UIColor.clear
+            self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string,
+                                                             attributes: [
+                                                                NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
+                ])
+            self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string,
+                                                            attributes: [
+                                                                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00) // Bunker
+                ])
+        }
+    }
+    
     override func __setHighlighted(fromUIKit highlighted: Bool) {
         if highlighted {
             self.backgroundColor = UIColor(red:0.93, green:0.23, blue:0.33, alpha:1.00) // UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00).withAlphaComponent(0.6) // Bonjour

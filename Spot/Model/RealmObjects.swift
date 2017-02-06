@@ -204,3 +204,22 @@ class Country {
         self.longitude = longitude
     }
 }
+
+class RealmCountry: Object {
+    dynamic var updated: Double = 0
+    dynamic var key = ""
+    dynamic var name: String = ""
+    dynamic var country: String = ""
+    dynamic var code: String = ""
+    dynamic var latitude: Double = 0.0
+    dynamic var longitude: Double = 0.0
+    var detail: String?
+    
+    override static func indexedProperties() -> [String] {
+        return ["key"]
+    }
+    
+    override static func primaryKey() -> String? {
+        return "key"
+    }
+}

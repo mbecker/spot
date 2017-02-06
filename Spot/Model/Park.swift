@@ -165,8 +165,8 @@ struct Images {
 
 class ParkItem2 {
     
-    let ref         :   FIRDatabaseReference
-    let storage     :   FIRStorage
+//    let ref         :   FIRDatabaseReference
+//    let storage     :   FIRStorage
     let key         :   String
     let name        :   String
     let image       :   Images?
@@ -184,13 +184,12 @@ class ParkItem2 {
      */
     
     
-    init?(snapshot: FIRDataSnapshot, type: ItemType, park: Park) {
+    init?(key: String, snapshotValue: [String: AnyObject], type: ItemType, park: Park) {
         
-        self.storage      = FIRStorage.storage()
+//        self.storage      = FIRStorage.storage()
         self.type         = type
-        self.key          = snapshot.key
-        self.ref          = snapshot.ref
-        let snapshotValue = snapshot.value as! [String: AnyObject]
+        self.key          = key
+//        self.ref          = snapshot.ref
         
         
         if let name: String = snapshotValue["name"] as? String {
@@ -291,116 +290,6 @@ class ParkItem2 {
         
     }
     
-    init?(snapshot: FIRDataSnapshot, type: ItemType, realmPark: RealmPark) {
-        
-        self.storage      = FIRStorage.storage()
-        self.realmPark         = realmPark
-        self.type         = type
-        self.key          = snapshot.key
-        self.ref          = snapshot.ref
-        let snapshotValue = snapshot.value as! [String: AnyObject]
-        
-        
-        if let name: String = snapshotValue["name"] as? String {
-            self.name = name
-        } else {
-            return nil
-        }
-        
-        
-        
-        /**
-         * Tags
-         */
-        if let tags: [String:String] = snapshotValue["tags"] as? [String:String] {
-            for (_, tag) in tags {
-                self.tags.append(tag)
-            }
-        }
-        
-        /**
-         * Sotted By
-         */
-        
-        if let spotted: [String: AnyObject] = snapshotValue["spottedby"] as? [String: AnyObject] {
-            for (key, user) in spotted {
-                var spot = [String: String]()
-                spot["id"] = key
-                
-                if let name: String = user["name"] as? String {
-                    spot["name"] = name
-                }
-                
-                if let profile: String = user["profile"] as? String {
-                    spot["profile"] = profile
-                }
-                self.spottedBy.append(spot)
-            }
-        }
-        
-        /**
-         * Location
-         */
-        if let location = snapshotValue["location"] as? [String: Any] {
-            self.latitude = location["latitude"] as? Double
-            self.longitude = location["longitude"] as? Double
-            self.location = [String: Double]()
-            self.location!["latitude"]  = self.latitude
-            self.location!["longitude"] = self.longitude
-        } else {
-            self.location = nil
-            self.latitude = nil
-            self.longitude = nil
-        }
-        
-        /**
-         * Images
-         */
-        if let imagesFromSnaphsot = snapshotValue["images"] as? [String: Any] {
-            var originalImage = Image()
-            if let publicImageTemp = imagesFromSnaphsot["public"] as? String {
-                originalImage.publicURL = URL(string: publicImageTemp)!
-            }
-            if let gcloudImageTemp = imagesFromSnaphsot["gcloud"] as? String {
-                originalImage.gcloud = gcloudImageTemp
-            }
-            
-            
-            var resizedImage = Image()
-            if let resized: [String: Any] = imagesFromSnaphsot["resized"] as? [String : Any], let resized375: [String: String] = resized["375x300"] as? [String : String] {
-                if resized375["public"] != nil {
-                    resizedImage.publicURL = URL(string: resized375["public"]!)!
-                }
-                if resized375["gcloud"] != nil {
-                    resizedImage.gcloud = resized375["gcloud"]
-                }
-            }
-            
-            self.image = Images(original: originalImage, resizedSize: "375x300", resizedImage: resizedImage)
-            
-            self.images = [Images]()
-            for (key, value) in imagesFromSnaphsot {
-                if key != "public" && key != "gcloud" && key != "resized", let imageInArray: [String: Any] = value as? [String : Any] {
-                    let additionalOriginalImage = Image(publicURL: imageInArray["public"] as! String, glcoud: imageInArray["gcloud"] as! String)
-                    let resized: [String: Any] = imageInArray["resized"] as! [String : Any]
-                    let resized375: [String: String] = resized["375x300"] as! [String : String]
-                    let resizedImage = Image(publicURL: resized375["public"]!, glcoud: resized375["gcloud"]!)
-                    self.images?.append(Images(original: additionalOriginalImage, resizedSize: "375x300", resizedImage: resizedImage))
-                }
-            }
-            
-        } else {
-            self.image = nil
-            self.images = nil
-        }
-        
-        
-        
-        
-    }
-
-    
-   
 }
 
 let parks = [

@@ -49,15 +49,13 @@ class FormCountriesTableViewController: UITableViewController {
             }
             return false
         }
-        if filteredCountries.count == 0 && !initialLoad {
+        if filteredCountries.count == 0 && searchText.characters.count > 0 {
             showNoParksFound = true
             tableView.reloadData()
-        } else {
-            
-            showNoParksFound = false
         }
-        if filteredCountries.count > 0 {
+        if filteredCountries.count > 0 && searchText.characters.count > 0 {
             initialLoad = false
+            showNoParksFound = false
             tableView.reloadData()
         }
         
@@ -133,16 +131,15 @@ class FormCountriesTableViewController: UITableViewController {
             }
             return parksClose.count
         default:
-            if searchController.isActive && searchController.searchBar.text != "" {
-                if filteredCountries.count == 0 {
-                    return 1
-                }
-                return filteredCountries.count
-            }
-            if parksAll.count == 0 {
+            if searchController.isActive && searchController.searchBar.text != "" && filteredCountries.count == 0 {
                 return 1
+            } else if searchController.isActive && searchController.searchBar.text != "" && filteredCountries.count > 0 {
+                return filteredCountries.count
+            } else if parksAll.count == 0 {
+                return 1
+            } else {
+                return parksAll.count
             }
-            return parksAll.count
         }
     }
     
@@ -266,6 +263,7 @@ extension FormCountriesTableViewController: UISearchControllerDelegate {
         }
     }
     
+    
 }
 
 extension FormCountriesTableViewController: UISearchDisplayDelegate {
@@ -278,10 +276,16 @@ extension FormCountriesTableViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.dismiss(animated: true, completion: nil)
     }
+    
 }
 
 extension FormCountriesTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        filterContentForSearchText(searchText: searchController.searchBar.text!)
+        if searchController.searchBar.text!.characters.count == 0 {
+            self.filteredCountries.removeAll()
+            self.tableView.reloadSections([1], with: .none)
+        } else {
+            filterContentForSearchText(searchText: searchController.searchBar.text!)
+        }
     }
 }
