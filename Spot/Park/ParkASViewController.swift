@@ -164,10 +164,11 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         title.translatesAutoresizingMaskIntoConstraints = false
         
         let detailButton = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 20 - 42.5947265625 - 20 - 20, y: 42 / 2 - 16.70703125, width: 20 + 42.5947265625 + 20, height: 16.70703125 * 2))
+        detailButton.contentHorizontalAlignment = .right
         detailButton.setAttributedTitle(NSAttributedString(
             string: "See all",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightRegular),
                 NSForegroundColorAttributeName: UIColor.scarlet,
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.6,
@@ -176,10 +177,10 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         detailButton.setAttributedTitle(NSAttributedString(
             string: "See all",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular),
-                NSForegroundColorAttributeName: UIColor.scarlet,
+                NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightRegular),
+                NSForegroundColorAttributeName: UIColor.scarlet.withAlphaComponent(0.6),
                 NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.0,
+                NSKernAttributeName: 0.6,
             ])
             , for: .highlighted)
         
