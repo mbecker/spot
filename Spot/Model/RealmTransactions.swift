@@ -136,10 +136,6 @@ class RealmTransactions {
         }
     }
     
-//    func loadCountries() -> [Country] {
-//        let realm = try! Realm()
-//        let objects = realm.objects(RealmCountry.self)
-//    }
     
     func loadParkFromFirebaseAndSaveToRealm(key: String, completion: @escaping (_ result: Park?) -> Void) {
         let ref = FIRDatabase.database().reference()

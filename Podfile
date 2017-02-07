@@ -26,6 +26,7 @@ target 'Spot' do
   pod 'PMAlertController'
   pod 'Down'
   pod 'SwiftMessages'
+  pod 'EasyAnimation'
 
   target 'SpotTests' do
     inherit! :search_paths

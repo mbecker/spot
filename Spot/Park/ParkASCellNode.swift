@@ -9,8 +9,8 @@
 import UIKit
 import AsyncDisplayKit
 import FirebaseDatabase
-import FirebaseStorage
 import NVActivityIndicatorView
+import EasyAnimation
 
 let airBnbImageFooterHeight: CGFloat = 58
 let airBnbHeight: CGFloat = 218 + airBnbImageFooterHeight
@@ -34,12 +34,13 @@ class ParkASCellNode: ASCellNode {
     var observerChildChanged: FIRDatabaseHandle?
     let errorLabelNoItems = UILabel()
     var errorImageNoItems: UIImageView!
+    var errorImageChain: EAAnimationFuture?
+    var errorImageShown = false
     
     /**
      * Firebase
      */
-    var ref: FIRDatabaseReference = FIRDatabaseReference()
-    var storage: FIRStorage!
+    let ref: FIRDatabaseReference = FIRDatabase.database().reference()
     
     let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
     
@@ -47,8 +48,6 @@ class ParkASCellNode: ASCellNode {
         self.parkSection    = park.sections[section]
         self.park           = park
         self.type           = type
-        self.ref            = FIRDatabase.database().reference()
-        self.storage        = FIRStorage.storage()
         
         // Layout
         let layout = UICollectionViewFlowLayout()
@@ -75,6 +74,12 @@ class ParkASCellNode: ASCellNode {
     func addObserver(){
         removeObserver()
         self.toggleErrorLabelNoItems(show: false)
+        
+        if self.errorImageShown {
+            self.errorImageNoItems.removeFromSuperview()
+            self.errorImageShown = false
+        }
+        
         // 1: .childAdded observer
         self.observerChildAdded = self.ref.child("park").child(self.park.key).child(self.parkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
@@ -88,7 +93,9 @@ class ParkASCellNode: ASCellNode {
                 self.collectionNode.reloadItems(at: [indexPath])
             }
             
-        })
+        }) { (error) in
+            print(error.localizedDescription)
+        }
         
         // 2: .childChanged observer
         self.observerChildChanged = self.ref.child("park").child(self.park.key).child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
@@ -103,22 +110,60 @@ class ParkASCellNode: ASCellNode {
                 }
             }
             
-        })
+        }) { (error) in
+            print(error.localizedDescription)
+        }
         
         
     }
     
-    func toggleErrorLabelNoItems(show: Bool) {
+    func toggleErrorAnimation(show: Bool){
         if show {
+            if !self.errorImageShown && self.observerChildAdded == nil {
+                // Add image; set errorImageShwon to true; chain animation
+                self.view.addSubview(self.errorImageNoItems)
+                self.errorImageShown = true
+                self.errorImageChain = UIView.animateAndChain(withDuration: 1.0, delay: 0.0,
+                                                              options: [], animations: {
+                                                                self.errorImageNoItems.frame.origin.x = self.view.center.x - 15
+                }, completion: nil)
+                    .animate(withDuration: 2.0, animations: {
+                        let degrees = 180.0
+                        let radians = CGFloat(degrees * Double.pi / 180)
+                        self.errorImageNoItems.layer.transform = CATransform3DConcat(CATransform3DMakeScale(1.4, 1.4, 1.0), CATransform3DMakeRotation(radians, 0.0, 0.0, 1.0))
+                    })
+                    .animate(withDuration: 2.0, animations: {
+                        // self.errorImageNoItems.layer.transform = CATransform3DMakeScale(1.2, 1.2, 1.0)
+                        let degrees = 360.0
+                        let radians = CGFloat(degrees * Double.pi / 180)
+                        self.errorImageNoItems.layer.transform = CATransform3DMakeRotation(radians, 0.0, 0.0, 1.0)
+                    })
+                    .animate(withDuration: 1.0, animations: {
+                        self.errorImageNoItems.frame.origin.x = self.view.bounds.width - 20 - 30
+                    })
+                    .animate(withDuration: 0.0, delay: 0.0, options: [.repeat], animations: {
+                        self.errorImageNoItems.frame.origin.x = 20
+                    }, completion: nil)
+            }
+        } else {
+            // Cancel animation; remove image; set errorImageShown to false
+            self.errorImageChain?.cancelAnimationChain({
+                self.errorImageNoItems.removeFromSuperview()
+                self.errorImageShown = false
+            });
+        }
+    }
+    
+    func toggleErrorLabelNoItems(show: Bool) {
+        if show && self.observerChildAdded == nil{
+            removeObserver()
             self.loadingIndicatorView.stopAnimating()
             self.view.addSubview(self.errorLabelNoItems)
-            self.view.addSubview(self.errorImageNoItems)
-            self.errorImageNoItems.rotate360Degrees(duration: 2, completionDelegate: self)
-            removeObserver()
         } else {
             self.errorLabelNoItems.removeFromSuperview()
-            self.errorImageNoItems.removeFromSuperview()
+            
             self.loadingIndicatorView.startAnimating()
+            
         }
         
     }
@@ -131,6 +176,68 @@ class ParkASCellNode: ASCellNode {
             self.ref.removeObserver(withHandle: self.observerChildChanged!)
         }
     }
+    
+    /**
+     * Preload Range. The furthest range out from being visible. This is where content is gathered from an external source, whether that’s some API or a local disk.
+     */
+    override func didEnterPreloadState() {
+        super.didEnterPreloadState()
+        /**
+         * Firebase:
+         * 1. Count the items in DB
+         * 2. Only attach observer if items.count > 0
+         * (only attach once an observer)
+         */
+        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.value, with: { (snapshot) -> Void in
+            if snapshot.exists(), let count: Int = snapshot.value as? Int, count > 0 {
+                self.addObserver()
+            } else {
+                self.toggleErrorLabelNoItems(show: true)
+            }
+        })
+        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
+            if let count: Int = snapshot.value as? Int, count > 0 {
+                self.addObserver()
+            } else {
+                self.toggleErrorLabelNoItems(show: true)
+            }
+        })
+    }
+    override func didExitPreloadState() {
+        super.didExitPreloadState()
+        self.ref.removeAllObservers()
+        self.observerChildAdded = nil
+        self.observerChildChanged = nil
+        toggleErrorLabelNoItems(show: false)
+    }
+    
+    /**
+     * Visible Range: The node is onscreen by at least one pixel.
+     */
+    override func didEnterVisibleState() {
+        super.didEnterVisibleState()
+        toggleErrorAnimation(show: true)
+    }
+    override func didExitVisibleState() {
+        super.didExitVisibleState()
+        toggleErrorAnimation(show: false)
+    }
+    
+    /**
+     * Display Range: Here, display tasks such as text rasterization and image decoding take place.
+     */
+    override func displayWillStart() {
+        super.displayWillStart()
+    }
+    override func didEnterDisplayState() {
+        super.didEnterDisplayState()
+    }
+    override func didExitDisplayState() {
+        super.didExitDisplayState()
+    }
+    
+    
+    
     
     override func didLoad() {
         super.didLoad()
@@ -154,29 +261,10 @@ class ParkASCellNode: ASCellNode {
         self.errorLabelNoItems.textColor = UIColor(red:0.40, green:0.40, blue:0.40, alpha:1.00)
         self.errorLabelNoItems.textAlignment = .center
         
-        self.errorImageNoItems = UIImageView(frame: CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30))
+        self.errorImageNoItems = UIImageView(frame: CGRect(x: 20, y: self.view.bounds.height / 2 + 22, width: 30, height: 30))
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
         
-        /**
-         * Firebase:
-         * 1. Count the items in DB
-         * 2. Only attach observer if items.count > 0
-         * (only attach once an observer)
-         */
-        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.value, with: { (snapshot) -> Void in
-            if snapshot.exists(), let count: Int = snapshot.value as? Int, count > 0 {
-                self.addObserver()
-            } else {
-                self.toggleErrorLabelNoItems(show: true)
-            }
-        })
-        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
-            if let count: Int = snapshot.value as? Int, count > 0 {
-                self.addObserver()
-            } else {
-                self.toggleErrorLabelNoItems(show: true)
-            }
-        })
+        
         
     }
     
@@ -189,12 +277,6 @@ class ParkASCellNode: ASCellNode {
         return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0), child: self.collectionNode)
     }
 
-}
-
-extension ParkASCellNode: CAAnimationDelegate {
-    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
-        self.errorImageNoItems.rotate360Degrees(duration: CFTimeInterval(randomNumber(range: 1...6)), completionDelegate: self)
-    }
 }
 
 extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {

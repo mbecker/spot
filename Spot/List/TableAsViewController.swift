@@ -5,6 +5,7 @@ import FirebaseDatabase
 import FirebaseMessaging
 import Kingfisher
 import NVActivityIndicatorView
+import EasyAnimation
 
 class TableAsViewController: ASViewController<ASDisplayNode> {
     
@@ -30,6 +31,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     var observerChildChanged: FIRDatabaseHandle?
     let errorLabelNoItems = UILabel()
     var errorImageNoItems: UIImageView!
+    var errorImageChain: EAAnimationFuture?
     
     /**
      * Data
@@ -91,7 +93,27 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
             self.loadingIndicatorView.stopAnimating()
             self.view.addSubview(self.errorLabelNoItems)
             self.view.addSubview(self.errorImageNoItems)
-            self.errorImageNoItems.rotate360Degrees(duration: 2, completionDelegate: self)
+            
+            self.errorImageChain = UIView.animateAndChain(withDuration: 1.0, delay: 0.0, options: [], animations: {
+                self.errorImageNoItems.frame.origin.x = self.view.center.x - 15
+            }, completion: nil).animate(withDuration: 2.0, animations: {
+                let degrees = 180.0
+                let radians = CGFloat(degrees * Double.pi / 180)
+                self.errorImageNoItems.layer.transform = CATransform3DConcat(CATransform3DMakeScale(1.4, 1.4, 1.0), CATransform3DMakeRotation(radians, 0.0, 0.0, 1.0))
+            }).animate(withDuration: 2.0, animations: {
+                // self.errorImageNoItems.layer.transform = CATransform3DMakeScale(1.2, 1.2, 1.0)
+                let degrees = 360.0
+                let radians = CGFloat(degrees * Double.pi / 180)
+                self.errorImageNoItems.layer.transform = CATransform3DMakeRotation(radians, 0.0, 0.0, 1.0)
+            }).animate(withDuration: 1.0, animations: {
+                self.errorImageNoItems.frame.origin.x = self.view.bounds.width - 20 - 30
+            }).animate(withDuration: 0.0, delay: 0.0, options: [.repeat], animations: {
+                self.errorImageNoItems.frame.origin.x = 20
+            }, completion: nil)
+            
+            
+            
+            
             removeObserver()
         } else {
             self.errorLabelNoItems.removeFromSuperview()
@@ -132,7 +154,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.errorLabelNoItems.textColor = UIColor(red:0.40, green:0.40, blue:0.40, alpha:1.00)
         self.errorLabelNoItems.textAlignment = .center
         
-        self.errorImageNoItems = UIImageView(frame: CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30))
+        self.errorImageNoItems = UIImageView(frame: CGRect(x: 20, y: self.view.bounds.height / 2 + 22, width: 30, height: 30))
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
         
         /**
@@ -162,9 +184,15 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         self.navigationController?.navigationBar.isHidden = true
-        
+        if self.observerChildAdded == nil {
+            toggleErrorLabelNoItems(show: true)
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.errorImageChain?.cancelAnimationChain()
+        self.errorImageNoItems.removeFromSuperview()
     }
     
     
@@ -212,11 +240,5 @@ extension TableAsViewController : ASTableDelegate {
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at: \(indexPath)")
         self.delegate?.didSelectPark(self.items2[indexPath.row])
-    }
-}
-
-extension TableAsViewController: CAAnimationDelegate {
-    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
-        self.errorImageNoItems.rotate360Degrees(duration: CFTimeInterval(randomNumber(range: 1...6)), completionDelegate: self)
     }
 }

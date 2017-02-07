@@ -138,10 +138,24 @@ extension UIView {
         rotateAnimation.toValue = CGFloat(M_PI * 2.0)
         rotateAnimation.duration = duration
         
-        if let delegate: AnyObject = completionDelegate {
+        if let _: AnyObject = completionDelegate {
             rotateAnimation.delegate = completionDelegate
         }
         self.layer.add(rotateAnimation, forKey: nil)
+    }
+    
+    func move(from: CGPoint, to: CGPoint, duration: CFTimeInterval = 1.0, isRemovedOnCompletion: Bool, completionDelegate: CAAnimationDelegate? = nil){
+        let moveAnimation = CABasicAnimation(keyPath: "position")
+        moveAnimation.fromValue = [from.x, from.y]
+        moveAnimation.toValue = [to.x, to.y]
+        moveAnimation.isRemovedOnCompletion = isRemovedOnCompletion
+        moveAnimation.fillMode = kCAFillModeForwards
+        moveAnimation.duration = duration
+        
+        if let _: AnyObject = completionDelegate {
+            moveAnimation.delegate = completionDelegate
+        }
+        self.layer.add(moveAnimation, forKey: "move")
     }
     
 }

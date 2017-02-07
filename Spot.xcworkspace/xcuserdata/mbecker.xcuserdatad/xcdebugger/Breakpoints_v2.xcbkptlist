@@ -9,13 +9,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Pods/NVActivityIndicatorView/NVActivityIndicatorView/NVActivityIndicatorPresenter.swift"
-            timestampString = "508104453.272987"
+            filePath = "Spot/FormCountriesTableViewController.swift"
+            timestampString = "508188368.016237"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
-            landmarkName = "hideTimerFired(_:)"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "filterContentForSearchText(searchText:scope:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spot/FormCountriesTableViewController.swift"
+            timestampString = "508188369.6586"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
+            landmarkName = "filterContentForSearchText(searchText:scope:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 protocol FormCountriesDelegate {
     func didSelect(country: Country)
@@ -16,6 +17,8 @@ class FormCountriesTableViewController: UITableViewController {
     
     let NO_PARKS_FOUND = "No Parks found ..."
     let LOADING_COUNTRIES = "Loading countries ..."
+    
+    let ref: FIRDatabaseReference = FIRDatabase.database().reference()
     
     var initialLoad = true
     var showNoParksFound = true
@@ -92,12 +95,60 @@ class FormCountriesTableViewController: UITableViewController {
         self.tableView.separatorStyle = .none
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
-        let realmTransactions = RealmTransactions()
-        realmTransactions.loadCountriesFromFirebase { (result) in
-            if let countries: [Country] = result {
-                self.parksAll = countries
-                self.tableView.reloadData()
+//        let realmTransactions = RealmTransactions()
+//        realmTransactions.loadCountriesFromFirebase { (result) in
+//            if let countries: [Country] = result {
+//                self.parksAll = countries
+//                self.tableView.reloadData()
+//            }
+//        }
+        
+        self.ref.child("parkcountries").observeSingleEvent(of: .value, with: { (snapshot) in
+            if let snapshotValue = snapshot.value as? [String: Any] {
+                
+                for (key, item) in snapshotValue {
+                    if let itemValue = item as? [String : Any] {
+                        guard let country: String = itemValue["country"] as? String else {
+                            break
+                        }
+                        guard let name: String = itemValue["name"] as? String else {
+                            break
+                        }
+                        guard let code: String = itemValue["code"] as? String else {
+                            break
+                        }
+                        guard let longitude: Double = itemValue["longitude"] as? Double else {
+                            break
+                        }
+                        guard let latitude: Double = itemValue["latitude"] as? Double else {
+                            break
+                        }
+                        let countryObject = Country(key: key, name: name, country: country, code: code, latitude: latitude, longitude: longitude)
+                        if let detail = itemValue["detail"] as? String {
+                            countryObject.detail = detail
+                        }
+                        self.parksAll.insert(countryObject, at: 0)
+                        let indexPath = IndexPath(item: 0, section: 1)
+                        if self.parksAll.count > 1 {
+                            // If the parksAll Array = 0 then we show an error; that's wy we can't add a new first row
+                            self.tableView.insertRows(at: [indexPath], with: .none)
+                        }
+                        UIView.setAnimationsEnabled(false)
+                        self.tableView.beginUpdates()
+                        self.tableView.reloadRows(at: [indexPath], with: .none)
+                        self.tableView.endUpdates()
+                        UIView.setAnimationsEnabled(true)
+                    } else {
+                        break
+                    }
+                }
+                
+            } else {
+                self.parksAll.removeAll()
             }
+            
+        }) { (error) in
+            print(error.localizedDescription)
         }
        
     }
