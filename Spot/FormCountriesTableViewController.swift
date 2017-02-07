@@ -292,8 +292,8 @@ class FormCountriesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // self.searchController.isActive = false
-        // tableView.becomeFirstResponder()
+         // self.searchController.isActive = false
+         tableView.becomeFirstResponder()
         switch indexPath.section {
         case 0:
             self.formCountriesDelegate?.didSelect(country: parksClose[indexPath.row])
