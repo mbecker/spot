@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Hola</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We want to show parks, attractions, animals and spots close to you!</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Save photos of your spots.</string>
 	<key>NSCameraUsageDescription</key>

@@ -29,6 +29,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     var observerChildAdded: FIRDatabaseHandle?
     var observerChildChanged: FIRDatabaseHandle?
     let errorLabelNoItems = UILabel()
+    let errorImageNoItems = UIImageView()
     
     /**
      * Data
@@ -87,12 +88,14 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     
     func toggleErrorLabelNoItems(show: Bool) {
         if show {
+            removeObserver()
             self.loadingIndicatorView.stopAnimating()
             self.view.addSubview(self.errorLabelNoItems)
-            
-            removeObserver()
+            self.view.addSubview(self.errorImageNoItems)
+            self.errorImageNoItems.rotate360Degrees(duration: 2, completionDelegate: self)
         } else {
             self.errorLabelNoItems.removeFromSuperview()
+            self.errorImageNoItems.removeFromSuperview()
             self.loadingIndicatorView.startAnimating()
         }
         
@@ -105,6 +108,14 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         if self.observerChildAdded != nil {
             self.ref.removeObserver(withHandle: self.observerChildChanged!)
         }
+    }
+    
+    override func loadView() {
+        super.loadView()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
     }
     
     override func viewDidLoad() {
@@ -129,6 +140,9 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.errorLabelNoItems.textColor = UIColor(red:0.40, green:0.40, blue:0.40, alpha:1.00)
         self.errorLabelNoItems.textAlignment = .center
         
+        self.errorImageNoItems.frame = CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30)
+        self.errorImageNoItems.image = UIImage(named:"Turtle-66")
+        
         /**
          * Firebase:
          * 1. Count the items in DB
@@ -149,20 +163,17 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
                 self.toggleErrorLabelNoItems(show: true)
             }
         })
-        
-
     }
     
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
-        if self.observerChildAdded == nil {
-            toggleErrorLabelNoItems(show: true)
-        }
+        self.navigationController?.navigationBar.isHidden = false
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
     
     
@@ -210,5 +221,11 @@ extension TableAsViewController : ASTableDelegate {
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at: \(indexPath)")
         self.delegate?.didSelectPark(self.items2[indexPath.row])
+    }
+}
+
+extension TableAsViewController: CAAnimationDelegate {
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        self.errorImageNoItems.rotate360Degrees(duration: CFTimeInterval(randomNumber(range: 1...6)), completionDelegate: self)
     }
 }

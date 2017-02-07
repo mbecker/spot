@@ -121,7 +121,6 @@ class ParkASCellNode: ASCellNode {
             self.errorLabelNoItems.removeFromSuperview()
             self.errorImageNoItems.removeFromSuperview()
             self.loadingIndicatorView.startAnimating()
-            
         }
         
     }

@@ -139,7 +139,7 @@ class RealmTransactions {
     
     func loadParkFromFirebaseAndSaveToRealm(key: String, completion: @escaping (_ result: Park?) -> Void) {
         let ref = FIRDatabase.database().reference()
-        ref.child("parkinfo").child(key).observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child("parkinfo/\(key)").observe(.value, with: { (snapshot) in
             // Get park value
             let value = snapshot.value as? NSDictionary
             
@@ -216,7 +216,6 @@ class RealmTransactions {
             let parkObject = Park(realmPark: park)
             
             completion(parkObject)
-            
         }) { (error) in
             print(error.localizedDescription)
             completion(nil)

@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseDatabase
+import CoreLocation
 
 protocol FormCountriesDelegate {
     func didSelect(country: Country)
@@ -27,8 +28,10 @@ class FormCountriesTableViewController: UITableViewController {
     
     let searchController = UISearchController(searchResultsController: nil)
     var filteredCountries = [Country]()
-    private var parksAll = [Country]()
-    private let parksClose = [Country]()
+    var parksAll = [Country]()
+    var parksClose = [Country]()
+    
+    var locationManager: CLLocationManager!
     
     var formCountriesDelegate: FormCountriesDelegate?
     
@@ -150,7 +153,15 @@ class FormCountriesTableViewController: UITableViewController {
         }) { (error) in
             print(error.localizedDescription)
         }
-       
+        
+        /**
+         * GPS Location
+         */
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        locationManager.distanceFilter = kCLDistanceFilterNone
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -159,11 +170,35 @@ class FormCountriesTableViewController: UITableViewController {
         DispatchQueue.main.async { [unowned self] in
             self.searchController.searchBar.becomeFirstResponder()
         }
+        
+        // 1. status is not determined
+        if CLLocationManager.authorizationStatus() == .notDetermined {
+            self.locationManager.requestAlwaysAuthorization()
+        }
+            // 2. authorization were denied
+        else if CLLocationManager.authorizationStatus() == .denied {
+            showAlert(title: "Location services were previously denied. Please enable location services for this app in Settings.")
+        }
+            // 3. we do have authorization
+        else if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+            self.locationManager.requestLocation()
+        }
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    // MARK: - Helpers
+    
+    func showAlert(title: String) {
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+        
     }
 
     // MARK: - Table view data source
@@ -206,9 +241,9 @@ class FormCountriesTableViewController: UITableViewController {
         let cell: UITableViewCell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         switch indexPath.section {
         case 0:
-            if showGPSError {
+            if showGPSError && parksClose.count == 0 {
                 cell.textLabel?.text = "Error fetching parks at your location ..."
-            } else if showGPSfetching {
+            } else if showGPSfetching && parksClose.count == 0 {
                 let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
                 activityIndicator.frame = CGRect(x: self.view.bounds.width / 2 - 12, y: 48 / 2 - 12, width: 24, height: 24)
                 activityIndicator.startAnimating()
@@ -257,13 +292,17 @@ class FormCountriesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.searchController.isActive = false
-        tableView.becomeFirstResponder()
+        // self.searchController.isActive = false
+        // tableView.becomeFirstResponder()
         switch indexPath.section {
         case 0:
             self.formCountriesDelegate?.didSelect(country: parksClose[indexPath.row])
         default:
-            self.formCountriesDelegate?.didSelect(country: parksAll[indexPath.row])
+            if filteredCountries.count > 0 {
+                self.formCountriesDelegate?.didSelect(country: filteredCountries[indexPath.row])
+            } else {
+                self.formCountriesDelegate?.didSelect(country: parksAll[indexPath.row])
+            }
         }
     }
     
@@ -338,5 +377,23 @@ extension FormCountriesTableViewController: UISearchResultsUpdating {
         } else {
             filterContentForSearchText(searchText: searchController.searchBar.text!)
         }
+    }
+}
+
+extension FormCountriesTableViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if locations.first != nil && self.parksClose.count == 0{
+            print("Found user's location: \(locations.first)")
+            self.showGPSfetching = false
+            let country = Country(key: "addo", name: "\(locations.first)", country: "DE", code: "DE", latitude: (locations.first?.coordinate.longitude)!, longitude: (locations.first?.coordinate.longitude)!)
+            self.parksClose.insert(country, at: 0)
+            let indexPath = IndexPath(item: 0, section: 0)
+            self.tableView.reloadRows(at: [indexPath], with: .none)
+        }
+    }
+    
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Failed to find user's location: \(error.localizedDescription)")
     }
 }
