@@ -5,7 +5,6 @@ import FirebaseDatabase
 import FirebaseMessaging
 import Kingfisher
 import NVActivityIndicatorView
-import EasyAnimation
 
 class TableAsViewController: ASViewController<ASDisplayNode> {
     
@@ -30,8 +29,6 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     var observerChildAdded: FIRDatabaseHandle?
     var observerChildChanged: FIRDatabaseHandle?
     let errorLabelNoItems = UILabel()
-    var errorImageNoItems: UIImageView!
-    var errorImageChain: EAAnimationFuture?
     
     /**
      * Data
@@ -92,32 +89,10 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         if show {
             self.loadingIndicatorView.stopAnimating()
             self.view.addSubview(self.errorLabelNoItems)
-            self.view.addSubview(self.errorImageNoItems)
-            
-            self.errorImageChain = UIView.animateAndChain(withDuration: 1.0, delay: 0.0, options: [], animations: {
-                self.errorImageNoItems.frame.origin.x = self.view.center.x - 15
-            }, completion: nil).animate(withDuration: 2.0, animations: {
-                let degrees = 180.0
-                let radians = CGFloat(degrees * Double.pi / 180)
-                self.errorImageNoItems.layer.transform = CATransform3DConcat(CATransform3DMakeScale(1.4, 1.4, 1.0), CATransform3DMakeRotation(radians, 0.0, 0.0, 1.0))
-            }).animate(withDuration: 2.0, animations: {
-                // self.errorImageNoItems.layer.transform = CATransform3DMakeScale(1.2, 1.2, 1.0)
-                let degrees = 360.0
-                let radians = CGFloat(degrees * Double.pi / 180)
-                self.errorImageNoItems.layer.transform = CATransform3DMakeRotation(radians, 0.0, 0.0, 1.0)
-            }).animate(withDuration: 1.0, animations: {
-                self.errorImageNoItems.frame.origin.x = self.view.bounds.width - 20 - 30
-            }).animate(withDuration: 0.0, delay: 0.0, options: [.repeat], animations: {
-                self.errorImageNoItems.frame.origin.x = 20
-            }, completion: nil)
-            
-            
-            
             
             removeObserver()
         } else {
             self.errorLabelNoItems.removeFromSuperview()
-            self.errorImageNoItems.removeFromSuperview()
             self.loadingIndicatorView.startAnimating()
         }
         
@@ -154,9 +129,6 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.errorLabelNoItems.textColor = UIColor(red:0.40, green:0.40, blue:0.40, alpha:1.00)
         self.errorLabelNoItems.textAlignment = .center
         
-        self.errorImageNoItems = UIImageView(frame: CGRect(x: 20, y: self.view.bounds.height / 2 + 22, width: 30, height: 30))
-        self.errorImageNoItems.image = UIImage(named:"Turtle-66")
-        
         /**
          * Firebase:
          * 1. Count the items in DB
@@ -191,8 +163,6 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.errorImageChain?.cancelAnimationChain()
-        self.errorImageNoItems.removeFromSuperview()
     }
     
     

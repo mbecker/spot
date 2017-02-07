@@ -10,7 +10,6 @@ import UIKit
 import AsyncDisplayKit
 import FirebaseDatabase
 import NVActivityIndicatorView
-import EasyAnimation
 
 let airBnbImageFooterHeight: CGFloat = 58
 let airBnbHeight: CGFloat = 218 + airBnbImageFooterHeight
@@ -33,9 +32,7 @@ class ParkASCellNode: ASCellNode {
     var observerChildAdded: FIRDatabaseHandle?
     var observerChildChanged: FIRDatabaseHandle?
     let errorLabelNoItems = UILabel()
-    var errorImageNoItems: UIImageView!
-    var errorImageChain: EAAnimationFuture?
-    var errorImageShown = false
+    let errorImageNoItems = UIImageView()
     
     /**
      * Firebase
@@ -75,11 +72,6 @@ class ParkASCellNode: ASCellNode {
         removeObserver()
         self.toggleErrorLabelNoItems(show: false)
         
-        if self.errorImageShown {
-            self.errorImageNoItems.removeFromSuperview()
-            self.errorImageShown = false
-        }
-        
         // 1: .childAdded observer
         self.observerChildAdded = self.ref.child("park").child(self.park.key).child(self.parkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
@@ -117,51 +109,17 @@ class ParkASCellNode: ASCellNode {
         
     }
     
-    func toggleErrorAnimation(show: Bool){
-        if show {
-            if !self.errorImageShown && self.observerChildAdded == nil {
-                // Add image; set errorImageShwon to true; chain animation
-                self.view.addSubview(self.errorImageNoItems)
-                self.errorImageShown = true
-                self.errorImageChain = UIView.animateAndChain(withDuration: 1.0, delay: 0.0,
-                                                              options: [], animations: {
-                                                                self.errorImageNoItems.frame.origin.x = self.view.center.x - 15
-                }, completion: nil)
-                    .animate(withDuration: 2.0, animations: {
-                        let degrees = 180.0
-                        let radians = CGFloat(degrees * Double.pi / 180)
-                        self.errorImageNoItems.layer.transform = CATransform3DConcat(CATransform3DMakeScale(1.4, 1.4, 1.0), CATransform3DMakeRotation(radians, 0.0, 0.0, 1.0))
-                    })
-                    .animate(withDuration: 2.0, animations: {
-                        // self.errorImageNoItems.layer.transform = CATransform3DMakeScale(1.2, 1.2, 1.0)
-                        let degrees = 360.0
-                        let radians = CGFloat(degrees * Double.pi / 180)
-                        self.errorImageNoItems.layer.transform = CATransform3DMakeRotation(radians, 0.0, 0.0, 1.0)
-                    })
-                    .animate(withDuration: 1.0, animations: {
-                        self.errorImageNoItems.frame.origin.x = self.view.bounds.width - 20 - 30
-                    })
-                    .animate(withDuration: 0.0, delay: 0.0, options: [.repeat], animations: {
-                        self.errorImageNoItems.frame.origin.x = 20
-                    }, completion: nil)
-            }
-        } else {
-            // Cancel animation; remove image; set errorImageShown to false
-            self.errorImageChain?.cancelAnimationChain({
-                self.errorImageNoItems.removeFromSuperview()
-                self.errorImageShown = false
-            });
-        }
-    }
     
     func toggleErrorLabelNoItems(show: Bool) {
         if show && self.observerChildAdded == nil{
             removeObserver()
             self.loadingIndicatorView.stopAnimating()
             self.view.addSubview(self.errorLabelNoItems)
+            self.view.addSubview(self.errorImageNoItems)
+            self.errorImageNoItems.rotate360Degrees(duration: 2, completionDelegate: self)
         } else {
             self.errorLabelNoItems.removeFromSuperview()
-            
+            self.errorImageNoItems.removeFromSuperview()
             self.loadingIndicatorView.startAnimating()
             
         }
@@ -216,11 +174,9 @@ class ParkASCellNode: ASCellNode {
      */
     override func didEnterVisibleState() {
         super.didEnterVisibleState()
-        toggleErrorAnimation(show: true)
     }
     override func didExitVisibleState() {
         super.didExitVisibleState()
-        toggleErrorAnimation(show: false)
     }
     
     /**
@@ -261,11 +217,8 @@ class ParkASCellNode: ASCellNode {
         self.errorLabelNoItems.textColor = UIColor(red:0.40, green:0.40, blue:0.40, alpha:1.00)
         self.errorLabelNoItems.textAlignment = .center
         
-        self.errorImageNoItems = UIImageView(frame: CGRect(x: 20, y: self.view.bounds.height / 2 + 22, width: 30, height: 30))
+        self.errorImageNoItems.frame = CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30)
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
-        
-        
-        
     }
     
     override func layout() {
@@ -319,4 +272,10 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
         self.delegate?.didSelectPark(parkItem)
     }
 
+}
+
+extension ParkASCellNode: CAAnimationDelegate {
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        self.errorImageNoItems.rotate360Degrees(duration: CFTimeInterval(randomNumber(range: 1...6)), completionDelegate: self)
+    }
 }

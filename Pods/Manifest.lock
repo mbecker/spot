@@ -15,8 +15,6 @@ PODS:
     - Bolts/Tasks
   - Bolts/Tasks (1.8.4)
   - Down (0.3)
-  - EasyAnimation (1.1.1)
-  - EZAlertController (3.2)
   - FacebookCore (0.2.0):
     - Bolts (~> 1.8)
     - FBSDKCoreKit (~> 4.15)
@@ -113,7 +111,6 @@ PODS:
   - PINRemoteImage/PINCache (3.0.0-beta.6):
     - PINCache (= 3.0.1-beta.2)
     - PINRemoteImage/Core
-  - PMAlertController (2.0.1)
   - SMSegmentView (0.0.2)
   - SwiftMessages (3.1.4)
   - TOCropViewController (2.0.11)
@@ -121,8 +118,6 @@ PODS:
 DEPENDENCIES:
   - AsyncDisplayKit (from `https://github.com/facebook/AsyncDisplayKit`)
   - Down
-  - EasyAnimation
-  - EZAlertController (= 3.2)
   - FacebookCore
   - FacebookLogin
   - FacebookShare
@@ -136,7 +131,6 @@ DEPENDENCIES:
   - Kingfisher (~> 3.0)
   - MapboxStatic.swift (from `https://github.com/mapbox/MapboxStatic.swift.git`, branch `swift-3`)
   - NVActivityIndicatorView
-  - PMAlertController
   - SMSegmentView (from `https://github.com/sima-11/SMSegmentView.git`)
   - SwiftMessages
   - TOCropViewController (~> 2.0)
@@ -165,8 +159,6 @@ SPEC CHECKSUMS:
   AsyncDisplayKit: 4d4403eb61b2b667866e98ca8b7fab6cec497b68
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   Down: dea228f55b736ea0a7b96e02dd14b33600ce83a2
-  EasyAnimation: e67601df3eb57e86c570948a250ce162a5665b8a
-  EZAlertController: 633be01320bed47720be54054df47667d61c2481
   FacebookCore: 2cb3f0fbff218e9d3119cec84bae983b232412de
   FacebookLogin: c9d606504735780a9e3002465a615512e0a691a5
   FacebookShare: 8e9ee8ea06505e6a1d3d719b0cc63e840fb8aaeb
@@ -192,11 +184,10 @@ SPEC CHECKSUMS:
   NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
-  PMAlertController: 8f809a67e740bd6ce1bb7d6017c12c94e997f64b
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
   SwiftMessages: 08386e74abe1b32fa8ac2075edb4043c56db709d
   TOCropViewController: fe91aaab9e95d72ac38654d1174c8c8339585ee5
 
-PODFILE CHECKSUM: 76efde1d8d9ae8240566fa6acde472552c95fde8
+PODFILE CHECKSUM: c8dc762b2aeb52b513648260cf9dedd17950f7ef
 
 COCOAPODS: 1.2.0.beta.1

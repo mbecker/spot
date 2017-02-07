@@ -20,13 +20,13 @@ target 'Spot' do
   pod 'ImageSlideshow', '~> 1.0.0-beta.1'
   pod 'MapboxStatic.swift', :git => 'https://github.com/mapbox/MapboxStatic.swift.git', :branch => 'swift-3'
   pod 'SMSegmentView', :git => 'https://github.com/sima-11/SMSegmentView.git'
-  pod 'EZAlertController', '3.2'
+  # pod 'EZAlertController', '3.2'
   pod 'ImagePicker'
   pod 'TOCropViewController', '~> 2.0'
-  pod 'PMAlertController'
+  # pod 'PMAlertController'
   pod 'Down'
   pod 'SwiftMessages'
-  pod 'EasyAnimation'
+  # pod 'EasyAnimation'
 
   target 'SpotTests' do
     inherit! :search_paths
