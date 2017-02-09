@@ -17,18 +17,23 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         return node as! ASTableNode
     }
     
-    let ref         :   FIRDatabaseReference
-    let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect.zero, type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
-    let page: Int
-    let parkSection: ParkSection
-    let park: Park
-    var items2: [ParkItem2] = [ParkItem2]()
+    let ref         : FIRDatabaseReference
+    let park        : Park
+    let parkSection : ParkSection?
+    let type        : ItemType?
+    let path        : String!
+    
+    
     weak var delegate:ParkASCellNodeDelegate?
+    
+    var items2: [ParkItem2] = [ParkItem2]()
     
     var observerChildAdded: FIRDatabaseHandle?
     var observerChildChanged: FIRDatabaseHandle?
     let errorLabelNoItems = UILabel()
     let errorImageNoItems = UIImageView()
+    
+    let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect.zero, type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
     
     /**
      * Data
@@ -36,9 +41,21 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     
     init(page: Int, park: Park, parkSection: ParkSection) {
         self.ref            = FIRDatabase.database().reference()
-        self.page           = page
         self.park           = park
         self.parkSection    = parkSection
+        self.path           = "park/" + self.park.key + "/" + parkSection.path + "/"
+        self.type           = nil
+        super.init(node: ASTableNode(style: UITableViewStyle.grouped))
+        tableNode.delegate = self
+        tableNode.dataSource = self
+    }
+    
+    init(park: Park, type: ItemType){
+        self.ref            = FIRDatabase.database().reference()
+        self.park           = park
+        self.type           = type
+        self.path           = type.rawValue + "/" + park.key
+        self.parkSection    = nil
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -51,30 +68,43 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     func addObserver(){
         removeObserver()
         self.toggleErrorLabelNoItems(show: false)
+
+        let itemType: ItemType = (self.parkSection != nil) ? self.parkSection!.type : self.type!
+        
         // 1: .childAdded observer
-        self.observerChildAdded = self.ref.child("park").child(self.park.key).child(self.parkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
+        self.observerChildAdded = self.ref.child(self.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2.contains(where: {$0.key == item2.key}) == false {
+            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: itemType), self.items2.contains(where: {$0.key == item2.key}) == false {
+                
                 if self.loadingIndicatorView.animating {
                     self.loadingIndicatorView.stopAnimating()
                 }
-                self.items2.insert(item2, at: 0)
-                let indexPath = IndexPath(item: 0, section: 0)
-                self.tableNode.insertRows(at: [indexPath], with: .none)
-                self.tableNode.reloadRows(at: [indexPath], with: .none)
+                
+                
+                OperationQueue.main.addOperation({
+                    self.items2.insert(item2, at: 0)
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    self.tableNode.insertRows(at: [indexPath], with: .none)
+                    self.tableNode.reloadRows(at: [indexPath], with: .none)
+                })
+                
             }
             
         })
         
         // 2: .childChanged observer
-        self.observerChildChanged = self.ref.child("park").child(self.park.key).child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
+        self.observerChildChanged = self.ref.child(self.path).observe(.childChanged, with: { (snapshot) -> Void in
             // ParkItem2 is updated; replace item in table array
             if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject] {
                 for i in 0...self.items2.count-1 {
-                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2[i].key == item2.key {
-                        self.items2[i]  = item2
-                        let indexPath = IndexPath(item: i, section: 0)
-                        self.tableNode.reloadRows(at: [indexPath], with: .fade)
+                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: itemType), self.items2[i].key == item2.key {
+                        let index = i
+                        OperationQueue.main.addOperation({
+                            self.items2[index]  = item2
+                            let indexPath = IndexPath(item: index, section: 0)
+                            self.tableNode.reloadRows(at: [indexPath], with: .fade)
+                        })
+                        
                     }
                 }
             }
@@ -141,26 +171,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.errorImageNoItems.frame = CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30)
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
         
-        /**
-         * Firebase:
-         * 1. Count the items in DB
-         * 2. Only attach observer if items.count > 0
-         * (only attach once an observer)
-         */
-        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.value, with: { (snapshot) -> Void in
-            if snapshot.exists(), let count: Int = snapshot.value as? Int, count > 0 {
-                self.addObserver()
-            } else {
-                self.toggleErrorLabelNoItems(show: true)
-            }
-        })
-        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
-            if let count: Int = snapshot.value as? Int, count > 0 {
-                self.addObserver()
-            } else {
-                self.toggleErrorLabelNoItems(show: true)
-            }
-        })
+        
 
     }
     
@@ -168,12 +179,31 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = false
-        
+        /**
+         * Firebase:
+         * 1. Count the items in DB
+         * 2. Only attach observer if items.count > 0
+         * (only attach once an observer)
+         */
+        self.ref.child(self.path).child("count").observe(.value, with: { (snapshot) -> Void in
+            if snapshot.exists(), let count: Int = snapshot.value as? Int, count > 0 {
+                self.addObserver()
+            } else {
+                self.toggleErrorLabelNoItems(show: true)
+            }
+        })
+        self.ref.child(self.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
+            if let count: Int = snapshot.value as? Int, count > 0 {
+                self.addObserver()
+            } else {
+                self.toggleErrorLabelNoItems(show: true)
+            }
+        })
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-            }
+    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)

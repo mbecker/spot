@@ -344,6 +344,17 @@ extension ParkASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at: \(indexPath)")
+        switch indexPath.section {
+        case 0:
+            let backItem = UIBarButtonItem()
+            backItem.title = ""
+            self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
+            let parkDetailUIViewController = ParkDetailViewController(park: self._park)
+            self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
+        default:
+            return
+        }
+        
     }
 }
 

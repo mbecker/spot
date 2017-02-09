@@ -74,13 +74,18 @@ class ParkASCellNode: ASCellNode {
         self.observerChildAdded = self.ref.child("park").child(self.park.key).child(self.parkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
             if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2.contains(where: {$0.key == item2.key}) == false {
+                
                 if self.loadingIndicatorView.animating {
                     self.loadingIndicatorView.stopAnimating()
                 }
-                self.items2.insert(item2, at: 0)
-                let indexPath = IndexPath(item: 0, section: 0)
-                self.collectionNode.insertItems(at: [indexPath])
-                self.collectionNode.reloadItems(at: [indexPath])
+                
+                OperationQueue.main.addOperation({
+                    self.items2.insert(item2, at: 0)
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    self.collectionNode.insertItems(at: [indexPath])
+                    self.collectionNode.reloadItems(at: [indexPath])
+                })
+                
             }
             
         }) { (error) in
