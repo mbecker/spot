@@ -17,8 +17,8 @@ class ParkInfoASTextCellNode: ASTextCellNode {
         }
         set {
             if newValue {
-                self.backgroundColor = UIColor.radicalRed
                 self.textAttributes = self._titleAttributesSelected
+                self.backgroundColor = UIColor.radicalRed
                 let modificationBlock = { (originalImage: UIImage) -> UIImage? in
                     return ASImageNodeTintColorModificationBlock(self._imageColorSelected)(originalImage)
                 }
@@ -33,8 +33,8 @@ class ParkInfoASTextCellNode: ASTextCellNode {
     
     override func __setSelected(fromUIKit selected: Bool) {
         if selected {
-            self.backgroundColor = UIColor.radicalRed
             self.textAttributes = self._titleAttributesSelected
+            self.backgroundColor = UIColor.radicalRed
             let modificationBlock = { (originalImage: UIImage) -> UIImage? in
                 return ASImageNodeTintColorModificationBlock(self._imageColorSelected)(originalImage)
             }
@@ -48,15 +48,15 @@ class ParkInfoASTextCellNode: ASTextCellNode {
     
     override func __setHighlighted(fromUIKit highlighted: Bool) {
         if highlighted {
-            self.backgroundColor = UIColor.radicalRed
             self.textAttributes = self._titleAttributesSelected
+            self.backgroundColor = UIColor.radicalRed
             let modificationBlock = { (originalImage: UIImage) -> UIImage? in
                 return ASImageNodeTintColorModificationBlock(self._imageColorSelected)(originalImage)
             }
             self.chevron.imageModificationBlock = modificationBlock
         } else {
-            self.backgroundColor = UIColor.clear
             self.textAttributes = self._titleAttributes
+            self.backgroundColor = UIColor.clear            
             self.chevron.imageModificationBlock = ASImageNodeTintColorModificationBlock(self._imageColor)
         }
     }
