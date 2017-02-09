@@ -33,6 +33,13 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     /**
      * Data
      */
+    
+    let parkInformtion = [
+        "Park",
+        "Animals",
+        "Attractions"
+    ]
+    
     let _park: Park
     let _user: User
     var delegate: SelectParkDelegate?
@@ -58,8 +65,8 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         // TableView
         self.tableNode.view.showsVerticalScrollIndicator = false
         self.tableNode.view.backgroundColor = UIColor.white
-        self.tableNode.view.separatorColor = UIColor.clear
-        
+        // self.tableNode.view.separatorColor = UIColor.clear
+        self.tableNode.view.separatorStyle = .none
         loadPark()
         
         /**
@@ -146,59 +153,61 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     }
     
     
-    func sectionHeaderView(text: String, sectionId: Int = 0) -> UIView {
+    func sectionHeaderView(text: String, sectionId: Int = 99, additionalSpacingToTop: Bool = false) -> UIView {
         let view = UIView(frame: CGRect.zero)
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.clear
         
         let title = UILabel()
         title.attributedText = NSAttributedString(
             string: text,
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 18, weight: UIFontWeightBold),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 22, weight: UIFontWeightRegular),
                 NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.0,
                 ])
         title.translatesAutoresizingMaskIntoConstraints = false
-        
-        let detailButton = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 20 - 42.5947265625 - 20 - 20, y: 42 / 2 - 16.70703125, width: 20 + 42.5947265625 + 20, height: 16.70703125 * 2))
-        detailButton.contentHorizontalAlignment = .right
-        detailButton.setAttributedTitle(NSAttributedString(
-            string: "See all",
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightRegular),
-                NSForegroundColorAttributeName: UIColor.scarlet,
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.6,
-            ])
-            , for: .normal)
-        detailButton.setAttributedTitle(NSAttributedString(
-            string: "See all",
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightRegular),
-                NSForegroundColorAttributeName: UIColor.scarlet.withAlphaComponent(0.6),
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.6,
-            ])
-            , for: .highlighted)
-        
-        // detailButton.setImage(UIImage(named: "next48")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        // detailButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
-        detailButton.tintColor = UIColor.scarlet
-        // detailButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-        // detailButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-        // detailButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-        detailButton.tag = sectionId
-        detailButton.addTarget(self, action: #selector(self.pushDetail(sender:)), for: UIControlEvents.touchUpInside)
-        
         view.addSubview(title)
-        view.addSubview(detailButton)
-        
-        let constraintLeftTitle = NSLayoutConstraint(item: title, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: 20)
-        let constraintCenterYTitle = NSLayoutConstraint(item: title, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1, constant: 0)
-        
+        let constraintLeftTitle = NSLayoutConstraint(item: title, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: 12)
+        let constraintCenterYTitle = NSLayoutConstraint(item: title, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1, constant: additionalSpacingToTop ? 8 : 0)
         view.addConstraint(constraintLeftTitle)
         view.addConstraint(constraintCenterYTitle)
+        
+        if sectionId != 99 {
+            let detailButton = UIButton()
+            detailButton.contentHorizontalAlignment = .right
+            detailButton.setAttributedTitle(NSAttributedString(
+                string: "See all",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightLight),
+                    NSForegroundColorAttributeName: UIColor.scarlet,
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.6,
+                    ])
+                , for: .normal)
+            detailButton.setAttributedTitle(NSAttributedString(
+                string: "See all",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightLight),
+                    NSForegroundColorAttributeName: UIColor.scarlet.withAlphaComponent(0.6),
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.6,
+                    ])
+                , for: .highlighted)
+            // detailButton.setImage(UIImage(named: "next48")?.withRenderingMode(.alwaysTemplate), for: .normal)
+            // detailButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
+            detailButton.tintColor = UIColor.scarlet
+            // detailButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+            // detailButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+            // detailButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+            detailButton.tag = sectionId
+            detailButton.addTarget(self, action: #selector(self.pushDetail(sender:)), for: UIControlEvents.touchUpInside)
+            detailButton.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(detailButton)
+            detailButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+            detailButton.centerYAnchor.constraint(equalTo: title.centerYAnchor).isActive = true
+            detailButton.heightAnchor.constraint(equalToConstant: 16.70703125 * 2).isActive = true
+        }
         
         return view
     }
@@ -229,48 +238,107 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return self._park.sections.count
+        return self._park.sections.count + parkInformtion.count
     }
     
+    /**
+     * Section
+     */
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if self._park.sections.indices.contains(section) {
-            return sectionHeaderView(text: self._park.sections[section].name, sectionId: section)
+        
+        switch section {
+        case 0:
+            return sectionHeaderView(text: "Encyclopedia")
+        case _ where section < parkInformtion.count:
+            return UIView()
+        case parkInformtion.count:
+            // The header is between last row of "Encyclopedia" and the first section
+            return sectionHeaderView(text: self._park.sections[section - parkInformtion.count].name, sectionId: section - parkInformtion.count, additionalSpacingToTop: true)
+        default:
+            return sectionHeaderView(text: self._park.sections[section - parkInformtion.count].name, sectionId: section - parkInformtion.count)
         }
-        return sectionHeaderView(text: "Section: \(section)")
         
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 42
+        switch section {
+        case 0:
+            return 42
+        case _ where section < parkInformtion.count:
+            return 0.0000000000001
+        case parkInformtion.count:
+            // The header is between last row of "Encyclopedia" and the first section
+            return 52
+        default:
+            return 42
+        }
     }
     
+    /**
+     * Footer
+     */
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footer = UIView()
-        footer.backgroundColor = UIColor.white
-        if section < self._park.sections.count - 1 {
+        footer.backgroundColor = UIColor.clear
+        
+        switch section {
+        case _ where section == self._park.sections.count + parkInformtion.count - 1:
             // Show not border line for last section
+            return footer
+        default:
             let borderLine = UIView(frame: CGRect(x: 20, y: 14, width: self.view.bounds.width - 40, height: 1))
-            borderLine.backgroundColor = UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00) // Bonjour
+            borderLine.backgroundColor = UIColor(red:0.78, green:0.78, blue:0.80, alpha:0.60) // Lavender grey (standard cell border color?) UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00) // Bonjour
+            borderLine.translatesAutoresizingMaskIntoConstraints = false
             footer.addSubview(borderLine)
+            borderLine.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+            borderLine.leadingAnchor.constraint(equalTo: footer.leadingAnchor, constant: 20).isActive = true
+            borderLine.trailingAnchor.constraint(equalTo: footer.trailingAnchor, constant: -20).isActive = true
+            borderLine.centerYAnchor.constraint(equalTo: footer.centerYAnchor).isActive = true
+            return footer
         }
-        return footer
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 18
+        switch section {
+        case _ where section < self.parkInformtion.count:
+            return 0.0000000000001
+        default:
+            return 18
+        }
     }
     
+    /**
+     * Cellnode
+     */
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
-        let node = ParkASCellNode(park: self._park, section: indexPath.section, type: self._park.sections[indexPath.section].type)
-        node.delegate = self
-        return node
+        let section = indexPath.section
+        
+        switch section {
+        case _ where section < parkInformtion.count:
+            let node = ParkInfoASTextCellNode(title: self.parkInformtion[section])
+            return node
+        default:
+            let node = ParkASCellNode(park: self._park, parkSectionNumber: (section - parkInformtion.count))
+            node.delegate = self
+            return node
+        }
+        
     }
 }
 
 extension ParkASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
-        return ASSizeRange.init(min: CGSize(width: 0, height: 144), max: CGSize(width: 0, height: 188))
+        let section = indexPath.section
+        
+        switch section {
+        case _ where section < parkInformtion.count:
+            return ASSizeRange.init(min: CGSize(width: 0, height: 44), max: CGSize(width: 0, height: 44))
+        default:
+            return ASSizeRange.init(min: CGSize(width: 0, height: 188), max: CGSize(width: 0, height: 188))
+        }
+        
+        
     }
     
     

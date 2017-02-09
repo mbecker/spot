@@ -168,28 +168,27 @@ class ParkItem2 {
 //    let ref         :   FIRDatabaseReference
 //    let storage     :   FIRStorage
     let key         :   String
+    let park        :   Park
+    let type        :   ItemType
     let name        :   String
     let image       :   Images?
     var images      :   [Images]?
     let location    :   [String: Double]?
     let latitude    :   Double?
     let longitude   :   Double?
-    let type        :   ItemType
     var tags        =   [String]()
     var spottedBy   =   [[String: String]]()
-    var park        :   Park?
     var realmPark: RealmPark?
     /**
      * Park information
      */
     
     
-    init?(key: String, snapshotValue: [String: AnyObject], type: ItemType, park: Park) {
+    init?(key: String, snapshotValue: [String: AnyObject], park: Park, type: ItemType) {
         
-//        self.storage      = FIRStorage.storage()
-        self.type         = type
         self.key          = key
-//        self.ref          = snapshot.ref
+        self.park         = park
+        self.type   = type
         
         
         if let name: String = snapshotValue["name"] as? String {
@@ -198,7 +197,7 @@ class ParkItem2 {
             return nil
         }
         
-        self.park         = park
+        
         
         /**
          * Tags

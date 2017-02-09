@@ -41,6 +41,10 @@ extension UIColor {
     public class var scarlet: UIColor {
         return UIColor(red:1.00, green:0.15, blue:0.29, alpha:1.00) // scarlet
     }
+    
+    public class var radicalRed: UIColor {
+        return UIColor(red:1.00, green:0.18, blue:0.33, alpha:1.00) // selected cell background color
+    }
 }
 
 extension UIColor {

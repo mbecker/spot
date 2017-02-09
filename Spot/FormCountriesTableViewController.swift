@@ -384,11 +384,26 @@ extension FormCountriesTableViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if locations.first != nil && self.parksClose.count == 0{
             print("Found user's location: \(locations.first)")
-            self.showGPSfetching = false
-            let country = Country(key: "addo", name: "\(locations.first)", country: "DE", code: "DE", latitude: (locations.first?.coordinate.longitude)!, longitude: (locations.first?.coordinate.longitude)!)
-            self.parksClose.insert(country, at: 0)
-            let indexPath = IndexPath(item: 0, section: 0)
-            self.tableView.reloadRows(at: [indexPath], with: .none)
+            
+            
+            let coordinate0 = CLLocation(latitude: (locations.first?.coordinate.latitude)!, longitude: (locations.first?.coordinate.longitude)!)
+            
+            
+            for park in parksAll {
+                let coordinate1 = CLLocation(latitude: park.latitude, longitude: park.longitude)
+                let distance = coordinate0.distance(from: coordinate1)
+                print("Distance to \(park.name): \(distance)")
+                let distance1: Double = Double(distance)
+                if distance1 < 9000000 {
+                    self.showGPSfetching = false
+                    let country = Country(key: "addo", name: "\(park.name)", country: "DE", code: "DE", latitude: park.latitude, longitude: park.longitude)
+                    self.parksClose.insert(country, at: 0)
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    // self.tableView.reloadRows(at: [indexPath], with: .none)
+                }
+            }
+            self.tableView.reloadData()
+            
         }
     }
     

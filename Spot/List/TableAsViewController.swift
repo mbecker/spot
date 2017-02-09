@@ -22,7 +22,6 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     let page: Int
     let parkSection: ParkSection
     let park: Park
-    let type: ItemType
     var items2: [ParkItem2] = [ParkItem2]()
     weak var delegate:ParkASCellNodeDelegate?
     
@@ -35,10 +34,9 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
      * Data
      */
     
-    init(page: Int, type: ItemType, park: Park, parkSection: ParkSection) {
+    init(page: Int, park: Park, parkSection: ParkSection) {
         self.ref            = FIRDatabase.database().reference()
         self.page           = page
-        self.type           = type
         self.park           = park
         self.parkSection    = parkSection
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
@@ -56,7 +54,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         // 1: .childAdded observer
         self.observerChildAdded = self.ref.child("park").child(self.park.key).child(self.parkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, type: self.type, park: self.park), self.items2.contains(where: {$0.key == item2.key}) == false {
+            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2.contains(where: {$0.key == item2.key}) == false {
                 if self.loadingIndicatorView.animating {
                     self.loadingIndicatorView.stopAnimating()
                 }
@@ -73,7 +71,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
             // ParkItem2 is updated; replace item in table array
             if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject] {
                 for i in 0...self.items2.count-1 {
-                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, type: self.type, park: self.park), self.items2[i].key == item2.key {
+                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2[i].key == item2.key {
                         self.items2[i]  = item2
                         let indexPath = IndexPath(item: i, section: 0)
                         self.tableNode.reloadRows(at: [indexPath], with: .fade)
@@ -163,6 +161,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
                 self.toggleErrorLabelNoItems(show: true)
             }
         })
+
     }
     
     
@@ -172,8 +171,16 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+            }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        removeObserver()
     }
     
     
@@ -214,7 +221,7 @@ extension TableAsViewController : ASTableDataSource {
 extension TableAsViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
-        return ASSizeRange.init(min: CGSize(width: 0, height: 80), max: CGSize(width: 0, height: 80))
+        return ASSizeRange.init(min: CGSize(width: 0, height: 66), max: CGSize(width: 0, height: 66))
     }
     
     

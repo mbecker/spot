@@ -21,9 +21,31 @@ class ListItemASCellNode: ASCellNode {
     var _errorText          =   ASTextNode()
     var _loadingIndicator   =   BallPulse()
     
-    let _height: CGFloat        = 80 // 112
-    let _imageHeight: CGFloat   = 64 // 96
-    let _imageWidth: CGFloat    = 64 // 103.55417528 // 142
+    let _titleAttributes:[String: Any] = [
+        NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+        NSForegroundColorAttributeName: UIColor.black, // UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
+        NSBackgroundColorAttributeName: UIColor.clear,
+        NSKernAttributeName: 0.0,
+    ]
+    let _titleAttributesSelected:[String: Any] = [
+        NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+        NSForegroundColorAttributeName: UIColor.white,
+        NSBackgroundColorAttributeName: UIColor.clear,
+        NSKernAttributeName: 0.0,
+        ]
+    let _detailAttributes:[String: Any] = [
+        NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
+        NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
+        NSBackgroundColorAttributeName: UIColor.clear,
+        NSKernAttributeName: 0.0,
+    ]
+    let _detailAttributesSelected:[String: Any] = [
+        NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
+        NSForegroundColorAttributeName: UIColor.white,
+        NSBackgroundColorAttributeName: UIColor.clear,
+        NSKernAttributeName: 0.0,
+        ]
+    
     
     override var isSelected: Bool {
         get {
@@ -31,25 +53,13 @@ class ListItemASCellNode: ASCellNode {
         }
         set {
             if newValue {
-                self.backgroundColor = UIColor(red:0.93, green:0.23, blue:0.33, alpha:1.00) // UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00).withAlphaComponent(0.6) // Bonjour
-                self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string,
-                                                                 attributes: [
-                                                                    NSForegroundColorAttributeName: UIColor.white
-                    ])
-                self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string,
-                                                                attributes: [
-                                                                    NSForegroundColorAttributeName: UIColor.black
-                    ])
+                self.backgroundColor = UIColor.radicalRed // UIColor(red:0.93, green:0.23, blue:0.33, alpha:0.20) // UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00).withAlphaComponent(0.6) // Bonjour
+                self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string, attributes: self._titleAttributesSelected)
+                self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string, attributes: self._detailAttributesSelected)
             } else {
                 self.backgroundColor = UIColor.clear
-                self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string,
-                                                                 attributes: [
-                                                                    NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
-                    ])
-                self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string,
-                                                                attributes: [
-                                                                    NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00) // Bunker
-                    ])
+                self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string, attributes: self._titleAttributes)
+                self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string, attributes: self._detailAttributes)
             }
         }
     }
@@ -57,40 +67,20 @@ class ListItemASCellNode: ASCellNode {
     override func __setSelected(fromUIKit selected: Bool) {
         if !selected {
             self.backgroundColor = UIColor.clear
-            self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string,
-                                                             attributes: [
-                                                                NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
-                ])
-            self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string,
-                                                            attributes: [
-                                                                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00) // Bunker
-                ])
+            self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string, attributes: self._titleAttributes)
+            self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string, attributes: self._detailAttributes)
         }
     }
     
     override func __setHighlighted(fromUIKit highlighted: Bool) {
         if highlighted {
-            self.backgroundColor = UIColor(red:0.93, green:0.23, blue:0.33, alpha:1.00) // UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00).withAlphaComponent(0.6) // Bonjour
-            self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string,
-                                                             attributes: [
-                                                                NSForegroundColorAttributeName: UIColor.white
-                ])
-            self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string,
-                                                             attributes: [
-                                                                NSForegroundColorAttributeName: UIColor.black
-                ])
-            
+            self.backgroundColor = UIColor.radicalRed // UIColor(red:0.93, green:0.23, blue:0.33, alpha:0.20) // UIColor(red:0.89, green:0.89, blue:0.89, alpha:1.00).withAlphaComponent(0.6) // Bonjour
+            self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string, attributes: self._titleAttributesSelected)
+            self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string, attributes: self._detailAttributesSelected)
         } else {
-            self.backgroundColor = UIColor.white
-            self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string,
-                                                             attributes: [
-                                                                NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
-                ])
-            self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string,
-                                                            attributes: [
-                                                                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00) // Bunker
-                ])
-
+            self.backgroundColor = UIColor.clear
+            self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string, attributes: self._titleAttributes)
+            self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string, attributes: self._detailAttributes)
         }
     }
     
@@ -105,23 +95,6 @@ class ListItemASCellNode: ASCellNode {
         self._image.backgroundColor     = UIColor(red:0.89, green:0.89, blue:0.89, alpha:0.30)
         self._image.contentMode         = .scaleAspectFill
         
-        self._title.attributedText = NSAttributedString(
-            string: parkItem.name,
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
-                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.0,
-                ])
-        self._detail.attributedText = NSAttributedString(
-            string: "12mins ago • 5.1km away",
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
-                NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.0,
-                ])
-
         
         super.init()
         // self.shouldRasterizeDescendants = true // This line will cause the entire node hierarchy from that point on to be rendered into one layer http://asyncdisplaykit.org/docs/subtree-rasterization.html
@@ -152,39 +125,56 @@ class ListItemASCellNode: ASCellNode {
             
             return modifiedImage
         }
+        self.setNeedsLayout()
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+        
+        let imageWidth = (constrainedSize.max.height - 16) * 4 / 3
+        let imageHeight = (constrainedSize.max.height - 16)
+        
+        self._image.style.width             = ASDimension(unit: .points, value: imageWidth)
+        self._image.style.height            = ASDimension(unit: .points, value: imageHeight)
+        
         self._loadingIndicator.style.width  = ASDimension(unit: .points, value: 44)
         self._loadingIndicator.style.height = ASDimension(unit: .points, value: 44)
         
-        let loadingIndicatorInsetSpec       = ASInsetLayoutSpec(insets: UIEdgeInsets(top: self._imageHeight / 2 - 22, left: self._imageWidth / 2 - 22, bottom: 0, right: 0), child: self._loadingIndicator)
+        let loadingIndicatorInsetSpec       = ASInsetLayoutSpec(insets: UIEdgeInsets(top: imageHeight / 2 - 22, left: imageWidth / 2 - 22, bottom: 0, right: 0), child: self._loadingIndicator)
         
-        self._image.style.width             = ASDimension(unit: .points, value: self._imageWidth)
-        self._image.style.height            = ASDimension(unit: .points, value: self._imageHeight)
         
         self._errorText.style.alignSelf     = .center
         // self._errorText.style.width         = ASDimension(unit: .points, value: self._imageHeight * 2 / 3)
         // self._errorText.style.height        = ASDimension(unit: .points, value: 28.640625)
         self._errorText.backgroundColor     = UIColor.clear
-        self._errorText.style.flexGrow = 1.0
+        self._errorText.style.flexGrow      = 1.0
         
         let errorCenterLayout               = ASCenterLayoutSpec(centeringOptions: .XY, sizingOptions: .minimumXY, child: self._errorText)
-        errorCenterLayout.style.width       = ASDimension(unit: .points, value: self._imageWidth - 8)
-        errorCenterLayout.style.height      = ASDimension(unit: .points, value: self._imageHeight - 8)
+        errorCenterLayout.style.width       = ASDimension(unit: .points, value: imageWidth - 8)
+        errorCenterLayout.style.height      = ASDimension(unit: .points, value: imageHeight - 8)
         
         let errorTextOverlaySpec            = ASOverlayLayoutSpec(child: self._image, overlay: errorCenterLayout)
         
         let loadingIndicatorOverlaySpec     = ASOverlayLayoutSpec(child: errorTextOverlaySpec, overlay: loadingIndicatorInsetSpec)
         
-        let verticalTextStackSpec           = ASStackLayoutSpec(direction: .vertical, spacing: 2, justifyContent: .center, alignItems: .start, children: [self._title, self._detail])
-        verticalTextStackSpec.style.flexGrow = 1.0
+        self._title.attributedText          = NSAttributedString(string: self._parkItem.name, attributes: self._titleAttributes)
+        //self._title.style.height            = ASDimension(unit: .points, value: (constrainedSize.max.height - 16) / 2)
+        self._title.style.width             = ASDimension(unit: .points, value: constrainedSize.max.width - 16 - imageWidth - 16 - 16)
+        
+        self._detail.attributedText         = NSAttributedString(string: "12mins ago • 5.1km away", attributes: self._detailAttributes)
+        // self._detail.style.height            = ASDimension(unit: .points, value: constrainedSize.max.height / 2)
+        self._detail.style.width            = ASDimension(unit: .points, value: constrainedSize.max.width - 16 - imageWidth - 16 - 16)
+        
+        // self._title.backgroundColor = UIColor.linkWater
+        // self._detail.backgroundColor = UIColor.lightGray
+        
+        let verticalTextStackSpec           = ASStackLayoutSpec(direction: .vertical, spacing: 2, justifyContent: .start, alignItems: .start, children: [self._title, self._detail])
+        verticalTextStackSpec.style.height  = ASDimension(unit: .points, value: constrainedSize.max.height)
         verticalTextStackSpec.style.alignSelf = .start
         
         let horizontalStackSpec               = ASStackLayoutSpec(direction: .horizontal, spacing: 16, justifyContent: .start, alignItems: .start, children: [loadingIndicatorOverlaySpec, verticalTextStackSpec])
-        horizontalStackSpec.style.flexGrow  = 1.0
+        horizontalStackSpec.style.flexGrow    = 1.0
         
-        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: (self._height - self._imageHeight) / 2, left: 16, bottom: 0, right: 16), child: horizontalStackSpec)
+        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: (constrainedSize.max.height - imageHeight) / 2, left: 16, bottom: 0, right: 16), child: horizontalStackSpec)
     }
     
     func loadImage() {
@@ -198,7 +188,6 @@ class ListItemASCellNode: ASCellNode {
             self._loadingIndicator.removeFromSupernode()
             self.showError(text: "Error:\nNo image uploaded")
         }
-       
     }
     
     func showError(text: String){

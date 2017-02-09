@@ -36,6 +36,7 @@
 		D181BEDB1DF9F46A00112CEB /* 2016-12-08_2.json in Resources */ = {isa = PBXBuildFile; fileRef = D181BEDA1DF9F46A00112CEB /* 2016-12-08_2.json */; };
 		D18DB6C41E37E60A00D536BC /* UserSettingsASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */; };
 		D19358FC1E491C7C000CA357 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D19358FB1E491C7C000CA357 /* MessageView.xib */; };
+		D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19DEAEB1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift */; };
 		D1A3E9621E314BB600E0C591 /* ImagePickerCropper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
 		D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */; };
@@ -383,6 +384,7 @@
 		D181BEDA1DF9F46A00112CEB /* 2016-12-08_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "2016-12-08_2.json"; sourceTree = "<group>"; };
 		D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSettingsASViewController.swift; sourceTree = "<group>"; };
 		D19358FB1E491C7C000CA357 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
+		D19DEAEB1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkInfoASTextCellNode.swift; sourceTree = "<group>"; };
 		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerCropper.swift; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -731,6 +733,7 @@
 				D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */,
 				D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */,
 				D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */,
+				D19DEAEB1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift */,
 			);
 			path = Park;
 			sourceTree = "<group>";
@@ -1791,6 +1794,7 @@
 				D10A1FB61E45E17100E2B7AA /* MainNavigationController.swift in Sources */,
 				D10A1FAE1E45D22000E2B7AA /* RealmObjects.swift in Sources */,
 				D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */,
+				D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */,
 				D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */,
 				D1C7579A1DF05D4E0029E882 /* DetailTableHeaderUIView.swift in Sources */,
 				D1FB21EE1DF2B95D0023F0F2 /* AssetManager.swift in Sources */,

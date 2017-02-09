@@ -26,7 +26,6 @@ class ParkASCellNode: ASCellNode {
     let park: Park!
     var items2: [ParkItem2] = [ParkItem2]()
     var nodes = [ItemASCellNode]()
-    let type: ItemType
     weak var delegate:ParkASCellNodeDelegate?
     
     var observerChildAdded: FIRDatabaseHandle?
@@ -41,10 +40,9 @@ class ParkASCellNode: ASCellNode {
     
     let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
     
-    init(park: Park, section: Int, type: ItemType) {
-        self.parkSection    = park.sections[section]
+    init(park: Park, parkSectionNumber: Int) {
         self.park           = park
-        self.type           = type
+        self.parkSection    = park.sections[parkSectionNumber]
         
         // Layout
         let layout = UICollectionViewFlowLayout()
@@ -75,7 +73,7 @@ class ParkASCellNode: ASCellNode {
         // 1: .childAdded observer
         self.observerChildAdded = self.ref.child("park").child(self.park.key).child(self.parkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, type: self.type, park: self.park), self.items2.contains(where: {$0.key == item2.key}) == false {
+            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2.contains(where: {$0.key == item2.key}) == false {
                 if self.loadingIndicatorView.animating {
                     self.loadingIndicatorView.stopAnimating()
                 }
@@ -90,21 +88,21 @@ class ParkASCellNode: ASCellNode {
         }
         
         // 2: .childChanged observer
-        self.observerChildChanged = self.ref.child("park").child(self.park.key).child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
-            // ParkItem2 is updated; replace item in table array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject] {
-                for i in 0...self.items2.count-1 {
-                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, type: self.type, park: self.park), self.items2[i].key == item2.key {
-                        self.items2[i]  = item2
-                        let indexPath = IndexPath(item: i, section: 0)
-                        self.collectionNode.reloadItems(at: [indexPath])
-                    }
-                }
-            }
-            
-        }) { (error) in
-            print(error.localizedDescription)
-        }
+//        self.observerChildChanged = self.ref.child("park").child(self.park.key).child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
+//            // ParkItem2 is updated; replace item in table array
+//            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject] {
+//                for i in 0...self.items2.count-1 {
+//                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2[i].key == item2.key {
+//                        self.items2[i]  = item2
+//                        let indexPath = IndexPath(item: i, section: 0)
+//                        self.collectionNode.reloadItems(at: [indexPath])
+//                    }
+//                }
+//            }
+//            
+//        }) { (error) in
+//            print(error.localizedDescription)
+//        }
         
         
     }
@@ -152,13 +150,14 @@ class ParkASCellNode: ASCellNode {
                 self.toggleErrorLabelNoItems(show: true)
             }
         })
-        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
-            if let count: Int = snapshot.value as? Int, count > 0 {
-                self.addObserver()
-            } else {
-                self.toggleErrorLabelNoItems(show: true)
-            }
-        })
+        //        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
+        //            if let count: Int = snapshot.value as? Int, count > 0 {
+        //                self.addObserver()
+        //            } else {
+        //                self.toggleErrorLabelNoItems(show: true)
+        //            }
+        //        })
+        
     }
     override func didExitPreloadState() {
         super.didExitPreloadState()
@@ -218,6 +217,7 @@ class ParkASCellNode: ASCellNode {
         
         self.errorImageNoItems.frame = CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30)
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
+        
     }
     
     override func layout() {
@@ -248,7 +248,7 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
             node._title.attributedText = NSAttributedString(
                 string: self.items2[indexPath.row].name,
                 attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightLight), // UIFont(name: "Avenir-Heavy", size: 12)!,
                     NSForegroundColorAttributeName: UIColor.black,
                     NSBackgroundColorAttributeName: UIColor.clear,
                     NSKernAttributeName: 0.0,
