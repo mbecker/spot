@@ -113,9 +113,11 @@ class ParkASCellNode: ASCellNode {
     }
     
     
-    func toggleErrorLabelNoItems(show: Bool) {
+    func toggleErrorLabelNoItems(show: Bool, shouldRemoveObserver: Bool = true) {
         if show && self.observerChildAdded == nil{
-            removeObserver()
+            if shouldRemoveObserver {
+                removeObserver()
+            }
             self.loadingIndicatorView.stopAnimating()
             self.view.addSubview(self.errorLabelNoItems)
             self.view.addSubview(self.errorImageNoItems)
@@ -151,8 +153,6 @@ class ParkASCellNode: ASCellNode {
         self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.value, with: { (snapshot) -> Void in
             if snapshot.exists(), let count: Int = snapshot.value as? Int, count > 0 {
                 self.addObserver()
-            } else {
-                self.toggleErrorLabelNoItems(show: true)
             }
         })
         //        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
@@ -222,6 +222,8 @@ class ParkASCellNode: ASCellNode {
         
         self.errorImageNoItems.frame = CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30)
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
+        
+        toggleErrorLabelNoItems(show: true, shouldRemoveObserver: false)
         
     }
     

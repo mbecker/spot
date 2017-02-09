@@ -37,6 +37,7 @@
 		D18DB6C41E37E60A00D536BC /* UserSettingsASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */; };
 		D19358FC1E491C7C000CA357 /* MessageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D19358FB1E491C7C000CA357 /* MessageView.xib */; };
 		D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19DEAEB1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift */; };
+		D19DEAF01E4CC427003F6E55 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19DEAEF1E4CC427003F6E55 /* String.swift */; };
 		D1A3E9621E314BB600E0C591 /* ImagePickerCropper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
 		D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */; };
@@ -385,6 +386,7 @@
 		D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSettingsASViewController.swift; sourceTree = "<group>"; };
 		D19358FB1E491C7C000CA357 /* MessageView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageView.xib; sourceTree = "<group>"; };
 		D19DEAEB1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkInfoASTextCellNode.swift; sourceTree = "<group>"; };
+		D19DEAEF1E4CC427003F6E55 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerCropper.swift; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -864,6 +866,7 @@
 				D1E4E6491E0934E60084A229 /* UIColor.swift */,
 				D1E4E64B1E0977D90084A229 /* UIImage.swift */,
 				D1D7813C1DD3AA390024B2A9 /* UIViewExtension.swift */,
+				D19DEAEF1E4CC427003F6E55 /* String.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1793,6 +1796,7 @@
 				D1E4E64C1E0977D90084A229 /* UIImage.swift in Sources */,
 				D10A1FB61E45E17100E2B7AA /* MainNavigationController.swift in Sources */,
 				D10A1FAE1E45D22000E2B7AA /* RealmObjects.swift in Sources */,
+				D19DEAF01E4CC427003F6E55 /* String.swift in Sources */,
 				D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */,
 				D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */,
 				D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */,

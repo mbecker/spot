@@ -54,7 +54,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.ref            = FIRDatabase.database().reference()
         self.park           = park
         self.type           = type
-        self.path           = type.rawValue + "/" + park.key
+        self.path           = "park/" + type.rawValue + "/" + self.park.key + "/"
         self.parkSection    = nil
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
@@ -114,9 +114,11 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         
     }
     
-    func toggleErrorLabelNoItems(show: Bool) {
+    func toggleErrorLabelNoItems(show: Bool, shouldRemoveObserver: Bool = true) {
         if show {
-            removeObserver()
+            if shouldRemoveObserver {
+                removeObserver()
+            }
             self.loadingIndicatorView.stopAnimating()
             self.view.addSubview(self.errorLabelNoItems)
             self.view.addSubview(self.errorImageNoItems)
@@ -148,6 +150,12 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Navigationcontroller
+        if self.type != nil {
+            self.navigationController?.visibleViewController?.title = "All \(self.type!.rawValue.firstCharacterUpperCase())"
+        }
+        
         // TableView
         self.view.backgroundColor = UIColor.white
         self.tableNode.view.showsVerticalScrollIndicator    = true
@@ -171,14 +179,44 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.errorImageNoItems.frame = CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30)
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
         
-        
+        toggleErrorLabelNoItems(show: true, shouldRemoveObserver: false)
 
     }
     
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = false
+        
+        if self.type != nil {
+            //Status bar style and visibility
+            UIApplication.shared.isStatusBarHidden = false
+            UIApplication.shared.statusBarStyle = .default
+            // Navigationbar
+            self.navigationController?.navigationBar.isHidden = false
+            self.navigationController?.navigationBar.backgroundColor = UIColor.white
+            
+            // Hide navigationBar hairline at the bottom
+            if shadowImageView == nil {
+                shadowImageView = findShadowImage(under: navigationController!.navigationBar)
+            }
+            shadowImageView?.isHidden = false
+            
+            // Navigationcontroller back image, tint color, text attributes
+            let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
+            self.navigationController?.navigationBar.backIndicatorImage = backImage
+            self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+            
+            self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
+            self.navigationController?.navigationBar.titleTextAttributes = [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+                NSForegroundColorAttributeName: UIColor.black,
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.0,
+            ]
+        } else {
+            self.navigationController?.navigationBar.isHidden = false
+        }
+        
         /**
          * Firebase:
          * 1. Count the items in DB
@@ -188,15 +226,11 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.ref.child(self.path).child("count").observe(.value, with: { (snapshot) -> Void in
             if snapshot.exists(), let count: Int = snapshot.value as? Int, count > 0 {
                 self.addObserver()
-            } else {
-                self.toggleErrorLabelNoItems(show: true)
             }
         })
         self.ref.child(self.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
             if let count: Int = snapshot.value as? Int, count > 0 {
                 self.addObserver()
-            } else {
-                self.toggleErrorLabelNoItems(show: true)
             }
         })
     }
@@ -217,6 +251,22 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    /**
+     * Hepers
+     */
+    private func findShadowImage(under view: UIView) -> UIImageView? {
+        if view is UIImageView && view.bounds.size.height <= 1 {
+            return (view as! UIImageView)
+        }
+        
+        for subview in view.subviews {
+            if let imageView = findShadowImage(under: subview) {
+                return imageView
+            }
+        }
+        return nil
     }
     
     

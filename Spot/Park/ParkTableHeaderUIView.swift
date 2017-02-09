@@ -28,7 +28,7 @@ class ParkTableHeaderUIView: UIView {
         
         //addTitleView(parkName: park.name)
         // addMapView()
-        self.mapView = ParkTableHeaderMapUIImageView.init(park: park, frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: self.bounds.height - 122))
+        self.mapView = ParkTableHeaderMapUIImageView.init(park: park, frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: 206))
         self.mapView?.delegate = self
         addSubview(self.mapView!)
         

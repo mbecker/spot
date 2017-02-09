@@ -351,6 +351,12 @@ extension ParkASViewController : ASTableDelegate {
             self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
             let parkDetailUIViewController = ParkDetailViewController(park: self._park)
             self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
+        case 1:
+            let backItem = UIBarButtonItem()
+            backItem.title = ""
+            self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
+            let parkDetailUIViewController = TableAsViewController(park: self._park, type: .animals)
+            self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
         default:
             return
         }

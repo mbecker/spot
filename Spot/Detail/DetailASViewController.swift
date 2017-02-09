@@ -57,12 +57,18 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         }
         shadowImageView?.isHidden = false
         
-        // Hide text "Back"
+        // Navigationcontroller back image, tint color, text attributes
         let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
         self.navigationController?.navigationBar.backIndicatorImage = backImage
         self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+        
         self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
-        // self.navigationController!.navigationBar.topItem?.title = "Park"
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black,
+            NSBackgroundColorAttributeName: UIColor.clear,
+            NSKernAttributeName: 0.0,
+        ]
         
     }
     
@@ -146,6 +152,10 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Navigationcontroller
+        self.navigationController?.visibleViewController?.title = self._parkItem.name
+        
         
 //        let add = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: nil)
 //        let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.share))

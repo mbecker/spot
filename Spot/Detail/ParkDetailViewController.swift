@@ -44,14 +44,18 @@ class ParkDetailViewController: UIViewController {
         }
         shadowImageView?.isHidden = false
         
-        // Hide text "Back"
+        // Navigationcontroller back image, tint color, text attributes
         let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
         self.navigationController?.navigationBar.backIndicatorImage = backImage
         self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
-        self.navigationController?.navigationItem.backBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
-        self.navigationController?.navigationItem.leftBarButtonItem = UIBarButtonItem(title: nil, style: .plain, target: nil, action: nil)
         
         self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black,
+            NSBackgroundColorAttributeName: UIColor.clear,
+            NSKernAttributeName: 0.0,
+        ]
         
     }
     
@@ -67,18 +71,43 @@ class ParkDetailViewController: UIViewController {
         }
         return nil
     }
-    
+    let scrollView = UIScrollView(frame: UIScreen.main.bounds)
+    var downView: DownView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // navgationconroller
         self.navigationController?.visibleViewController?.title = self._park.name
-        self.view.backgroundColor = UIColor.white
+        
+        // View - Scrollview
+        self.view = self.scrollView
+        self.scrollView.backgroundColor = UIColor.white
+        self.scrollView.isUserInteractionEnabled = true
         
         self.loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: self.view.bounds.width / 2 - 44, y: self.view.bounds.height / 2 - 22 - self.navigationController!.navigationBar.bounds.height, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
-        
         self.loadingIndicatorView!.startAnimating()
-        self.view.addSubview(self.loadingIndicatorView!)
+        self.scrollView.addSubview(self.loadingIndicatorView!)
+        
+        
+        /**
+         * Additional image
+         */
+        let mapImageView = UIImageView(frame: CGRect(x: 20, y: 20, width: self.scrollView.bounds.width - 40, height: 206))
+        self.scrollView.addSubview(mapImageView)
+        if let mapImageString: String = self._park.mapURL, let mapImageURL: URL = URL(string: mapImageString) {
+            let processor = RoundCornerImageProcessor(cornerRadius: 10)
+            mapImageView.kf.indicatorType = .activity
+            mapImageView.kf.setImage(with: mapImageURL, placeholder: nil, options: [.processor(processor)], progressBlock: nil, completionHandler: { image, error, cacheType, imageURL in
+                if error != nil {
+                    print(error!)
+                    // ToDo: Map Image can't be download; show error?
+                } else {
+                    self._park.mapImage = image
+                }
+            })
+        }
+        
         
         /**
          * Markdown
@@ -97,10 +126,9 @@ class ParkDetailViewController: UIViewController {
     
     func showMarkdown(markdown: String){
         do {
-            let downViewFrame: CGRect = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height)
-            let downView = try DownView(frame: downViewFrame, markdownString: markdown)
+            downView = try DownView(frame: CGRect.zero, markdownString: markdown)
             downView.delegate = self
-            self.view.addSubview(downView)
+            
         } catch {
             print("Error: DownView")
         }
@@ -114,7 +142,10 @@ class ParkDetailViewController: UIViewController {
 }
 
 extension ParkDetailViewController: DownViewProtocol {
-    func didFinish(){
+    func didFinish(height: CGFloat){
         self.loadingIndicatorView?.removeFromSuperview()
+        self.downView.frame = CGRect(x: 0, y: 226, width: self.view.bounds.width, height: height)
+        self.scrollView.addSubview(downView)
+        self.scrollView.contentSize = CGSize(width: self.view.bounds.width, height: height + 226)
     }
 }
