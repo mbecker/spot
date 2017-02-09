@@ -11,7 +11,7 @@ import WebKit
 // MARK: - Public API
 
 public protocol DownViewProtocol {
-    func didFinish(height: CGFloat)
+    func didFinish()
 }
 
 open class DownView: WKWebView {
@@ -93,11 +93,10 @@ extension DownView: WKNavigationDelegate {
         webView.evaluateJavaScript("document.body.offsetHeight") { (result, error) in
             if error == nil {
                 if let height: CGFloat = result as! CGFloat? {
-                    self.delegate?.didFinish(height: height)
+                    self.delegate?.didFinish()
                 }
             }
         }
-        
     }
     
     

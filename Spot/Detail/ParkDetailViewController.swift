@@ -77,7 +77,7 @@ class ParkDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // navgationconroller
+        // Navgationconroller
         self.navigationController?.visibleViewController?.title = self._park.name
         
         // View - Scrollview
@@ -91,7 +91,7 @@ class ParkDetailViewController: UIViewController {
         
         
         /**
-         * Additional image
+         * Mapimage of park
          */
         let mapImageView = UIImageView(frame: CGRect(x: 20, y: 20, width: self.scrollView.bounds.width - 40, height: 206))
         self.scrollView.addSubview(mapImageView)
@@ -107,7 +107,6 @@ class ParkDetailViewController: UIViewController {
                 }
             })
         }
-        
         
         /**
          * Markdown
@@ -142,10 +141,21 @@ class ParkDetailViewController: UIViewController {
 }
 
 extension ParkDetailViewController: DownViewProtocol {
-    func didFinish(height: CGFloat){
+    func didFinish(){
         self.loadingIndicatorView?.removeFromSuperview()
-        self.downView.frame = CGRect(x: 0, y: 226, width: self.view.bounds.width, height: height)
+        // Add a frame for downview to do a proper setneedslayout
+        self.downView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.scrollView.bounds.height)
         self.scrollView.addSubview(downView)
-        self.scrollView.contentSize = CGSize(width: self.view.bounds.width, height: height + 226)
+        
+        // do the needslayou to update to correct body.offsezHeight; get the body.offsetHeight and assign it to downview and scrollview.contentsite
+        self.downView.setNeedsLayout()
+        self.downView.evaluateJavaScript("document.body.offsetHeight") { (result, error) in
+            if error == nil {
+                if let height: CGFloat = result as! CGFloat? {
+                    self.downView.frame = CGRect(x: 0, y: 226, width: self.view.bounds.width, height: height)
+                    self.scrollView.contentSize = CGSize(width: self.view.bounds.width, height: height + 226)
+                }
+            }
+        }
     }
 }
