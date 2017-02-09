@@ -241,24 +241,25 @@ class FormCountriesTableViewController: UITableViewController {
         let cell: UITableViewCell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         switch indexPath.section {
         case 0:
-            if showGPSError && parksClose.count == 0 {
-                cell.textLabel?.text = "Error fetching parks at your location ..."
-            } else if showGPSfetching && parksClose.count == 0 {
-                let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
-                activityIndicator.frame = CGRect(x: self.view.bounds.width / 2 - 12, y: 48 / 2 - 12, width: 24, height: 24)
-                activityIndicator.startAnimating()
-                cell.addSubview(activityIndicator)
+            if self.parksClose.count == 0 {
+                if showGPSError {
+                    cell.textLabel?.text = "Error fetching parks at your location ..."
+                } else if showGPSfetching {
+                    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
+                    activityIndicator.frame = CGRect(x: self.view.bounds.width / 2 - 12, y: 48 / 2 - 12, width: 24, height: 24)
+                    activityIndicator.startAnimating()
+                    cell.addSubview(activityIndicator)
+                }
             } else {
                 cell.textLabel!.text = parksClose[indexPath.row].name + ", " + parksClose[indexPath.row].country
             }
             
-            if parksClose.count > 1 {
-                // Bottom border
-                let vw = UIView()
-                vw.frame = CGRect(x: 20, y: 47, width: UIScreen.main.bounds.width - 40, height: 1)
-                vw.backgroundColor = UIColor(red:0.85, green:0.85, blue:0.85, alpha:1.00).withAlphaComponent(0.6)
-                cell.addSubview(vw)
-            }
+            // Bottom border
+            let vw = UIView()
+            vw.frame = CGRect(x: 20, y: 47, width: UIScreen.main.bounds.width - 40, height: 1)
+            vw.backgroundColor = UIColor(red:0.85, green:0.85, blue:0.85, alpha:1.00).withAlphaComponent(0.6)
+            cell.addSubview(vw)
+            
             
         default:
             
@@ -383,26 +384,26 @@ extension FormCountriesTableViewController: UISearchResultsUpdating {
 extension FormCountriesTableViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if locations.first != nil && self.parksClose.count == 0{
-            print("Found user's location: \(locations.first)")
-            
-            
             let coordinate0 = CLLocation(latitude: (locations.first?.coordinate.latitude)!, longitude: (locations.first?.coordinate.longitude)!)
-            
             
             for park in parksAll {
                 let coordinate1 = CLLocation(latitude: park.latitude, longitude: park.longitude)
                 let distance = coordinate0.distance(from: coordinate1)
-                print("Distance to \(park.name): \(distance)")
+                // print("Distance to \(park.name): \(distance)")
                 let distance1: Double = Double(distance)
                 if distance1 < 9000000 {
                     self.showGPSfetching = false
-                    let country = Country(key: "addo", name: "\(park.name)", country: "DE", code: "DE", latitude: park.latitude, longitude: park.longitude)
-                    self.parksClose.insert(country, at: 0)
-                    let indexPath = IndexPath(item: 0, section: 0)
-                    // self.tableView.reloadRows(at: [indexPath], with: .none)
+                    let parkToAdd = park
+                    OperationQueue.main.addOperation({
+                        let country = Country(key: "addo", name: "\(parkToAdd.name)", country: "DE", code: "DE", latitude: parkToAdd.latitude, longitude: parkToAdd.longitude)
+                        self.parksClose.insert(country, at: 0)
+                        // ToDo: Relaod of seperated rows doesn't work; do not find the bug
+                        // let indexPath = IndexPath(item: 0, section: 0)
+                        // self.tableView.reloadRows(at: [indexPath], with: .none)
+                        self.tableView.reloadSections([0], with: .none)
+                    })
                 }
             }
-            self.tableView.reloadData()
             
         }
     }
