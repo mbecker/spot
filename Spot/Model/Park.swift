@@ -151,15 +151,28 @@ struct Image {
         self.publicURL = URL(string: publicURL)!
         self.gcloud = glcoud
     }
+    
+    init(publicURL: String){
+        self.publicURL = URL(string: publicURL)!
+        self.gcloud = nil
+    }
 }
 
 struct Images {
-    let original: Image
-    let resized: [String: Image]
+    var original: Image?
+    var resized = [String: Image]()
+    
+    init() {
+        self.original = nil
+    }
     
     init(original: Image, resizedSize: String, resizedImage: Image) {
         self.original = original
         self.resized = [resizedSize: resizedImage]
+    }
+    
+    mutating func addImage(key: String, image: Image){
+        self.resized[key] = image
     }
 }
 

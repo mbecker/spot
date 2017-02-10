@@ -12,6 +12,7 @@ import Firebase
 import FirebaseAuth
 import RealmSwift
 import SwiftMessages
+import SwiftyJSON
 
 class MainNavigationController: UINavigationController, NVActivityIndicatorViewable {
     
@@ -55,7 +56,10 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
             }
         }
         
-        
+        /**
+         * Load JOSN object to realm
+         */
+        loadAnimalsJSON()
     }
 
     override func didReceiveMemoryWarning() {
@@ -107,6 +111,91 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
     }
     
 
+}
+
+extension MainNavigationController {
+    func loadAnimalsJSON(){
+        var jsonData: Data?
+        
+        
+        
+        guard let file = Bundle.main.path(forResource: "parkanimals", ofType: "json") else {
+            return print("Fail")
+        }
+        
+        jsonData = try? Data(contentsOf: URL(fileURLWithPath: file))
+        let json = JSON(data: jsonData!)
+        
+        //If json is .Array
+        //The `index` is 0..<json.count's string value
+        for (index, items):(String, JSON) in json {
+            for(id, item) : (String, JSON) in items {
+                print(id)
+                guard let name = item["name"].string else {
+                    print("JSON name was not defined for item: \(id)")
+                    break
+                }
+                print(name)
+                
+                guard let markdown = item["markdown"].string else {
+                    print("JSON markdown was not defined for item: \(id)")
+                    break
+                }
+                print(markdown)
+                
+                guard let parks = item["parks"] as? JSON else {
+                    print("JSON parks was not defined for item: \(id)")
+                    break
+                }
+                
+                guard let images = item["images"] as? JSON else {
+                    print("JSON images was not defined for item: \(id)")
+                    break
+                }
+                
+                for(parkid, park) : (String, JSON) in parks {
+                    if let parkName = park.string {
+                        print(parkName)
+                    }
+                }
+                
+                var imageObject = Image()
+                var imagesObject = Images()
+                for(imageKey, imageValue) : (String, JSON) in images {
+                    
+                    if imageKey == "public", let imageValuePublic = imageValue.rawString(), let imageValuePublicURL = URL(string: imageValuePublic) {
+                        imageObject.publicURL = imageValuePublicURL
+                        imagesObject.original = imageObject
+                    } else if imageKey == "resized", let resizedImageJSON = imageValue.dictionary {
+                        for (resizedIMageKey, resizedImageValue) : (String, JSON) in resizedImageJSON {
+                            if resizedIMageKey == "375x300", let resizedImageValueJSON = resizedImageValue.dictionary {
+                                for (resizedImageJSONKey, resizedImageJSONValue) : (String, JSON) in resizedImageValueJSON {
+                                    if resizedImageJSONKey == "public", let resizedImageJSONValuePublic = resizedImageJSONValue.rawString() {
+                                        let resizedImageObject = Image(publicURL: resizedImageJSONValuePublic)
+                                        imagesObject.addImage(key: "375x300", image: resizedImageObject)
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        if let additionalImage = imageValue.dictionary {
+                            for(additionalImageKey, additionalImageValue) : (String, JSON) in additionalImage {
+                                if additionalImageKey == "public", let additionalImagePublic = additionalImageValue.rawString() {
+                                    print(additionalImagePublic)
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+                
+                print(imagesObject)
+                
+                
+            }
+        }
+        
+    }
 }
 
 extension MainNavigationController: FormCountriesDelegate {

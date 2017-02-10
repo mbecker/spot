@@ -255,7 +255,7 @@ extension ListASPagerNode: ASPagerDataSource {
     func pagerNode(_ pagerNode: ASPagerNode, nodeAt index: Int) -> ASCellNode {
         let page        = index
         let node = ASCellNode(viewControllerBlock: { () -> UIViewController in
-            let view = TableAsViewController(page: page, park: self._park, parkSection: self._park.sections[page])
+            let view = TableAsViewController(park: self._park, parkSection: self._park.sections[page])
             view.delegate = self
             return view
         }, didLoad: nil)

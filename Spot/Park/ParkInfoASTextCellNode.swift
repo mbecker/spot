@@ -23,10 +23,12 @@ class ParkInfoASTextCellNode: ASTextCellNode {
                     return ASImageNodeTintColorModificationBlock(self._imageColorSelected)(originalImage)
                 }
                 self.chevron.imageModificationBlock = modificationBlock
+                self.setNeedsDisplay()
             } else {
                 self.backgroundColor = UIColor.clear
                 self.textAttributes = self._titleAttributes
                 self.chevron.imageModificationBlock = ASImageNodeTintColorModificationBlock(self._imageColor)
+                self.setNeedsDisplay()
             }
         }
     }
@@ -39,10 +41,12 @@ class ParkInfoASTextCellNode: ASTextCellNode {
                 return ASImageNodeTintColorModificationBlock(self._imageColorSelected)(originalImage)
             }
             self.chevron.imageModificationBlock = modificationBlock
+            self.setNeedsDisplay()
         } else {
             self.backgroundColor = UIColor.clear
             self.textAttributes = self._titleAttributes
             self.chevron.imageModificationBlock = ASImageNodeTintColorModificationBlock(self._imageColor)
+            self.setNeedsDisplay()
         }
     }
     
@@ -54,10 +58,12 @@ class ParkInfoASTextCellNode: ASTextCellNode {
                 return ASImageNodeTintColorModificationBlock(self._imageColorSelected)(originalImage)
             }
             self.chevron.imageModificationBlock = modificationBlock
+            self.setNeedsDisplay()
         } else {
             self.textAttributes = self._titleAttributes
             self.backgroundColor = UIColor.clear            
             self.chevron.imageModificationBlock = ASImageNodeTintColorModificationBlock(self._imageColor)
+            self.setNeedsDisplay()
         }
     }
     

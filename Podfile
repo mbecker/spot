@@ -27,6 +27,7 @@ target 'Spot' do
   pod 'Down'
   pod 'SwiftMessages'
   # pod 'EasyAnimation'
+  pod 'SwiftyJSON'
 
   target 'SpotTests' do
     inherit! :search_paths

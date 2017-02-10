@@ -1,3 +1,12 @@
+//
+//  ParkItemsASViewController.swift
+//  Spot
+//
+//  Created by Mats Becker on 2/9/17.
+//  Copyright © 2017 safari.digital. All rights reserved.
+//
+
+import Foundation
 import UIKit
 import AsyncDisplayKit
 import Firebase
@@ -6,7 +15,7 @@ import FirebaseMessaging
 import Kingfisher
 import NVActivityIndicatorView
 
-class TableAsViewController: ASViewController<ASDisplayNode> {
+class ParkItemsASViewController: ASViewController<ASDisplayNode> {
     
     private var shadowImageView: UIImageView?
     
@@ -19,7 +28,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     
     let ref         : FIRDatabaseReference
     let park        : Park
-    let parkSection : ParkSection
+    let type        : ItemType
     let path        : String!
     
     
@@ -38,11 +47,11 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
      * Data
      */
     
-    init(park: Park, parkSection: ParkSection) {
+    init(park: Park, type: ItemType){
         self.ref            = FIRDatabase.database().reference()
         self.park           = park
-        self.parkSection    = parkSection
-        self.path           = "park/" + self.park.key + "/" + parkSection.path + "/"
+        self.type           = type
+        self.path           = "park/" + type.rawValue + "/" + self.park.key + "/"
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -56,10 +65,11 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         removeObserver()
         self.toggleErrorLabelNoItems(show: false)
         
+        
         // 1: .childAdded observer
         self.observerChildAdded = self.ref.child(self.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2.contains(where: {$0.key == item2.key}) == false {
+            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.type), self.items2.contains(where: {$0.key == item2.key}) == false {
                 
                 if self.loadingIndicatorView.animating {
                     self.loadingIndicatorView.stopAnimating()
@@ -82,7 +92,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
             // ParkItem2 is updated; replace item in table array
             if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject] {
                 for i in 0...self.items2.count-1 {
-                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2[i].key == item2.key {
+                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.type), self.items2[i].key == item2.key {
                         let index = i
                         OperationQueue.main.addOperation({
                             self.items2[index]  = item2
@@ -136,6 +146,8 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Navigationcontroller
+        self.navigationController?.visibleViewController?.title = "All \(self.type.rawValue.firstCharacterUpperCase())"
         
         // TableView
         self.view.backgroundColor = UIColor.white
@@ -161,14 +173,38 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
         
         toggleErrorLabelNoItems(show: true, shouldRemoveObserver: false)
-
+        
     }
     
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        //Status bar style and visibility
+        UIApplication.shared.isStatusBarHidden = false
+        UIApplication.shared.statusBarStyle = .default
+        // Navigationbar
         self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.navigationBar.backgroundColor = UIColor.white
+        
+        // Hide navigationBar hairline at the bottom
+        if shadowImageView == nil {
+            shadowImageView = findShadowImage(under: navigationController!.navigationBar)
+        }
+        shadowImageView?.isHidden = false
+        
+        // Navigationcontroller back image, tint color, text attributes
+        let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
+        self.navigationController?.navigationBar.backIndicatorImage = backImage
+        self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+        
+        self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black,
+            NSBackgroundColorAttributeName: UIColor.clear,
+            NSKernAttributeName: 0.0,
+        ]
         
         /**
          * Firebase:
@@ -207,7 +243,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     }
     
     /**
-     * Helpers
+     * Hepers
      */
     private func findShadowImage(under view: UIView) -> UIImageView? {
         if view is UIImageView && view.bounds.size.height <= 1 {
@@ -225,7 +261,7 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     
 }
 
-extension TableAsViewController : ASTableDataSource {
+extension ParkItemsASViewController : ASTableDataSource {
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
         return self.items2.count
     }
@@ -251,7 +287,7 @@ extension TableAsViewController : ASTableDataSource {
     }
 }
 
-extension TableAsViewController : ASTableDelegate {
+extension ParkItemsASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
         return ASSizeRange.init(min: CGSize(width: 0, height: 66), max: CGSize(width: 0, height: 66))
@@ -264,7 +300,7 @@ extension TableAsViewController : ASTableDelegate {
     }
 }
 
-extension TableAsViewController: CAAnimationDelegate {
+extension ParkItemsASViewController: CAAnimationDelegate {
     func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         self.errorImageNoItems.rotate360Degrees(duration: CFTimeInterval(randomNumber(range: 1...6)), completionDelegate: self)
     }

@@ -113,6 +113,7 @@ PODS:
     - PINRemoteImage/Core
   - SMSegmentView (0.0.2)
   - SwiftMessages (3.1.4)
+  - SwiftyJSON (3.1.4)
   - TOCropViewController (2.0.11)
 
 DEPENDENCIES:
@@ -133,6 +134,7 @@ DEPENDENCIES:
   - NVActivityIndicatorView
   - SMSegmentView (from `https://github.com/sima-11/SMSegmentView.git`)
   - SwiftMessages
+  - SwiftyJSON
   - TOCropViewController (~> 2.0)
 
 EXTERNAL SOURCES:
@@ -186,8 +188,9 @@ SPEC CHECKSUMS:
   PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
   SwiftMessages: 08386e74abe1b32fa8ac2075edb4043c56db709d
+  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TOCropViewController: fe91aaab9e95d72ac38654d1174c8c8339585ee5
 
-PODFILE CHECKSUM: c8dc762b2aeb52b513648260cf9dedd17950f7ef
+PODFILE CHECKSUM: d8f57f6be908134091079a5296cece9e580eec5b
 
 COCOAPODS: 1.2.0.beta.1

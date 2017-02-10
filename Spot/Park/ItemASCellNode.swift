@@ -110,7 +110,7 @@ class ItemASCellNode: ASCellNode {
         
         if let imageURL: URL = self._parkItem.image?.resized["375x300"]?.publicURL {
             self._image.url = imageURL
-        } else if let imageURL: URL = self._parkItem.image?.original.publicURL {
+        } else if let imageURL: URL = self._parkItem.image?.original?.publicURL {
             self._image.url = imageURL
         } else {
             // Show error

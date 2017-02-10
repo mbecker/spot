@@ -169,7 +169,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         var urls = [URL]()
         if let imageURL: URL = self._parkItem.image?.resized["375x300"]?.publicURL {
             urls.append(imageURL)
-        } else if let imageURL: URL = self._parkItem.image?.original.publicURL {
+        } else if let imageURL: URL = self._parkItem.image?.original?.publicURL {
             urls.append(imageURL)
         }
         
@@ -177,7 +177,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
             for image in images {
                 if let imageURL: URL = image.resized["375x300"]?.publicURL {
                     urls.append(imageURL)
-                } else if let imageURL: URL = image.original.publicURL {
+                } else if let imageURL: URL = image.original?.publicURL {
                     urls.append(imageURL)
                 }
             }
