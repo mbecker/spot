@@ -2,69 +2,26 @@
   
       "animals" : {
         "Elephant" : {
+            "updated": 1486719547,
           "images" : {
-            "0" : {
-              "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/home.jpg",
-              "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/home.jpg",
-              "resized" : {
-                "375x300" : {
-                  "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/home_375x300.jpg",
-                  "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/home_375x300.jpg"
-                }
-              }
-            },
-            "1" : {
-              "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
-              "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
-              "resized" : {
-                "375x300" : {
-                  "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/childrenplace_375x300.jpg",
-                  "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace_375x300.jpg"
-                }
-              }
-            },
-            "2" : {
-              "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/mainentry.jpg",
-              "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/mainentry.jpg",
-              "resized" : {
-                "375x300" : {
-                  "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/mainentry_375x300.jpg",
-                  "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/mainentry_375x300.jpg"
-                }
-              }
-            },
+            
             "3" : {
-              "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/picnic.jpg",
-              "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/picnic.jpg",
+              "public" : "Elephant_additional",
               "resized" : {
                 "375x300" : {
-                  "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/picnic_375x300.jpg",
-                  "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/picnic_375x300.jpg"
+                  "public" : "Elephant_additional_resized"
                 }
               }
             },
-            "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
-            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
+            "public" : "Elephant_public",
             "resized" : {
-              "100x100" : {
-                "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/addo/childrenplace_100x100.jpg",
-                "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fchildrenplace_100x100.jpg?generation=1484690596502000&alt=media"
-              },
-              "350x300" : {
-                "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/addo/childrenplace_350x300.jpg",
-                "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fchildrenplace_350x300.jpg?generation=1484681964194000&alt=media"
-              },
+              
               "375x300" : {
-                "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/addo/childrenplace_375x300.jpg",
-                "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fchildrenplace_375x300.jpg?generation=1484690596541000&alt=media"
-              },
-              "600x600" : {
-                "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/addo/childrenplace_600x600.jpg",
-                "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fchildrenplace_600x600.jpg?generation=1484690596661000&alt=media"
+                "public" : "Elephant_resized"
               }
             }
           },
-          "markdown" : "# An exhibit of Markdown2\n\n\n\nThis note demonstrates some of what [Markdown][1] is capable of doing.\n\n\n\n*Note: Feel free to play with this page. Unlike regular notes, this doesn't automatically save itself.*\n\n\n\n```javascript\n\nvar s = \"JavaScript syntax highlighting\";\n\nalert(s);\n\n```\n\n \n\n```python\n\ns = \"Python syntax highlighting\"\n\nprint s\n\n```\n\n \n\n```\n\nNo language indicated, so no syntax highlighting. \n\nBut let's throw in a <b>tag</b>.\n\n```\n\n\n\n![](https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/animals%2Faddo%2F15_a_KrugerNational_375x300.jpg?generation=1484690590588000&alt=media =20x20)\n\n![alt text](https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/animals%2Faddo%2F15_a_KrugerNational_375x300.jpg?generation=1484690590588000&alt=media \"Logo Title Text 1\"  =100x20 )\n\n![alt text](https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/Elephant1_375x300.jpg \"Logo Title Text 1\")\n\n![alt text](https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/animals%2Faddo%2F15_a_KrugerNational_375x300.jpg?generation=1484690590588000&alt=media \"Logo Title Text 1\")\n\n\n\nReference-style: \n\n![alt text][logo]\n\n\n\n[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png \"Logo Title Text 2\"\n\n\n\n## Basic formatting\n\n\n\nParagraphs can be written like so. A paragraph is the basic block of Markdown. A paragraph is what text will turn into when there is no reason it should become anything else.\n\n\n\nParagraphs must be separated by a blank line. Basic formatting of *italics* and **bold** is supported. This *can be **nested** like* so.\n\n\n\n## Lists\n\n\n\n### Ordered list\n\n\n\n1. Item 1\n\n2. A second item\n\n3. Number 3\n\n4. Ⅳ\n\n\n\n*Note: the fourth item uses the Unicode character for [Roman numeral four][2].*\n\n\n\n### Unordered list\n\n\n\n* An item\n\n* Another item\n\n* Yet another item\n\n* And there's more...\n\n\n\n## Paragraph modifiers\n\n\n\n### Code block\n\n\n\n    Code blocks are very useful for developers and other people who look at code or other things that are written in plain text. As you can see, it uses a fixed-width font.\n\n\n\nYou can also make `inline code` to add code into other things.\n\n\n\n### Quote\n\n\n\n> Here is a quote. What this is should be self explanatory. Quotes are automatically indented when they are used.\n\n\n\n## Headings\n\n\n\nThere are six levels of headings. They correspond with the six levels of HTML headings. You've probably noticed them already in the page. Each level down uses one more hash character.\n\n\n\n### Headings *can* also contain **formatting**\n\n\n\n### They can even contain `inline code`\n\n\n\nOf course, demonstrating what headings look like messes up the structure of the page.\n\n\n\nI don't recommend using more than three or four levels of headings here, because, when you're smallest heading isn't too small, and you're largest heading isn't too big, and you want each size up to look noticeably larger and more important, there there are only so many sizes that you can use.\n\n\n\n## URLs\n\n\n\nURLs can be made in a handful of ways:\n\n\n\n* A named link to [MarkItDown][3]. The easiest way to do these is to select what you want to make a link and hit `Ctrl+L`.\n\n* Another named link to [MarkItDown](http://www.markitdown.net/)\n\n* Sometimes you just want a URL like <http://www.markitdown.net/>.\n\n\n\n## Horizontal rule\n\n\n\nA horizontal rule is a line that goes across the middle of the page.\n\n\n\n---\n\n\n\nIt's sometimes handy for breaking things up.\n\n\n\n## Images\n\n\n\nMarkdown can also contain images. I'll need to add something here sometime.\n\n\n\n## Finally\n\n\n\nThere's actually a lot more to Markdown than this. See the official [introduction][4] and [syntax][5] for more information. However, be aware that this is not using the official implementation, and this might work subtly differently in some of the little things.\n\n\n\n\n\n  [1]: http://daringfireball.net/projects/markdown/\n\n  [2]: http://www.fileformat.info/info/unicode/char/2163/index.htm\n\n  [3]: http://www.markitdown.net/\n\n  [4]: http://daringfireball.net/projects/markdown/basics\n\n  [5]: http://daringfireball.net/projects/markdown/syntax",
+          "markdown" : "elephant Markdown",
           "name" : "Elephant",
           "parks" : {
             "asdasd" : "addo",
@@ -72,70 +29,28 @@
           }
         },
         "Lion" : {
+            "updated": 1486719547,
           "images" : {
-            "0" : {
-              "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/home.jpg",
-              "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/home.jpg",
+                        "3" : {
+              
+              "public" : "Lion_additioan",
               "resized" : {
                 "375x300" : {
-                  "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/home_375x300.jpg",
-                  "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/home_375x300.jpg"
+                  "public" : "Lion_additional_resized"
                 }
               }
             },
-            "1" : {
-              "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
-              "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
-              "resized" : {
-                "375x300" : {
-                  "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/childrenplace_375x300.jpg",
-                  "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace_375x300.jpg"
-                }
-              }
-            },
-            "2" : {
-              "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/mainentry.jpg",
-              "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/mainentry.jpg",
-              "resized" : {
-                "375x300" : {
-                  "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/mainentry_375x300.jpg",
-                  "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/mainentry_375x300.jpg"
-                }
-              }
-            },
-            "3" : {
-              "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/picnic.jpg",
-              "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/picnic.jpg",
-              "resized" : {
-                "375x300" : {
-                  "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/picnic_375x300.jpg",
-                  "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/picnic_375x300.jpg"
-                }
-              }
-            },
-            "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
-            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
+            "public" : "Lion_public",
             "resized" : {
-              "100x100" : {
-                "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/addo/childrenplace_100x100.jpg",
-                "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fchildrenplace_100x100.jpg?generation=1484690596502000&alt=media"
-              },
-              "350x300" : {
-                "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/addo/childrenplace_350x300.jpg",
-                "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fchildrenplace_350x300.jpg?generation=1484681964194000&alt=media"
-              },
+              
               "375x300" : {
-                "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/addo/childrenplace_375x300.jpg",
-                "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fchildrenplace_375x300.jpg?generation=1484690596541000&alt=media"
-              },
-              "600x600" : {
-                "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/addo/childrenplace_600x600.jpg",
-                "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fchildrenplace_600x600.jpg?generation=1484690596661000&alt=media"
+                "public" : "Lion_resized"
               }
+                
             }
           },
-          "markdown" : "# An exhibit of Markdown2\n\n\n\nThis note demonstrates some of what [Markdown][1] is capable of doing.\n\n\n\n*Note: Feel free to play with this page. Unlike regular notes, this doesn't automatically save itself.*\n\n\n\n```javascript\n\nvar s = \"JavaScript syntax highlighting\";\n\nalert(s);\n\n```\n\n \n\n```python\n\ns = \"Python syntax highlighting\"\n\nprint s\n\n```\n\n \n\n```\n\nNo language indicated, so no syntax highlighting. \n\nBut let's throw in a <b>tag</b>.\n\n```\n\n\n\n![](https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/animals%2Faddo%2F15_a_KrugerNational_375x300.jpg?generation=1484690590588000&alt=media =20x20)\n\n![alt text](https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/animals%2Faddo%2F15_a_KrugerNational_375x300.jpg?generation=1484690590588000&alt=media \"Logo Title Text 1\"  =100x20 )\n\n![alt text](https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/Elephant1_375x300.jpg \"Logo Title Text 1\")\n\n![alt text](https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/animals%2Faddo%2F15_a_KrugerNational_375x300.jpg?generation=1484690590588000&alt=media \"Logo Title Text 1\")\n\n\n\nReference-style: \n\n![alt text][logo]\n\n\n\n[logo]: https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png \"Logo Title Text 2\"\n\n\n\n## Basic formatting\n\n\n\nParagraphs can be written like so. A paragraph is the basic block of Markdown. A paragraph is what text will turn into when there is no reason it should become anything else.\n\n\n\nParagraphs must be separated by a blank line. Basic formatting of *italics* and **bold** is supported. This *can be **nested** like* so.\n\n\n\n## Lists\n\n\n\n### Ordered list\n\n\n\n1. Item 1\n\n2. A second item\n\n3. Number 3\n\n4. Ⅳ\n\n\n\n*Note: the fourth item uses the Unicode character for [Roman numeral four][2].*\n\n\n\n### Unordered list\n\n\n\n* An item\n\n* Another item\n\n* Yet another item\n\n* And there's more...\n\n\n\n## Paragraph modifiers\n\n\n\n### Code block\n\n\n\n    Code blocks are very useful for developers and other people who look at code or other things that are written in plain text. As you can see, it uses a fixed-width font.\n\n\n\nYou can also make `inline code` to add code into other things.\n\n\n\n### Quote\n\n\n\n> Here is a quote. What this is should be self explanatory. Quotes are automatically indented when they are used.\n\n\n\n## Headings\n\n\n\nThere are six levels of headings. They correspond with the six levels of HTML headings. You've probably noticed them already in the page. Each level down uses one more hash character.\n\n\n\n### Headings *can* also contain **formatting**\n\n\n\n### They can even contain `inline code`\n\n\n\nOf course, demonstrating what headings look like messes up the structure of the page.\n\n\n\nI don't recommend using more than three or four levels of headings here, because, when you're smallest heading isn't too small, and you're largest heading isn't too big, and you want each size up to look noticeably larger and more important, there there are only so many sizes that you can use.\n\n\n\n## URLs\n\n\n\nURLs can be made in a handful of ways:\n\n\n\n* A named link to [MarkItDown][3]. The easiest way to do these is to select what you want to make a link and hit `Ctrl+L`.\n\n* Another named link to [MarkItDown](http://www.markitdown.net/)\n\n* Sometimes you just want a URL like <http://www.markitdown.net/>.\n\n\n\n## Horizontal rule\n\n\n\nA horizontal rule is a line that goes across the middle of the page.\n\n\n\n---\n\n\n\nIt's sometimes handy for breaking things up.\n\n\n\n## Images\n\n\n\nMarkdown can also contain images. I'll need to add something here sometime.\n\n\n\n## Finally\n\n\n\nThere's actually a lot more to Markdown than this. See the official [introduction][4] and [syntax][5] for more information. However, be aware that this is not using the official implementation, and this might work subtly differently in some of the little things.\n\n\n\n\n\n  [1]: http://daringfireball.net/projects/markdown/\n\n  [2]: http://www.fileformat.info/info/unicode/char/2163/index.htm\n\n  [3]: http://www.markitdown.net/\n\n  [4]: http://daringfireball.net/projects/markdown/basics\n\n  [5]: http://daringfireball.net/projects/markdown/syntax",
-          "name" : "Elephant",
+          "markdown" : "Lion Markdown",
+          "name" : "Lion",
           "parks" : {
             "asdasd" : "addo",
             "dsd33dasd" : "kruger"

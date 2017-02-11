@@ -59,7 +59,7 @@ class CountryASCellNode: ASCellNode {
         self._bottomSeparatorNode.image = UIImage.as_resizableRoundedImage(withCornerRadius: 0, cornerColor: UIColor.clear, fill: UIColor(red:0.92, green:0.92, blue:0.92, alpha:1.00))  // Lilly White
         self._topSeparatorNode.image    = UIImage.as_resizableRoundedImage(withCornerRadius: 0, cornerColor: UIColor.clear, fill: UIColor.clear)
         super.init()
-        addNodes(name: park.name, country: park.country)
+        addNodes(name: park.name, country: park.country.country)
 
     }
     

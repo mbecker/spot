@@ -13,12 +13,18 @@ import FirebaseAuth
 import RealmSwift
 import SwiftMessages
 import SwiftyJSON
+import CoreLocation
 
 class MainNavigationController: UINavigationController, NVActivityIndicatorViewable {
     
-    var launchImageView: UIImageView!
-    var loadingIndicatorView: NVActivityIndicatorView!
+    let launchImageView = UIImageView()
+    let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect.zero, type: NVActivityIndicatorType.ballPulse, color: UIColor.white, padding: 0)
+    let loadingLabel = UILabel()
     let realmTransactions = RealmTransactions()
+    
+    var alreadSignedinUser = false
+    
+    var locationManager: CLLocationManager!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -32,14 +38,21 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.launchImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+        self.launchImageView.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         self.launchImageView.image = #imageLiteral(resourceName: "SplahScreenAirBNB")
         
-        self.loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: UIScreen.main.bounds.width / 2 - 88 / 2, y: UIScreen.main.bounds.height / 2 + UIScreen.main.bounds.height / 4 - 44 / 2, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor.white, padding: 0)
+        self.loadingIndicatorView.frame = CGRect(x: UIScreen.main.bounds.width / 2 - 88 / 2, y: UIScreen.main.bounds.height / 2 + UIScreen.main.bounds.height / 4 - 44 / 2, width: 88, height: 44)
         self.loadingIndicatorView.startAnimating()
+        
+        self.loadingLabel.frame = CGRect(x: 0, y: UIScreen.main.bounds.height  - 44, width: self.view.bounds.width, height: 24)
+        self.loadingLabel.textAlignment = .center
+        self.loadingLabel.text = "Initializing parks ..."
+        self.loadingLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular)
+        self.loadingLabel.textColor = UIColor.white
         
         self.view.addSubview(launchImageView)
         self.view.addSubview(loadingIndicatorView)
+        self.view.addSubview(self.loadingLabel)
         
         self.modalTransitionStyle = .coverVertical
         self.modalPresentationStyle = .fullScreen
@@ -49,17 +62,20 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
                 self.popToRootViewController(animated: true)
                 self.launchImageView.removeFromSuperview()
                 self.loadingIndicatorView.removeFromSuperview()
-            } else {
-                if !(self.topViewController is MainASTabBarController) {
+                self.loadingLabel.removeFromSuperview()
+                self.alreadSignedinUser = false
+            } else if user != nil && !self.alreadSignedinUser {
+                
+                if self.topViewController is MainASTabBarController {
+                    // ToDO: Negative check? !(a is b) -> !! -> true
+                } else {
+                    self.alreadSignedinUser = true
                     self.loadPark()
                 }
+                
             }
         }
         
-        /**
-         * Load JOSN object to realm
-         */
-        loadAnimalsJSON()
     }
 
     override func didReceiveMemoryWarning() {
@@ -73,40 +89,80 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
         self.pushViewController(mainASTabBarController, animated: true)
         self.loadingIndicatorView.removeFromSuperview()
         self.launchImageView.removeFromSuperview()
+        self.loadingLabel.removeFromSuperview()
+    }
+    
+    func showTabBarController(park: RealmPark) {
+        let park = Park(realmPark: park)
+        self.showTabBarController(park: park)
     }
     
     func loadPark(){
-        let realm = try! Realm()
-        if let userDefaultPark = UserDefaults.standard.object(forKey: UserDefaultTypes.parkpath.rawValue) as? String {
-            let parks = realm.objects(RealmPark.self).filter("key = '\(userDefaultPark)'")
-            if parks.count == 1 {
-                let realmPark = parks[0]
-                /*
-                 * Park is in local database; show ParkASViewController
+        if let userDefaultPark = UserDefaults.standard.object(forKey: UserDefaultTypes.parkpath.rawValue) as? String, let realmPark: RealmPark = self.realmTransactions.realm.object(ofType: RealmPark.self, forPrimaryKey: userDefaultPark) {
+            
+            self.showTabBarController(park: realmPark)
+            
+        } else {
+            
+            
+            // Load parks from file and update with firebase data if possible
+            if let realmParks: [RealmPark] = loadParksJSONFromFile(file: "parks") {
+                loadingLabel.text = "Parks loaded succesfully."
+                loadAndShowParkBasedOnDistance()
+                /**
+                 * Load JSON object to realm at first start of app
                  */
-                let park = Park(realmPark: realmPark)
-                self.showTabBarController(park: park)
-                realmTransactions.updateRealmObject(park: park)
+                loadEncyclopediaItemsJSONFromFile(file: "parkanimals")
+                loadParkMarkdownJSONFromFile(file: "parksmarkdown")
                 
             } else {
-                /*
-                 * Park is whyever not in local database; fetch park details
-                 */
-                realmTransactions.loadParkFromFirebaseAndSaveToRealm(key: userDefaultPark, completion: { (park) in
-                    if park != nil {
-                        self.showTabBarController(park: park!)
-                    } else {
-                        // Error in fecthing park details from firebae; show "park form list"
-                        // showParkFormList()
-                    }
-                })
+                loadingLabel.text = "Something went wrong. Restart the ap and please contact us."
             }
-        } else {
-            /*
-             * User has not yet set a park; show "park form list"
-             */
-            // showParkFormList()
         }
+        
+        /**
+         * ToDo: Update realm object
+         */
+        // realmTransactions.updateRealmObject(park: park)
+        
+        
+        
+    }
+    
+    func loadAndShowParkBasedOnDistance() {
+        self.loadingLabel.text = "Fetching your location to show you the closest park"
+        /**
+         * GPS Location
+         */
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers
+        locationManager.distanceFilter = kCLDistanceFilterNone
+        
+        // 1. status is not determined
+        if CLLocationManager.authorizationStatus() == .notDetermined {
+            self.locationManager.requestWhenInUseAuthorization()
+        }
+            // 2. authorization were denied
+        else if CLLocationManager.authorizationStatus() == .denied {
+            showAlert(title: "Location services were previously denied. Please enable location services for this app in Settings.")
+        }
+            // 3. we do have authorization
+        else if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
+            self.locationManager.requestLocation()
+        }
+        
+    }
+    
+    // MARK: - Helpers
+    
+    func showAlert(title: String) {
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
         
     }
     
@@ -114,12 +170,263 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
 }
 
 extension MainNavigationController {
-    func loadAnimalsJSON(){
+    
+    
+    
+    func getResizedPublicURL(key: String, json: [String: JSON]) -> String? {
+        
+        for (resizedIMageKey, resizedImageValue) : (String, JSON) in json {
+            if resizedIMageKey == key, let resizedImageValueJSON = resizedImageValue.dictionary {
+                for (resizedImageJSONKey, resizedImageJSONValue) : (String, JSON) in resizedImageValueJSON {
+                    if resizedImageJSONKey == "public", let resizedImageJSONValuePublic = resizedImageJSONValue.rawString() {
+                        return resizedImageJSONValuePublic
+                    }
+                }
+            }
+        }
+        
+        return nil
+    }
+    
+    func getRealmImages(imageJSON: [String:JSON], itemKey: String, suffix: String, resizedKeyInJSON: String) -> RealmImages? {
+        // 1. Original images (original + additional)
+        let realmImages     = RealmImages()
+        realmImages.key     = "\(itemKey)"
+        
+        // 2. Original public image
+        let realmImage      = RealmImage()
+        realmImage.key      = "\(itemKey)-\(suffix)-original"
+        realmImage.type     = "original"
+        
+        // 3. original resized image
+        let realmResized    = RealmImage()
+        realmResized.key    = "\(itemKey)-\(suffix)-resized-\(resizedKeyInJSON)"
+        realmResized.type   = resizedKeyInJSON
+        
+        for(JSONimageKey, JSONimageValue) : (String, JSON) in imageJSON {
+            if JSONimageKey == "public", let originalImagePublicURL = JSONimageValue.rawString() {
+                
+                // Add original image public url to realm "realm original image public" -> Save to "realm original image"
+                realmImage.publicURL    = originalImagePublicURL
+                realmImages.original    = realmImage
+                
+            } else if JSONimageKey == "resized", let resizedImageJSON = JSONimageValue.dictionary {
+                
+                if let originalImageResizedPublicURL: String = getResizedPublicURL(key: resizedKeyInJSON, json: resizedImageJSON) {
+                    
+                    // Add original resized image
+                    realmResized.publicURL = originalImageResizedPublicURL
+                    realmImages.resized.append(realmResized)
+                    
+                }
+                
+            }
+        }
+        
+        if realmImages.original != nil && !realmImages.resized.isEmpty {
+            return realmImages
+        }
+        return nil
+    }
+    
+    func loadParksJSONFromFile(file: String) -> [RealmPark]? {
         var jsonData: Data?
         
+        guard let file = Bundle.main.path(forResource: file, ofType: "json") else {
+            print("JOSN failed reading file")
+            return nil
+        }
         
+        jsonData = try? Data(contentsOf: URL(fileURLWithPath: file))
+        let json = JSON(data: jsonData!)
         
-        guard let file = Bundle.main.path(forResource: "parkanimals", ofType: "json") else {
+        var realmParks = [RealmPark]()
+        
+        for(id, park) : (String, JSON) in json {
+            
+            let key = id
+            let path = "parkinfo/\(key)"
+            
+            guard let updated = park["updated"].double else {
+                print("JSON updated was not defined for park: \(id)")
+                return nil
+            }
+            
+            guard let name = park["name"].string else {
+                print("JSON name was not defined for park: \(id)")
+                return nil
+            }
+            
+            
+            guard let countryicon = park["countryicon"].string else {
+                print("JSON countryicon was not defined for park: \(id)")
+                return nil
+            }
+            
+            guard let parkicon = park["parkicon"].string else {
+                print("JSON parkicon was not defined for park: \(id)")
+                return nil
+            }
+            
+            guard let mapimage = park["mapimage"].string else {
+                print("JSON parkicon was not defined for park: \(id)")
+                return nil
+            }
+            
+            /**
+             * Country
+             */
+            guard let countryName = park["country"]["name"].string else {
+                print("JSON country:name was not defined for park: \(id)")
+                return nil
+            }
+            
+            guard let countryCode = park["country"]["code"].string else {
+                print("JSON country:code was not defined for park: \(id)")
+                return nil
+            }
+            
+            guard let countryCountry = park["country"]["country"].string else {
+                print("JSON country:country was not defined for park: \(id)")
+                return nil
+            }
+            
+            guard let countryDetail = park["country"]["detail"].string else {
+                print("JSON country:detail was not defined for park: \(id)")
+                return nil
+            }
+            
+            guard let countryLatitude = park["country"]["latitude"].double else {
+                print("JSON country:longitude was not defined for park: \(id)")
+                return nil
+            }
+            
+            guard let countryLongitude = park["country"]["longitude"].double else {
+                print("JSON country:longitude was not defined for park: \(id)")
+                return nil
+            }
+            
+            /**
+             * Sections
+             */
+            guard let sections = park["section"].dictionary else {
+                print("JSON sections was not defined for park: \(id)")
+                return nil
+            }
+            
+            /**
+             * Create RealmPark
+             */
+            let realmPark = RealmPark()
+            
+            for (sectionKey, sectionValue) : (String, JSON) in sections {
+                guard let sectionName = sectionValue["name"].string else{
+                    print("JSON section:name was not defined for park: \(id)")
+                    break
+                }
+                guard let sectionPath = sectionValue["path"].string else{
+                    print("JSON section:path was not defined for park: \(id)")
+                    break
+                }
+                guard let sectionType = sectionValue["type"].string else{
+                    print("JSON section:type was not defined for park: \(id)")
+                    break
+                }
+                
+                let realmSection = RealmParkSection()
+                realmSection.key = sectionKey
+                realmSection.name = sectionName
+                realmSection.path = sectionPath
+                realmSection.type = sectionType
+                realmSection.updated = updated
+                
+                realmPark.sections.append(realmSection)
+            }
+            
+            let realmCountry = RealmCountry()
+            realmCountry.key        = key
+            realmCountry.name       = countryName
+            realmCountry.code       = countryCode
+            realmCountry.country    = countryCountry
+            realmCountry.detail     = countryDetail
+            realmCountry.latitude   = countryLatitude
+            realmCountry.longitude  = countryLongitude
+            
+            
+            realmPark.key           = key
+            realmPark.path          = "parkinfo/\(key)"
+            realmPark.updated       = updated
+            realmPark.name          = name
+            realmPark.countryIcon   = countryicon
+            realmPark.parkIcon      = parkicon
+            realmPark.mapURL        = mapimage
+            realmPark.country       = realmCountry
+            
+            try! self.realmTransactions.realm.write {
+                self.realmTransactions.realm.add(realmPark, update: true)
+            }
+            
+            realmParks.append(realmPark)
+        }
+        
+        return realmParks
+    }
+    
+    // Load Markdown from JSON; save to realm
+    func loadParkMarkdownJSONFromFile(file: String){
+        var jsonData: Data?
+        guard let file = Bundle.main.path(forResource: file, ofType: "json") else {
+            return print("Fail")
+        }
+        jsonData = try? Data(contentsOf: URL(fileURLWithPath: file))
+        let json = JSON(data: jsonData!)
+        
+        /**
+         *  {
+         *      "addo" : {
+         *          "updated": 1486719547,
+         *          "markdown" : "markdown"
+         *      },
+         *      "kruger" : {
+         *          "updated": 1486719547,
+         *          "markdown" : "markdown"
+         *      }
+         *  }
+         */
+        
+        for(park, item) : (String, JSON) in json {
+            guard let markdown = item["markdown"].string else {
+                print("JSON markdown was not defined for item: \(park)")
+                break
+            }
+            
+            var updated: Double = 0.0
+            if let updatedJSON: Double = item["updated"].double {
+                updated = updatedJSON
+            } else {
+                updated = NSDate.timeIntervalSinceReferenceDate
+            }
+            
+            let realmMarkdown = RealmMarkdown()
+            realmMarkdown.key       = park
+            realmMarkdown.markdown  = markdown
+            realmMarkdown.updated   = updated
+            
+            do {
+                try self.realmTransactions.realm.write {
+                    self.realmTransactions.realm.create(RealmPark.self, value: ["key": park, "markdown": realmMarkdown], update: true)
+                }
+            } catch let error as NSError {
+                print(error)
+            }
+            
+        }
+    }
+    
+    func loadEncyclopediaItemsJSONFromFile(file: String){
+        var jsonData: Data?
+        
+        guard let file = Bundle.main.path(forResource: file, ofType: "json") else {
             return print("Fail")
         }
         
@@ -129,73 +436,132 @@ extension MainNavigationController {
         //If json is .Array
         //The `index` is 0..<json.count's string value
         for (index, items):(String, JSON) in json {
-            for(id, item) : (String, JSON) in items {
-                print(id)
-                guard let name = item["name"].string else {
-                    print("JSON name was not defined for item: \(id)")
+            for(itemKey, item) : (String, JSON) in items {
+                
+                let type = index
+                
+                guard let updated = item["updated"].double else {
+                    print("JSON updated was not defined for item: \(itemKey)")
                     break
                 }
-                print(name)
+                
+                guard let name = item["name"].string else {
+                    print("JSON name was not defined for item: \(itemKey)")
+                    break
+                }
                 
                 guard let markdown = item["markdown"].string else {
-                    print("JSON markdown was not defined for item: \(id)")
-                    break
-                }
-                print(markdown)
-                
-                guard let parks = item["parks"] as? JSON else {
-                    print("JSON parks was not defined for item: \(id)")
+                    print("JSON markdown was not defined for item: \(itemKey)")
                     break
                 }
                 
-                guard let images = item["images"] as? JSON else {
-                    print("JSON images was not defined for item: \(id)")
+                guard let parksJSON = item["parks"].dictionary else {
+                    print("JSON parks was not defined for item: \(itemKey)")
                     break
                 }
                 
-                for(parkid, park) : (String, JSON) in parks {
+                guard let images = item["images"].dictionary else {
+                    print("JSON images was not defined for item: \(itemKey)")
+                    break
+                }
+                
+                var parks = [String]()
+                for(_, park) : (String, JSON) in parksJSON {
                     if let parkName = park.string {
-                        print(parkName)
+                        parks.append(parkName)
                     }
                 }
                 
-                var imageObject = Image()
-                var imagesObject = Images()
-                for(imageKey, imageValue) : (String, JSON) in images {
-                    
-                    if imageKey == "public", let imageValuePublic = imageValue.rawString(), let imageValuePublicURL = URL(string: imageValuePublic) {
-                        imageObject.publicURL = imageValuePublicURL
-                        imagesObject.original = imageObject
-                    } else if imageKey == "resized", let resizedImageJSON = imageValue.dictionary {
-                        for (resizedIMageKey, resizedImageValue) : (String, JSON) in resizedImageJSON {
-                            if resizedIMageKey == "375x300", let resizedImageValueJSON = resizedImageValue.dictionary {
-                                for (resizedImageJSONKey, resizedImageJSONValue) : (String, JSON) in resizedImageValueJSON {
-                                    if resizedImageJSONKey == "public", let resizedImageJSONValuePublic = resizedImageJSONValue.rawString() {
-                                        let resizedImageObject = Image(publicURL: resizedImageJSONValuePublic)
-                                        imagesObject.addImage(key: "375x300", image: resizedImageObject)
-                                    }
-                                }
+                
+                /**
+                 * RealmImages:
+                 *  - key: String
+                 *  - original: RealmImage
+                 *  - resized: List<RealmImage>
+                 *
+                 * RealImage:
+                 *  - key: String
+                 *  - type: String
+                 *  - publicURL: String
+                 */
+                let resizedKeyinJSON = "375x300"
+                
+                
+                // 1. Original images (original + resized)
+                var realmOriginalImage = RealmImages()
+                if let realmOriginalImageFromJSON: RealmImages = getRealmImages(imageJSON: images, itemKey: itemKey, suffix: "original", resizedKeyInJSON: resizedKeyinJSON) {
+                    realmOriginalImage      = realmOriginalImageFromJSON
+                }
+                
+                // 2. Additional images (each item has origina + resized)
+                var realmAdditionalImages = [RealmImages]()
+                for(_, JSONimageValue) : (String, JSON) in images {
+                    var i = 0
+                    if let additionalImages = JSONimageValue.dictionary, let realmAdditionalImage: RealmImages = getRealmImages(imageJSON: additionalImages, itemKey: itemKey, suffix: "additional_\(i)", resizedKeyInJSON: resizedKeyinJSON) {
+                        realmAdditionalImages.append(realmAdditionalImage)
+                        i = i + 1
+                    }
+                }
+                
+                /**
+                 * Create RealmEncyclopediaItem
+                 */
+                let realmEncyclopediaitem       = RealmEncyclopediaItem()
+                realmEncyclopediaitem.key       = itemKey // "Elephant", "Lion", ... (unique identifier)
+                realmEncyclopediaitem.updated   = updated
+                realmEncyclopediaitem.name      = name
+                realmEncyclopediaitem.type      = type
+                realmEncyclopediaitem.markdown  = markdown
+                
+                if realmOriginalImage.original != nil {
+                    realmEncyclopediaitem.image = realmOriginalImage
+                }
+                
+                for resizedImages in realmAdditionalImages {
+                    realmEncyclopediaitem.images.append(resizedImages)
+                }
+                
+                /**
+                 * Loop through all parks in JSON; add the RealmEncyclopediaItem to each park
+                 */
+                for park in parks {
+                    if let realmPark: RealmPark = self.realmTransactions.realm.object(ofType: RealmPark.self, forPrimaryKey: park) {
+                        // Bug: Get all encyclopedia items from park, add the current one and update park
+                        let realmParkEncylopediaItems = realmPark.encyclopediaItems
+                        let realmParkEncyclopediaList = List<RealmEncyclopediaItem>()
+                        for rEncyclopediaItem in realmParkEncylopediaItems {
+                            realmParkEncyclopediaList.append(rEncyclopediaItem)
+                        }
+                        realmParkEncyclopediaList.append(realmEncyclopediaitem)
+                        
+                        
+                        do {
+                            try self.realmTransactions.realm.write {
+                                self.realmTransactions.realm.create(RealmPark.self, value: ["key": park, "encyclopediaItems": realmParkEncyclopediaList], update: true)
                             }
+                        } catch let error as NSError {
+                            print(error)
                         }
                     } else {
-                        if let additionalImage = imageValue.dictionary {
-                            for(additionalImageKey, additionalImageValue) : (String, JSON) in additionalImage {
-                                if additionalImageKey == "public", let additionalImagePublic = additionalImageValue.rawString() {
-                                    print(additionalImagePublic)
-                                }
-                            }
+                        let realmPark = RealmPark()
+                        realmPark.key = park
+                        realmPark.encyclopediaItems.append(realmEncyclopediaitem)
+                        try! self.realmTransactions.realm.write {
+                            self.realmTransactions.realm.add(realmPark)
                         }
                     }
-                    
                 }
                 
-                print(imagesObject)
+                
+                
                 
                 
             }
         }
         
     }
+
+    
 }
 
 extension MainNavigationController: FormCountriesDelegate {
@@ -211,7 +577,7 @@ extension MainNavigationController: FormCountriesDelegate {
                 self.stopAnimating()
                 //Status bar style and visibility
                 UIApplication.shared.isStatusBarHidden = false
-                self.showTabBarController(park: park!)
+                // self.showTabBarController(park: park!)
                 self.dismiss(animated: false, completion: nil)
             } else {
                 self.stopAnimating()
@@ -253,5 +619,42 @@ extension MainNavigationController: SelectParkDelegate {
     
     func selectPark(park: String, name: String) {
         
+    }
+}
+
+extension MainNavigationController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        if locations.first != nil {
+            let coordinate0 = CLLocation(latitude: (locations.first?.coordinate.latitude)!, longitude: (locations.first?.coordinate.longitude)!)
+            
+            var distanceToClostesPark: Double = 123456789123456789.0
+            var closestPark = RealmPark()
+            for park in self.realmTransactions.realm.objects(RealmPark.self) {
+                closestPark = park
+                if let latitude: Double = park.country?.longitude, let longitude: Double = park.country?.longitude {
+                    let coordinate1 = CLLocation(latitude: latitude, longitude: longitude)
+                    let distance = coordinate0.distance(from: coordinate1)
+                    if distance < distanceToClostesPark {
+                        distanceToClostesPark = distance
+                        closestPark = park
+                    }
+                }
+            }
+            
+            if closestPark.key != nil {
+                self.showTabBarController(park: closestPark)
+            } else {
+                showAlert(title: "We couldn't find any parks downloadded. Please restart the app.")
+            }
+            
+            
+        }
+    }
+    
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Failed to find user's location: \(error.localizedDescription)")
+        showAlert(title: "We couldn't find any location. Please restart the app and enable GPS.")
     }
 }

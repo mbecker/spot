@@ -32,6 +32,7 @@ enum UserDefaultTypes: String {
     case parkname   = "parkname"
     case showConfig = "showconfig"
     case showNavBar = "shownavbar"
+    case initData   = "initdata"
 }
 
 enum Databasepaths: String {
@@ -156,6 +157,7 @@ struct Image {
         self.publicURL = URL(string: publicURL)!
         self.gcloud = nil
     }
+    
 }
 
 struct Images {

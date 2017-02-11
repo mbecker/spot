@@ -70,12 +70,12 @@ class ParkSection {
 
 class RealmPark: Object {
     
-    func configure(key: String, name: String, country: String, path: String){
-        self.key = key
-        self.name = name
-        self.country = country
-        self.path = path
-    }
+//    func configure(key: String, name: String, country: String, path: String){
+//        self.key = key
+//        self.name = name
+//        self.country = country
+//        self.path = path
+//    }
     
     // Specify properties to ignore (Realm won't persist these)
     
@@ -86,10 +86,12 @@ class RealmPark: Object {
     dynamic var key = ""
     dynamic var name = ""
     dynamic var path = ""
-    dynamic var country = ""
+    dynamic var country: RealmCountry?
     let sections = List<RealmParkSection>()
     
     dynamic var markdown: RealmMarkdown?
+    
+    let encyclopediaItems = List<RealmEncyclopediaItem>()
     
     // Images
     dynamic var mapURL      : String?
@@ -139,7 +141,7 @@ class Park {
     let key: String
     var name: String
     let path: String
-    let country: String
+    let country: Country
     
     var sections = [ParkSection]()
     
@@ -156,7 +158,7 @@ class Park {
         self.key = realmPark.key
         self.name = realmPark.name
         self.path = "parkinfo/\(realmPark.key)"
-        self.country = realmPark.country
+        self.country = Country(realmCountry: realmPark.country!)
         
         for section in realmPark.sections {
             let parkSection = ParkSection(realmParkSection: section)
@@ -173,8 +175,8 @@ class Park {
         self.countryImage = nil
         self.parkImage = nil
         
-        if let realmMarkdown = realmPark.markdown, let markdown: Markdown = Markdown(realmMarkdown: realmMarkdown) {
-            self.markdown = markdown
+        if let realmMarkdown = realmPark.markdown {
+            self.markdown = Markdown(realmMarkdown: realmMarkdown)
         } else {
             self.markdown = nil
         }
@@ -203,6 +205,16 @@ class Country {
         self.latitude = latitude
         self.longitude = longitude
     }
+    
+    init(realmCountry: RealmCountry){
+        self.key = realmCountry.key
+        self.name = realmCountry.name
+        self.country = realmCountry.country
+        self.code = realmCountry.code
+        self.detail = realmCountry.detail
+        self.latitude = realmCountry.latitude
+        self.longitude = realmCountry.longitude
+    }
 }
 
 class RealmCountry: Object {
@@ -214,6 +226,58 @@ class RealmCountry: Object {
     dynamic var latitude: Double = 0.0
     dynamic var longitude: Double = 0.0
     var detail: String?
+    
+    override static func indexedProperties() -> [String] {
+        return ["key"]
+    }
+    
+    override static func primaryKey() -> String? {
+        return "key"
+    }
+}
+
+/**
+ * EncyclopediaItem
+ */
+class RealmImage: Object {
+    dynamic var key = ""
+    dynamic var type = "" // "original", "375x300", etc.
+    dynamic var publicURL = ""
+    
+    override static func indexedProperties() -> [String] {
+        return ["key", "type"]
+    }
+    
+    override static func primaryKey() -> String? {
+        return "key"
+    }
+    
+}
+
+class RealmImages: Object {
+    dynamic var key = ""
+    dynamic var original: RealmImage?
+    let resized = List<RealmImage>()
+    
+    override static func indexedProperties() -> [String] {
+        return ["key"]
+    }
+    
+    override static func primaryKey() -> String? {
+        return "key"
+    }
+    
+}
+
+class RealmEncyclopediaItem: Object {
+    dynamic var updated: Double = 0
+    dynamic var key = ""
+    dynamic var type = ""
+    dynamic var name = ""
+    dynamic var markdown = ""
+    dynamic var image: RealmImages?
+    var images  = List<RealmImages>()
+    let parks   = LinkingObjects(fromType: RealmPark.self, property: "encyclopediaItems")
     
     override static func indexedProperties() -> [String] {
         return ["key"]

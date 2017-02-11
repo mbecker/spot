@@ -12,6 +12,8 @@ import FirebaseDatabase
 
 class RealmTransactions {
     
+    let realm = try! Realm()
+    
     public func loadCountriesFromFirebase(completion: @escaping (_ result: [Country]?) -> Void) {
         let ref = FIRDatabase.database().reference()
         ref.child("parkcountries").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -70,14 +72,13 @@ class RealmTransactions {
             }
         }
         
-        let realm = try! Realm()
         // Check if realmMarkdown Object exists; and if yes when was it last updated?
-        if let currentObject = realm.object(ofType: RealmMarkdown.self, forPrimaryKey: park.key) {
+        if let currentObject = self.realm.object(ofType: RealmMarkdown.self, forPrimaryKey: park.key) {
             // RealmMarkdown object exists in database
             if currentObject.updated > NSDate.timeIntervalSinceReferenceDate + 60 * 60 * 24 * 2 {
                 // RealmMarkdown object was updated latest older since 2 days; update object with firebase data
                 loadFirebase(firebaseLoaded: { (markdown) in
-                    try! realm.write {
+                    try! self.realm.write {
                         currentObject.updated = NSDate.timeIntervalSinceReferenceDate
                         currentObject.markdown = markdown
                     }
@@ -104,12 +105,12 @@ class RealmTransactions {
                 markdownRealm.key = park.key
                 markdownRealm.markdown = markdown
                 
-                try! realm.write {
-                    realm.add(markdownRealm)
+                try! self.realm.write {
+                    self.realm.add(markdownRealm)
                     // link markdown to park
-                    if let parkObject = realm.object(ofType: RealmPark.self, forPrimaryKey: park.key) {
+                    if let parkObject = self.realm.object(ofType: RealmPark.self, forPrimaryKey: park.key) {
                         parkObject.markdown = markdownRealm
-                        realm.add(parkObject)
+                        self.realm.add(parkObject)
                     }
                 }
                 
@@ -126,8 +127,7 @@ class RealmTransactions {
     }
     
     func updateRealmObject(park: Park) {
-        let realm = try! Realm()
-        let objects = realm.objects(RealmPark.self).filter("key = '\(park.key)'")
+        let objects = self.realm.objects(RealmPark.self).filter("key = '\(park.key)'")
         let timeInterval: Double = 0
         for object in objects {
             if NSDate.timeIntervalSinceReferenceDate > object.updated + timeInterval {
@@ -148,10 +148,6 @@ class RealmTransactions {
                 return completion(nil)
             }
             
-            guard let parkCountry = value?["country"] as? String else {
-                return completion(nil)
-            }
-            
             guard let parkCountryIconCode = value?["countryicon"] as? String else {
                 return completion(nil)
             }
@@ -164,57 +160,89 @@ class RealmTransactions {
                 return completion(nil)
             }
             
-            let park = RealmPark()
-            park.configure(key: key, name: parkName, country: parkCountry, path: "parkinfo/\(key)")
-            park.updated = NSDate.timeIntervalSinceReferenceDate
+            guard let parkCountry = value?["country"] as? [String: Any] else {
+                return completion(nil)
+            }
+            
+            let realmPark = RealmPark()
+            realmPark.updated = NSDate.timeIntervalSinceReferenceDate
             
             if let parkCountryIconFilePath: String = countries[parkCountryIconCode] {
-                park.countryIcon = parkCountryIconFilePath
+                realmPark.countryIcon = parkCountryIconFilePath
             }
             
             if let parkIconFilePath: String = parks[parkIconCode] {
-                park.parkIcon = parkIconFilePath
+                realmPark.parkIcon = parkIconFilePath
             }
             
             if let parkMapURL = value?["mapimage"] as? String {
-                park.mapURL = parkMapURL
+                realmPark.mapURL = parkMapURL
             }
+            
+            /**
+             * country
+             */
+            guard let countryCode = parkCountry["code"] as? String else {
+                return completion(nil)
+            }
+            
+            guard let countryCountry = parkCountry["country"] as? String else {
+                return completion(nil)
+            }
+            
+            guard let countryDetail = parkCountry["detail"] as? String else {
+                return completion(nil)
+            }
+            
+            guard let countryLatitude = parkCountry["latitude"] as? Double else {
+                return completion(nil)
+            }
+            
+            guard let countryLongitude = parkCountry["longitude"] as? Double else {
+                return completion(nil)
+            }
+            
+            let realmCountry = RealmCountry()
+            realmCountry.updated = NSDate.timeIntervalSinceReferenceDate
+            realmCountry.key = snapshot.key
+            realmCountry.code = countryCode
+            realmCountry.name = parkName
+            realmCountry.country = countryCountry
+            realmCountry.detail = countryDetail
+            realmCountry.latitude = countryLatitude
+            realmCountry.longitude = countryLongitude
+            
+            // -> RealmCountry -> RealmPark
+            realmPark.country = realmCountry
+            
             
             /*
              * Sections
              */
-            // var realmSections = [RealmSection]()
             for (key, section) in parkSections {
                 if let sectionValue = section as? [String : Any], let sectionName = sectionValue["name"] as? String, let sectionType = sectionValue["type"] as? String {
+                    
                     let realmSection = RealmParkSection()
+                    realmSection.updated = NSDate.timeIntervalSinceReferenceDate
                     realmSection.key = key
                     realmSection.name = sectionName
-                    if(sectionType == "ad") {
-                        realmSection.type = ItemType.ad.rawValue
-                    } else if (sectionType == ItemType.animals.rawValue) {
-                        realmSection.type = ItemType.animals.rawValue
-                    } else if (sectionType == ItemType.attractions.rawValue) {
-                        realmSection.type = ItemType.attractions.rawValue
-                    } else {
-                        realmSection.type = ItemType.item.rawValue
-                    }
+                    realmSection.type = sectionType
                     
                     if let sectionPath = sectionValue["path"] as? String {
                         realmSection.path = sectionPath
                     }
-                    park.sections.append(realmSection)
                     
-                    park.updated = NSDate.timeIntervalSinceReferenceDate
+                    // -> Sections -> RealmPark
+                    realmPark.sections.append(realmSection)
+                    
                 }
             }
             
-            let realm = try! Realm()
-            
-            try! realm.write {
-                realm.add(park, update: true)
+            try! self.realm.write {
+                self.realm.add(realmPark, update: true)
             }
             
-            let parkObject = Park(realmPark: park)
+            let parkObject = Park(realmPark: realmPark)
             
             completion(parkObject)
         }) { (error) in

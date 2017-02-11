@@ -39,6 +39,8 @@
 		D19DEAF21E4D23D7003F6E55 /* ParkItemsASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19DEAF11E4D23D7003F6E55 /* ParkItemsASViewController.swift */; };
 		D19DEAF61E4D284E003F6E55 /* parkanimals.json in Resources */ = {isa = PBXBuildFile; fileRef = D19DEAF51E4D284E003F6E55 /* parkanimals.json */; };
 		D1A3E9621E314BB600E0C591 /* ImagePickerCropper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */; };
+		D1A5FE551E4DF4FD007DBC1C /* parks.json in Resources */ = {isa = PBXBuildFile; fileRef = D1A5FE541E4DF4FD007DBC1C /* parks.json */; };
+		D1A5FE571E4E8282007DBC1C /* parksmarkdown.json in Resources */ = {isa = PBXBuildFile; fileRef = D1A5FE561E4E8282007DBC1C /* parksmarkdown.json */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
 		D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */; };
 		D1AFD85E1DCF8B4C0082A6EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */; };
@@ -388,6 +390,8 @@
 		D19DEAF11E4D23D7003F6E55 /* ParkItemsASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkItemsASViewController.swift; sourceTree = "<group>"; };
 		D19DEAF51E4D284E003F6E55 /* parkanimals.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = parkanimals.json; path = ../parkanimals.json; sourceTree = "<group>"; };
 		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerCropper.swift; sourceTree = "<group>"; };
+		D1A5FE541E4DF4FD007DBC1C /* parks.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = parks.json; sourceTree = "<group>"; };
+		D1A5FE561E4E8282007DBC1C /* parksmarkdown.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = parksmarkdown.json; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D1AFD8581DCF8B4C0082A6EF /* Spot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Spot.xcdatamodel; sourceTree = "<group>"; };
@@ -911,6 +915,8 @@
 		D1FB21EF1DF2B9FF0023F0F2 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				D1A5FE561E4E8282007DBC1C /* parksmarkdown.json */,
+				D1A5FE541E4DF4FD007DBC1C /* parks.json */,
 				D19DEAF51E4D284E003F6E55 /* parkanimals.json */,
 				D1FB224F1DF2C4E00023F0F2 /* Countries */,
 				D1FB21F01DF2BA0A0023F0F2 /* Icons */,
@@ -1341,6 +1347,7 @@
 				D1FB27A21DF400CB0023F0F2 /* id.png in Resources */,
 				D1FB223B1DF2BB050023F0F2 /* Flamingo-66.png in Resources */,
 				D1FB275A1DF400CB0023F0F2 /* al.png in Resources */,
+				D1A5FE551E4DF4FD007DBC1C /* parks.json in Resources */,
 				D1FB22341DF2BB050023F0F2 /* Deer-66.png in Resources */,
 				D1FB27BA1DF400CC0023F0F2 /* lc.png in Resources */,
 				D1FB220C1DF2BA1F0023F0F2 /* Treehouse-66.png in Resources */,
@@ -1573,6 +1580,7 @@
 				D1FB275F1DF400CB0023F0F2 /* au.png in Resources */,
 				D1FB27CE1DF400CC0023F0F2 /* mt.png in Resources */,
 				D1C943A61DFB1EFB0008C38F /* login4@3x.jpg in Resources */,
+				D1A5FE571E4E8282007DBC1C /* parksmarkdown.json in Resources */,
 				D1FB27AF1DF400CC0023F0F2 /* kh.png in Resources */,
 				D1FB27711DF400CB0023F0F2 /* bz.png in Resources */,
 				D1FB22091DF2BA1F0023F0F2 /* Parking-66.png in Resources */,
