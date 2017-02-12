@@ -84,6 +84,8 @@ class ListItemASCellNode: ASCellNode {
         }
     }
     
+    override func 
+    
     init(parkItem: ParkItem2){
         self._parkItem                  = parkItem
         self._storage                   = FIRStorage.storage()
@@ -126,6 +128,7 @@ class ListItemASCellNode: ASCellNode {
             return modifiedImage
         }
         self.setNeedsLayout()
+        
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {

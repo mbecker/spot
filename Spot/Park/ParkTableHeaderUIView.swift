@@ -11,39 +11,34 @@ import Kingfisher
 
 class ParkTableHeaderUIView: UIView {
     
-    let parkTitle = UILabel()
-    var delegate: SelectParkDelegate?
-    var delegateMap: SelectParkMapDelegate?
-    var parkTitleView: ParkTableHeaderTitleUIView
+    var delegate    : SelectParkDelegate?
+    var delegateMap : SelectParkMapDelegate?
+    
     var mapView: ParkTableHeaderMapUIImageView?
 
-    init(park: Park) {
-        self.parkTitleView = ParkTableHeaderTitleUIView(parkName: park.name, frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82))
+    init(realmPark: RealmPark) {
+        
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 328))
         
-        
         backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
-        self.parkTitleView.delegate = self
-        addSubview(self.parkTitleView)
         
-        //addTitleView(parkName: park.name)
-        // addMapView()
-        self.mapView = ParkTableHeaderMapUIImageView.init(park: park, frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: 206))
+        let parkTitleView = ParkTableHeaderTitleUIView(parkName: realmPark.name, frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82))
+        parkTitleView.delegate = self
+        addSubview(parkTitleView)
+        
+        self.mapView = ParkTableHeaderMapUIImageView.init(realmPark: realmPark, frame: CGRect(x: 20, y: 102, width: self.bounds.width - 40, height: 206))
         self.mapView?.delegate = self
         addSubview(self.mapView!)
         
     }
     
     init(parkName: String) {
-        self.parkTitleView = ParkTableHeaderTitleUIView(parkName: parkName, frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82))
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82 + 12))
         backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00) // grey
-        self.parkTitleView.delegate = self
-        addSubview(self.parkTitleView)
-    }
-    
-    func updateParkTitle(parkName: String){
-        self.parkTitleView.updateParkTitle(parkName: parkName)
+        
+        let parkTitleView = ParkTableHeaderTitleUIView(parkName: parkName, frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 82))
+        parkTitleView.delegate = self
+        addSubview(parkTitleView)
     }
     
     required init?(coder aDecoder: NSCoder) {

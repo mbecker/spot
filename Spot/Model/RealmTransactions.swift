@@ -10,6 +10,9 @@ import Foundation
 import RealmSwift
 import FirebaseDatabase
 
+let UPDATE_TIMEFRAME_MARKDOWN: Double   = 1 // 60 * 60 * 24 * 7
+let UPDATE_TIMEFRAME_PARK: Double       = 1 // 60 * 60 * 24 * 7
+
 class RealmTransactions {
     
     let realm = try! Realm()
@@ -57,68 +60,62 @@ class RealmTransactions {
         }
     }
     
-    public func loadMarkdownFromFirebaseAndSaveToRealm(park: Park, completion: @escaping (_ result: Markdown?) -> Void) {
+    public func loadMarkdownFromFirebaseAndSaveToRealm(realmPark: RealmPark, completion: @escaping (_ result: RealmMarkdown?,_ error: MarkdownError?) -> Void) {
         
-        func loadFirebase(firebaseLoaded: @escaping (_ result: String?) -> Void) {
+        func loadFirebase(firebaseLoaded: @escaping (_ result: String?, _ error: MarkdownError?) -> Void) {
             let ref = FIRDatabase.database().reference()
-            ref.child("markdown").child(park.key).child("markdown").observeSingleEvent(of: .value, with: { (snapshot) in
+            ref.keepSynced(false)
+            
+            ref.child("markdown").child(realmPark.key).child("markdown").observe(.value, with: { (snapshot) in
                 guard let markdown = snapshot.value as? String else {
-                    return firebaseLoaded(nil)
+                    return firebaseLoaded(nil, MarkdownError.MarkdownDoesNotExist)
                 }
-                return firebaseLoaded(markdown)
+                return firebaseLoaded(markdown, nil)
             }) { (error) in
                 print(error.localizedDescription)
-                firebaseLoaded(nil)
+                firebaseLoaded(nil, MarkdownError.FirebaseError)
             }
         }
         
-        // Check if realmMarkdown Object exists; and if yes when was it last updated?
-        if let currentObject = self.realm.object(ofType: RealmMarkdown.self, forPrimaryKey: park.key) {
-            // RealmMarkdown object exists in database
-            if currentObject.updated > NSDate.timeIntervalSinceReferenceDate + 60 * 60 * 24 * 2 {
-                // RealmMarkdown object was updated latest older since 2 days; update object with firebase data
-                loadFirebase(firebaseLoaded: { (markdown) in
+        if let markdown = realmPark.markdown, markdown.updated + UPDATE_TIMEFRAME_MARKDOWN < NSDate().timeIntervalSince1970  {
+            // RealmMarkdown object was updated latest older since UPDATE_TIMEFRAME_MARKDOWN; update object with firebase data
+            
+            loadFirebase(firebaseLoaded: { (returnMarkdown, error) in
+                if let markdownString: String = returnMarkdown, error == nil {
                     try! self.realm.write {
-                        currentObject.updated = NSDate.timeIntervalSinceReferenceDate
-                        currentObject.markdown = markdown
+                        markdown.updated    = NSDate().timeIntervalSince1970
+                        markdown.markdown   = markdownString
                     }
-                    if let markdownObject: Markdown = Markdown(realmMarkdown: currentObject){
-                        park.markdown = markdownObject
-                        completion(markdownObject)
-                    } else {
-                        completion(nil)
-                    }
-                })
-            } else {
-                // RealmMarkdown object exists in database and was not longer than 2 days
-                if let markdownObject: Markdown = Markdown(realmMarkdown: currentObject){
-                    park.markdown = markdownObject
-                    completion(markdownObject)
-                } else {
-                    completion(nil)
+                    completion(markdown, nil)
+                } else if error != nil {
+                    completion(markdown, nil)
                 }
-            }
+                
+            })
+            
+        } else if let markdown = realmPark.markdown {
+            // Markdown exists and was updated before UPDATE_TIMEFRAME_MARKDOWN
+            
+            completion(markdown, nil)
+            
         } else {
-            loadFirebase(firebaseLoaded: { (markdown) in
-                let markdownRealm = RealmMarkdown()
-                markdownRealm.updated = NSDate.timeIntervalSinceReferenceDate
-                markdownRealm.key = park.key
-                markdownRealm.markdown = markdown
+            // Markdown does not exists
+            
+            loadFirebase(firebaseLoaded: { (returnMarkdown, error) in
                 
-                try! self.realm.write {
-                    self.realm.add(markdownRealm)
-                    // link markdown to park
-                    if let parkObject = self.realm.object(ofType: RealmPark.self, forPrimaryKey: park.key) {
-                        parkObject.markdown = markdownRealm
-                        self.realm.add(parkObject)
+                if let markdownString: String = returnMarkdown, error == nil {
+                    let realmMarkdown       = RealmMarkdown()
+                    realmMarkdown.updated   = NSDate().timeIntervalSince1970
+                    realmMarkdown.key       = realmPark.key
+                    realmMarkdown.markdown  = markdownString
+                    
+                    try! self.realm.write {
+                        realmPark.markdown      = realmMarkdown
                     }
-                }
-                
-                if let markdownObject: Markdown = Markdown(realmMarkdown: markdownRealm){
-                    park.markdown = markdownObject
-                    completion(markdownObject)
+                    
+                    completion(realmMarkdown, nil)
                 } else {
-                    completion(nil)
+                    completion(nil, error!)
                 }
                 
             })
@@ -130,125 +127,278 @@ class RealmTransactions {
         let objects = self.realm.objects(RealmPark.self).filter("key = '\(park.key)'")
         let timeInterval: Double = 0
         for object in objects {
-            if NSDate.timeIntervalSinceReferenceDate > object.updated + timeInterval {
+            if NSDate().timeIntervalSince1970 > object.updated + timeInterval {
                 print("...time to update")
             }
         }
     }
     
     
-    func loadParkFromFirebaseAndSaveToRealm(key: String, completion: @escaping (_ result: Park?) -> Void) {
-        let ref = FIRDatabase.database().reference()
-        ref.keepSynced(true)
-        ref.child("parkinfo/\(key)").observe(.value, with: { (snapshot) in
-            // Get park value
-            let value = snapshot.value as? NSDictionary
+    func loadParkFromFirebaseAndSaveToRealm(key: String, completion: @escaping (_ result: RealmPark?, _ error: ParkError?) -> Void) {
+        
+        func loadParkFromFirebase(firebaseLoaded: @escaping (_ result: RealmPark?) -> Void) {
+            let ref = FIRDatabase.database().reference()
+            ref.keepSynced(true)
             
-            guard let parkName = value?["name"] as? String else {
-                return completion(nil)
+            ref.child("parkinfo").child(key).observe(.value, with: { (snapshot) in
+                
+                guard snapshot.exists() else {
+                    return completion(nil, ParkError.ParkDoesNotExist)
+                }
+                
+                // Get park value
+                let value = snapshot.value as? NSDictionary
+                
+                guard let parkName = value?["name"] as? String else {
+                    return completion(nil, ParkError.ParkNameDoesNotExist)
+                }
+                
+                guard let parkCountryIconCode = value?["countryicon"] as? String else {
+                    return completion(nil, ParkError.ParkError)
+                }
+                
+                guard let parkIconCode = value?["parkicon"] as? String else {
+                    return completion(nil, ParkError.ParkError)
+                }
+                
+                guard let parkSections = value?["section"] as? [String: Any] else {
+                    return completion(nil, ParkError.ParkSectionDoesNotExist)
+                }
+                
+                guard let parkCountry = value?["country"] as? [String: Any] else {
+                    return completion(nil, ParkError.ParkError)
+                }
+                
+                
+                let realmPark = RealmPark()
+                realmPark.updated       = NSDate().timeIntervalSince1970
+                realmPark.key           = snapshot.key
+                realmPark.name          = parkName
+                realmPark.path          = "parkinfo/\(snapshot.key)"
+                realmPark.countryIcon   = parkCountryIconCode
+                realmPark.parkIcon      = parkIconCode
+                
+                if let parkMapURL = value?["mapimage"] as? String {
+                    realmPark.mapURL = parkMapURL
+                }
+                
+                /**
+                 * country
+                 */
+                guard let countryCode = parkCountry["code"] as? String else {
+                    return completion(nil, ParkError.ParkCountryError)
+                }
+                
+                guard let countryCountry = parkCountry["country"] as? String else {
+                    return completion(nil, ParkError.ParkCountryError)
+                }
+                
+                guard let countryLatitude = parkCountry["latitude"] as? Double else {
+                    return completion(nil, ParkError.ParkCountryError)
+                }
+                
+                guard let countryLongitude = parkCountry["longitude"] as? Double else {
+                    return completion(nil, ParkError.ParkCountryError)
+                }
+                
+                let realmCountry = RealmCountry()
+                realmCountry.updated    = NSDate().timeIntervalSince1970
+                realmCountry.key        = snapshot.key
+                realmCountry.code       = countryCode
+                realmCountry.name       = parkName
+                realmCountry.country    = countryCountry
+                realmCountry.latitude   = countryLatitude
+                realmCountry.longitude  = countryLongitude
+                
+                if let countryDetail = parkCountry["detail"] as? String {
+                    realmCountry.detail     = countryDetail
+                }
+                
+                // -> RealmCountry -> RealmPark
+                realmPark.country = realmCountry
+                
+                
+                /*
+                 * Sections
+                 */
+                for (key, section) in parkSections {
+                    if let sectionValue = section as? [String : Any], let sectionName = sectionValue["name"] as? String, let sectionType = sectionValue["type"] as? String {
+                        
+                        let realmSection        = RealmParkSection()
+                        realmSection.updated    = NSDate().timeIntervalSince1970
+                        realmSection.key        = key
+                        realmSection.name       = sectionName
+                        realmSection.type       = sectionType
+                        
+                        if let sectionPath = sectionValue["path"] as? String {
+                            realmSection.path = sectionPath
+                        }
+                        
+                        // -> Sections -> RealmPark
+                        realmPark.sections.append(realmSection)
+                        
+                    }
+                }
+                
+                try! self.realm.write {
+                    self.realm.add(realmPark, update: true)
+                }
+                
+                firebaseLoaded(realmPark)
+                
+                
+                
+            }) { (error) in
+                print(error.localizedDescription)
+                firebaseLoaded(nil)
             }
+        }
+        
+        func updateParkFromFirebase(realmPark: RealmPark, firebaseLoaded: @escaping (_ result: RealmPark?) -> Void) {
+            let ref = FIRDatabase.database().reference()
+            ref.keepSynced(true)
             
-            guard let parkCountryIconCode = value?["countryicon"] as? String else {
-                return completion(nil)
-            }
-            
-            guard let parkIconCode = value?["parkicon"] as? String else {
-                return completion(nil)
-            }
-            
-            guard let parkSections = value?["section"] as? [String: Any] else {
-                return completion(nil)
-            }
-            
-            guard let parkCountry = value?["country"] as? [String: Any] else {
-                return completion(nil)
-            }
-            
-            let realmPark = RealmPark()
-            realmPark.updated = NSDate.timeIntervalSinceReferenceDate
-            
-            if let parkCountryIconFilePath: String = countries[parkCountryIconCode] {
-                realmPark.countryIcon = parkCountryIconFilePath
-            }
-            
-            if let parkIconFilePath: String = parks[parkIconCode] {
-                realmPark.parkIcon = parkIconFilePath
-            }
-            
-            if let parkMapURL = value?["mapimage"] as? String {
-                realmPark.mapURL = parkMapURL
-            }
-            
-            /**
-             * country
-             */
-            guard let countryCode = parkCountry["code"] as? String else {
-                return completion(nil)
-            }
-            
-            guard let countryCountry = parkCountry["country"] as? String else {
-                return completion(nil)
-            }
-            
-            guard let countryDetail = parkCountry["detail"] as? String else {
-                return completion(nil)
-            }
-            
-            guard let countryLatitude = parkCountry["latitude"] as? Double else {
-                return completion(nil)
-            }
-            
-            guard let countryLongitude = parkCountry["longitude"] as? Double else {
-                return completion(nil)
-            }
-            
-            let realmCountry = RealmCountry()
-            realmCountry.updated = NSDate.timeIntervalSinceReferenceDate
-            realmCountry.key = snapshot.key
-            realmCountry.code = countryCode
-            realmCountry.name = parkName
-            realmCountry.country = countryCountry
-            realmCountry.detail = countryDetail
-            realmCountry.latitude = countryLatitude
-            realmCountry.longitude = countryLongitude
-            
-            // -> RealmCountry -> RealmPark
-            realmPark.country = realmCountry
-            
-            
-            /*
-             * Sections
-             */
-            for (key, section) in parkSections {
-                if let sectionValue = section as? [String : Any], let sectionName = sectionValue["name"] as? String, let sectionType = sectionValue["type"] as? String {
+            ref.child("parkinfo").child(key).observe(.value, with: { (snapshot) in
+                
+                guard snapshot.exists() else {
+                    return completion(nil, ParkError.UpdateParkDoesNotExists)
+                }
+                
+                // Get park value
+                let value = snapshot.value as? NSDictionary
+                
+                guard let parkName = value?["name"] as? String else {
+                    return completion(nil, ParkError.UpdateError)
+                }
+                
+                guard let parkCountryIconCode = value?["countryicon"] as? String else {
+                    return completion(nil, ParkError.UpdateError)
+                }
+                
+                guard let parkIconCode = value?["parkicon"] as? String else {
+                    return completion(nil, ParkError.UpdateError)
+                }
+                
+                guard let parkSections = value?["section"] as? [String: Any] else {
+                    return completion(nil, ParkError.UpdateError)
+                }
+                
+                guard let parkCountry = value?["country"] as? [String: Any] else {
+                    return completion(nil, ParkError.UpdateError)
+                }
+                
+                
+                /**
+                 * country
+                 */
+                guard let countryCode = parkCountry["code"] as? String else {
+                    return completion(nil, ParkError.UpdateCountryError)
+                }
+                
+                guard let countryCountry = parkCountry["country"] as? String else {
+                    return completion(nil, ParkError.UpdateCountryError)
+                }
+                
+                guard let countryLatitude = parkCountry["latitude"] as? Double else {
+                    return completion(nil, ParkError.UpdateCountryError)
+                }
+                
+                guard let countryLongitude = parkCountry["longitude"] as? Double else {
+                    return completion(nil, ParkError.UpdateCountryError)
+                }
+                
+                try! self.realm.write {
+                    realmPark.updated       = NSDate().timeIntervalSince1970
+                    realmPark.name          = parkName
+                    realmPark.path          = "parkinfo/\(snapshot.key)"
+                    realmPark.countryIcon   = parkCountryIconCode
+                    realmPark.parkIcon      = parkIconCode
                     
-                    let realmSection = RealmParkSection()
-                    realmSection.updated = NSDate.timeIntervalSinceReferenceDate
-                    realmSection.key = key
-                    realmSection.name = sectionName
-                    realmSection.type = sectionType
-                    
-                    if let sectionPath = sectionValue["path"] as? String {
-                        realmSection.path = sectionPath
+                    if let parkMapURL = value?["mapimage"] as? String {
+                        realmPark.mapURL = parkMapURL
                     }
                     
-                    // -> Sections -> RealmPark
-                    realmPark.sections.append(realmSection)
+                    if let realmCountry = realmPark.country {
+                        realmCountry.updated = NSDate().timeIntervalSince1970
+                        realmCountry.code = countryCode
+                        realmCountry.name = parkName
+                        realmCountry.country = countryCountry
+                        realmCountry.latitude = countryLatitude
+                        realmCountry.longitude = countryLongitude
+                        
+                        if let countryDetail = parkCountry["detail"] as? String {
+                            realmCountry.detail     = countryDetail
+                        }
+                    }
                     
+                    
+                    /*
+                     * Sections
+                     */
+                    for (key, section) in parkSections {
+                        if let sectionValue = section as? [String : Any], let sectionName = sectionValue["name"] as? String, let sectionType = sectionValue["type"] as? String {
+                            
+                            if let realmSection: RealmParkSection = self.realm.object(ofType: RealmParkSection.self, forPrimaryKey: key) {
+                                // the section is already in realm and linked to the park
+                                realmSection.updated = NSDate().timeIntervalSince1970
+                                realmSection.name = sectionName
+                                realmSection.type = sectionType
+                                
+                                if let sectionPath = sectionValue["path"] as? String {
+                                    realmSection.path = sectionPath
+                                }
+                            } else {
+                                // Section is new; save to realm and link to park
+                                let realmSection = RealmParkSection()
+                                realmSection.updated = NSDate().timeIntervalSince1970
+                                realmSection.key = key
+                                realmSection.name = sectionName
+                                realmSection.type = sectionType
+                                if let sectionPath = sectionValue["path"] as? String {
+                                    realmSection.path = sectionPath
+                                }
+                                
+                                // -> Sections -> RealmPark
+                                realmPark.sections.append(realmSection)
+                            }
+                            
+                        }
+                    }
                 }
+                
+                firebaseLoaded(realmPark)
+                
+                
+                
+            }) { (error) in
+                print(error.localizedDescription)
+                firebaseLoaded(nil)
             }
-            
-            try! self.realm.write {
-                self.realm.add(realmPark, update: true)
-            }
-            
-            let parkObject = Park(realmPark: realmPark)
-            
-            completion(parkObject)
-        }) { (error) in
-            print(error.localizedDescription)
-            completion(nil)
         }
+        
+        
+        /**
+         * Check if realmPark object is in realm; if not load from firebase
+         */
+        if let realmPark = self.realm.object(ofType: RealmPark.self, forPrimaryKey: key) {
+            // realPark exsist in realm
+            if NSDate().timeIntervalSince1970 > realmPark.updated + UPDATE_TIMEFRAME_PARK {
+                // realmPark object needs to be updated
+                updateParkFromFirebase(realmPark: realmPark, firebaseLoaded: { (realmPark) in
+                    completion(realmPark, nil)
+                })
+            } else {
+                // realmPark object does not to be updated
+                completion(realmPark, nil)
+            }
+        } else {
+            // The park is not in realm; usee selcted "country" which was loaded from firebase and not yet in realm
+            loadParkFromFirebase(firebaseLoaded: { (realmPark) in
+                completion(realmPark, nil)
+            })
+        }
+        
+        
         
     }
 

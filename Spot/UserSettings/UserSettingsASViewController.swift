@@ -73,6 +73,7 @@ class UserSettingsASViewController: ASViewController<ASDisplayNode> {
     }()
     
     func sectionHeaderView(text: String) -> UIView {
+        
         let view = UIView(frame: CGRect.zero)
         view.backgroundColor = UIColor.white
         
@@ -110,7 +111,11 @@ extension UserSettingsASViewController : ASTableDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        return sectionHeaderView(text: self._user.name)
+        if let text: String = self._user.name {
+            return sectionHeaderView(text: text)
+        } else {
+            return sectionHeaderView(text: "Please login")
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -168,16 +173,42 @@ extension UserSettingsASViewController : ASTableDelegate {
 }
 
 class LogoutNode: UIView {
+    
+    let errorLabel = UILabel()
+    
     init() {
         super.init(frame: CGRect.zero)
         backgroundColor = UIColor.white
         let height: CGFloat = 64
-        let view = UIView(frame: CGRect(x: 20, y: 0, width: UIScreen.main.bounds.width - 20 - 32 - 20, height: height))
+        let view = UIView(frame: CGRect(x: 20, y: 0, width: UIScreen.main.bounds.width - 20 - 20, height: height))
         addSubview(view)
-        let loginButton = LoginButton(readPermissions: [ .publicProfile, .email, .userFriends ])
+        
+        let loginButton = LoginButton(frame: CGRect(x: 60, y: 20, width: view.bounds.width - 60 - 60, height: 64 - 20), readPermissions: [ .publicProfile, .email, .userFriends ])
         loginButton.center = view.center
         loginButton.delegate = self
         view.addSubview(loginButton)
+        
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        let infoAttributedText = NSAttributedString(
+            string: "We use Facebook as a login provider and would never post anything without your permission.",
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 11, weight: UIFontWeightMedium),
+                NSForegroundColorAttributeName: UIColor(red:0.56, green:0.56, blue:0.56, alpha:1.00),
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.0,
+                NSParagraphStyleAttributeName: paragraph
+            ])
+        errorLabel.lineBreakMode = .byWordWrapping
+        errorLabel.numberOfLines = 0
+        errorLabel.attributedText = infoAttributedText
+        errorLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(errorLabel)
+        errorLabel.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 8).isActive = true
+        errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        errorLabel.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 64).isActive = true
+
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -200,8 +231,63 @@ extension LogoutNode: LoginButtonDelegate {
     }
     
     func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
-        // We don't use this login button to login; only for logut
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        switch result {
+        case .success(let grantedPermissions, let declinedPermissions, let token):
+            let credential = FIRFacebookAuthProvider.credential(withAccessToken: token.authenticationToken)
+            FIRAuth.auth()?.signIn(with: credential) { (user, error) in
+                if let error = error {
+                    print(error)
+                    self.errorLabel.attributedText = NSAttributedString(
+                        string: error.localizedDescription,
+                        attributes: [
+                            NSFontAttributeName: UIFont.systemFont(ofSize: 11, weight: UIFontWeightMedium),
+                            NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
+                            NSBackgroundColorAttributeName: UIColor.clear,
+                            NSKernAttributeName: 0.0,
+                            NSParagraphStyleAttributeName: paragraph
+                        ])
+                    return
+                }
+                print(":: FIREBASE :: LOGGED IN ")
+                print("displayname: \(user!.displayName)")
+                print("email: \(user!.email)")
+                print("image: \(user!.photoURL)")
+                // self.navigationController?.pushViewController(MainASTabBarController(), animated: true)
+                
+            }
+            break
+        case .cancelled:
+            print(":: FACEBOOK LOGIN CANCELLED ::")
+            self.errorLabel.attributedText = NSAttributedString(
+                string: "Facebook Login cancelled",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 11, weight: UIFontWeightMedium),
+                    NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.0,
+                    NSParagraphStyleAttributeName: paragraph
+                ])
+            break
+        case .failed(let error):
+            print(":: FACEBOOK LOGIN ERROR ::")
+            print(error)
+            self.errorLabel.attributedText = NSAttributedString(
+                string: error.localizedDescription,
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 11, weight: UIFontWeightMedium),
+                    NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.0,
+                    NSParagraphStyleAttributeName: paragraph
+                ])
+            break
+        }
+        
+        
     }
+
 }
 
 class SettingsNode: UIView {

@@ -26,10 +26,10 @@ class ParkItemsASViewController: ASViewController<ASDisplayNode> {
         return node as! ASTableNode
     }
     
-    let ref         : FIRDatabaseReference
-    let park        : Park
-    let type        : ItemType
-    let path        : String!
+    let _firebaseRef    : FIRDatabaseReference
+    let _realmPark      : RealmPark
+    let _type           : ItemType
+    let _path           : String!
     
     
     weak var delegate:ParkASCellNodeDelegate?
@@ -47,11 +47,12 @@ class ParkItemsASViewController: ASViewController<ASDisplayNode> {
      * Data
      */
     
-    init(park: Park, type: ItemType){
-        self.ref            = FIRDatabase.database().reference()
-        self.park           = park
-        self.type           = type
-        self.path           = "park/" + type.rawValue + "/" + self.park.key + "/"
+    init(realmPark: RealmPark, type: ItemType){
+        self._firebaseRef    = FIRDatabase.database().reference()
+        self._realmPark      = realmPark
+        self._type           = type
+        self._path           = "park/" + type.rawValue + "/" + self._realmPark.key + "/"
+        
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -67,9 +68,9 @@ class ParkItemsASViewController: ASViewController<ASDisplayNode> {
         
         
         // 1: .childAdded observer
-        self.observerChildAdded = self.ref.child(self.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
+        self.observerChildAdded = self._firebaseRef.child(self._path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
             // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.type), self.items2.contains(where: {$0.key == item2.key}) == false {
+            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark, type: self._type), self.items2.contains(where: {$0.key == item2.key}) == false {
                 
                 if self.loadingIndicatorView.animating {
                     self.loadingIndicatorView.stopAnimating()
@@ -88,11 +89,11 @@ class ParkItemsASViewController: ASViewController<ASDisplayNode> {
         })
         
         // 2: .childChanged observer
-        self.observerChildChanged = self.ref.child(self.path).observe(.childChanged, with: { (snapshot) -> Void in
+        self.observerChildChanged = self._firebaseRef.child(self._path).observe(.childChanged, with: { (snapshot) -> Void in
             // ParkItem2 is updated; replace item in table array
             if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject] {
                 for i in 0...self.items2.count-1 {
-                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.type), self.items2[i].key == item2.key {
+                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark, type: self._type), self.items2[i].key == item2.key {
                         let index = i
                         OperationQueue.main.addOperation({
                             self.items2[index]  = item2
@@ -128,10 +129,10 @@ class ParkItemsASViewController: ASViewController<ASDisplayNode> {
     
     func removeObserver(){
         if self.observerChildAdded != nil {
-            self.ref.removeObserver(withHandle: self.observerChildAdded!)
+            self._firebaseRef.removeObserver(withHandle: self.observerChildAdded!)
         }
         if self.observerChildAdded != nil {
-            self.ref.removeObserver(withHandle: self.observerChildChanged!)
+            self._firebaseRef.removeObserver(withHandle: self.observerChildChanged!)
         }
     }
     
@@ -147,7 +148,7 @@ class ParkItemsASViewController: ASViewController<ASDisplayNode> {
         super.viewDidLoad()
         
         // Navigationcontroller
-        self.navigationController?.visibleViewController?.title = "All \(self.type.rawValue.firstCharacterUpperCase())"
+        self.navigationController?.visibleViewController?.title = "All \(self._type.rawValue.firstCharacterUpperCase())"
         
         // TableView
         self.view.backgroundColor = UIColor.white
@@ -212,12 +213,12 @@ class ParkItemsASViewController: ASViewController<ASDisplayNode> {
          * 2. Only attach observer if items.count > 0
          * (only attach once an observer)
          */
-        self.ref.child(self.path).child("count").observe(.value, with: { (snapshot) -> Void in
+        self._firebaseRef.child(self._path).child("count").observe(.value, with: { (snapshot) -> Void in
             if snapshot.exists(), let count: Int = snapshot.value as? Int, count > 0 {
                 self.addObserver()
             }
         })
-        self.ref.child(self.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
+        self._firebaseRef.child(self._path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
             if let count: Int = snapshot.value as? Int, count > 0 {
                 self.addObserver()
             }

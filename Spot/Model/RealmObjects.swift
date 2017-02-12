@@ -10,6 +10,24 @@ import Foundation
 import RealmSwift
 import UIKit
 
+
+enum ParkError: Error {
+    case ParkDoesNotExist
+    case ParkNameDoesNotExist
+    case ParkSectionDoesNotExist
+    case ParkError
+    case ParkCountryError
+    case UpdateParkDoesNotExists
+    case UpdateError
+    case UpdateCountryError
+}
+
+enum MarkdownError: Error {
+    case MarkdownDoesNotExist
+    case MarkdownError
+    case FirebaseError
+}
+
 /*
  * ParkSection
  */
@@ -141,7 +159,7 @@ class Park {
     let key: String
     var name: String
     let path: String
-    let country: Country
+    let country: Country?
     
     var sections = [ParkSection]()
     
@@ -226,6 +244,7 @@ class RealmCountry: Object {
     dynamic var latitude: Double = 0.0
     dynamic var longitude: Double = 0.0
     var detail: String?
+    let park = LinkingObjects(fromType: RealmPark.self, property: "country")
     
     override static func indexedProperties() -> [String] {
         return ["key"]

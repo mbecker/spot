@@ -41,6 +41,8 @@
 		D1A3E9621E314BB600E0C591 /* ImagePickerCropper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */; };
 		D1A5FE551E4DF4FD007DBC1C /* parks.json in Resources */ = {isa = PBXBuildFile; fileRef = D1A5FE541E4DF4FD007DBC1C /* parks.json */; };
 		D1A5FE571E4E8282007DBC1C /* parksmarkdown.json in Resources */ = {isa = PBXBuildFile; fileRef = D1A5FE561E4E8282007DBC1C /* parksmarkdown.json */; };
+		D1ADC92D1E4FA50100E1C4DB /* SplashScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ADC92C1E4FA50100E1C4DB /* SplashScreenViewController.swift */; };
+		D1ADC92F1E5071EF00E1C4DB /* PageASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ADC92E1E5071EF00E1C4DB /* PageASCellNode.swift */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
 		D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */; };
 		D1AFD85E1DCF8B4C0082A6EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */; };
@@ -392,6 +394,8 @@
 		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerCropper.swift; sourceTree = "<group>"; };
 		D1A5FE541E4DF4FD007DBC1C /* parks.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = parks.json; sourceTree = "<group>"; };
 		D1A5FE561E4E8282007DBC1C /* parksmarkdown.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = parksmarkdown.json; sourceTree = "<group>"; };
+		D1ADC92C1E4FA50100E1C4DB /* SplashScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreenViewController.swift; sourceTree = "<group>"; };
+		D1ADC92E1E5071EF00E1C4DB /* PageASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageASCellNode.swift; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D1AFD8581DCF8B4C0082A6EF /* Spot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Spot.xcdatamodel; sourceTree = "<group>"; };
@@ -763,6 +767,7 @@
 				D15405A51DF8054200EAE971 /* ListASPagerNode.swift */,
 				D181BED81DF9DA0600112CEB /* ListItemASCellNode.swift */,
 				D15405A71DF8111E00EAE971 /* TableAsViewController.swift */,
+				D1ADC92E1E5071EF00E1C4DB /* PageASCellNode.swift */,
 			);
 			path = List;
 			sourceTree = "<group>";
@@ -831,6 +836,7 @@
 				D10A7F7E1DD282C100741BF0 /* Spot.entitlements */,
 				D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */,
 				D10A1FB51E45E17100E2B7AA /* MainNavigationController.swift */,
+				D1ADC92C1E4FA50100E1C4DB /* SplashScreenViewController.swift */,
 			);
 			path = Spot;
 			sourceTree = "<group>";
@@ -1774,6 +1780,7 @@
 				D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */,
 				D1C10B0C1E03EA70000CF2C7 /* CountryASCellNode.swift in Sources */,
 				D1E4E64A1E0934E60084A229 /* UIColor.swift in Sources */,
+				D1ADC92F1E5071EF00E1C4DB /* PageASCellNode.swift in Sources */,
 				D14D8D371DD25945009AC39B /* Park.swift in Sources */,
 				D1C9438F1DFB19600008C38F /* LoginViewController.swift in Sources */,
 				D12D64FB1DEF70500096A847 /* UIButton.swift in Sources */,
@@ -1797,6 +1804,7 @@
 				D10A1FB61E45E17100E2B7AA /* MainNavigationController.swift in Sources */,
 				D10A1FAE1E45D22000E2B7AA /* RealmObjects.swift in Sources */,
 				D19DEAF01E4CC427003F6E55 /* String.swift in Sources */,
+				D1ADC92D1E4FA50100E1C4DB /* SplashScreenViewController.swift in Sources */,
 				D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */,
 				D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */,
 				D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */,

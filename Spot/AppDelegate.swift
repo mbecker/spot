@@ -29,6 +29,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Delete realm database file
         // try! FileManager.default.removeItem(at: Realm.Configuration().fileURL!)
         
+        print("::::::: TIME :::::::")
+        let timestamp = NSDate().timeIntervalSince1970
+        
+        print(timestamp)
+        print("::::::::::::::::::::")
+        
         // set badge count to 0
         UIApplication.shared.applicationIconBadgeNumber = 0
         
@@ -77,7 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white
         //window.rootViewController = UINavigationController(rootViewController: MainViewController())
-        window.rootViewController = MainNavigationController(rootViewController: LoginViewController())
+        window.rootViewController = MainNavigationController(rootViewController: SplashScreenViewController())
         window.makeKeyAndVisible()
         self.window = window
         

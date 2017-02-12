@@ -10,17 +10,18 @@ import UIKit
 import Down
 import Kingfisher
 import NVActivityIndicatorView
+import SwiftMessages
 
 class ParkDetailViewController: UIViewController {
     
     private var shadowImageView: UIImageView?
     
-    let _park: Park
+    let _realmPark: RealmPark
     
     var loadingIndicatorView: NVActivityIndicatorView?
     
-    init(park: Park){
-        self._park = park
+    init(realmPark: RealmPark){
+        self._realmPark = realmPark
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -78,7 +79,7 @@ class ParkDetailViewController: UIViewController {
         super.viewDidLoad()
         
         // Navgationconroller
-        self.navigationController?.visibleViewController?.title = self._park.name
+        self.navigationController?.visibleViewController?.title = self._realmPark.name
         
         // View - Scrollview
         self.view = self.scrollView
@@ -95,7 +96,7 @@ class ParkDetailViewController: UIViewController {
          */
         let mapImageView = UIImageView(frame: CGRect(x: 20, y: 20, width: self.scrollView.bounds.width - 40, height: 206))
         self.scrollView.addSubview(mapImageView)
-        if let mapImageString: String = self._park.mapURL, let mapImageURL: URL = URL(string: mapImageString) {
+        if let mapImageString: String = self._realmPark.mapURL, let mapImageURL: URL = URL(string: mapImageString) {
             let processor = RoundCornerImageProcessor(cornerRadius: 10)
             mapImageView.kf.indicatorType = .activity
             mapImageView.kf.setImage(with: mapImageURL, placeholder: nil, options: [.processor(processor)], progressBlock: nil, completionHandler: { image, error, cacheType, imageURL in
@@ -103,7 +104,7 @@ class ParkDetailViewController: UIViewController {
                     print(error!)
                     // ToDo: Map Image can't be download; show error?
                 } else {
-                    self._park.mapImage = image
+                    // We can not store an image to realm; but the image is cached anyway
                 }
             })
         }
@@ -111,16 +112,41 @@ class ParkDetailViewController: UIViewController {
         /**
          * Markdown
          */
-        if let markdown: String = self._park.markdown?.markdown {
-            showMarkdown(markdown: markdown)
-        } else {
-            let realmTransactions = RealmTransactions()
-            realmTransactions.loadMarkdownFromFirebaseAndSaveToRealm(park: self._park, completion: { (result) in
-                if let markdown: String = result?.markdown {
-                    self.showMarkdown(markdown: markdown)
+        let realmTransactions = RealmTransactions()
+        realmTransactions.loadMarkdownFromFirebaseAndSaveToRealm(realmPark: self._realmPark, completion: { (result, returnError) in
+            if let markdown: String = result?.markdown {
+                self.showMarkdown(markdown: markdown)
+            } else if let error: MarkdownError = returnError {
+                let errorLabel = UILabel()
+                errorLabel.text = "Sorry :-("
+                errorLabel.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightSemibold)
+                errorLabel.textColor = UIColor.scarlet
+                errorLabel.textAlignment = .center
+                errorLabel.translatesAutoresizingMaskIntoConstraints = false
+                self.loadingIndicatorView?.removeFromSuperview()
+                self.view.addSubview(errorLabel)
+                errorLabel.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
+                errorLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 24).isActive = true
+                errorLabel.heightAnchor.constraint(equalToConstant: 24).isActive = true
+                
+                
+                switch (error) {
+                case .MarkdownDoesNotExist:
+                    self.showMessage(message: "The park information does not exsist.")
+                    break;
+                case .FirebaseError:
+                    self.showMessage(message: "We couldn't fetch any data from the database.")
+                    break;
+                case .MarkdownError:
+                    self.showMessage(message: "We had problems to load the park informtion.")
+                    break;
+                default:
+                    break;
                 }
-            })
-        }
+                print(error)
+                
+            }
+        })
     }
     
     func showMarkdown(markdown: String){
@@ -136,6 +162,30 @@ class ParkDetailViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    // - Helpers
+    func showMessage(message: String) {
+        //Status bar style and visibility
+        UIApplication.shared.isStatusBarHidden = false
+        self.dismiss(animated: false, completion: nil)
+        
+        let image = UIImage(named:"Dinosaur-66")?.withRenderingMode(.alwaysTemplate)
+        let info = MessageView.viewFromNib(layout: .MessageView)
+        info.configureTheme(.error)
+        info.button?.isHidden = true
+        info.iconLabel?.isHidden = true
+        info.configureContent(title: "Error", body: message, iconImage: image!)
+        info.iconImageView?.isHidden = false
+        info.iconImageView?.tintColor = UIColor.white
+        info.configureIcon(withSize: CGSize(width: 30, height: 30), contentMode: .scaleAspectFill)
+        info.backgroundView.backgroundColor = UIColor(red:0.93, green:0.33, blue:0.39, alpha:1.00)
+        var infoConfig = SwiftMessages.defaultConfig
+        infoConfig.presentationStyle = .bottom
+        infoConfig.duration = .seconds(seconds: 2)
+        
+        
+        SwiftMessages.show(config: infoConfig, view: info)
     }
     
 }

@@ -17,18 +17,18 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         return node as! ASTableNode
     }
     
-    let ref         : FIRDatabaseReference
-    let park        : Park
-    let parkSection : ParkSection
-    let path        : String!
-    
+    let _firebaseRef        : FIRDatabaseReference
+    let _firebasePath       : String!
+    let _realmPark          : RealmPark
+    let _realmParkSection   : RealmParkSection
     
     weak var delegate:ParkASCellNodeDelegate?
     
     var items2: [ParkItem2] = [ParkItem2]()
     
-    var observerChildAdded: FIRDatabaseHandle?
-    var observerChildChanged: FIRDatabaseHandle?
+    var observerChildAdded      : FIRDatabaseHandle?
+    var observerChildChanged    : FIRDatabaseHandle?
+    var obseverCount            : FIRDatabaseHandle?
     let errorLabelNoItems = UILabel()
     let errorImageNoItems = UIImageView()
     
@@ -38,11 +38,13 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
      * Data
      */
     
-    init(park: Park, parkSection: ParkSection) {
-        self.ref            = FIRDatabase.database().reference()
-        self.park           = park
-        self.parkSection    = parkSection
-        self.path           = "park/" + self.park.key + "/" + parkSection.path + "/"
+    init(realmPark: RealmPark, realmParkSection: RealmParkSection) {
+        self._firebaseRef         = FIRDatabase.database().reference()
+        self._firebasePath        = "park/" + realmPark.key + "/" + realmParkSection.path + "/"
+        
+        self._realmPark           = realmPark
+        self._realmParkSection    = realmParkSection
+        
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -54,74 +56,67 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     
     func addObserver(){
         removeObserver()
-        self.toggleErrorLabelNoItems(show: false)
         
-        // 1: .childAdded observer
-        self.observerChildAdded = self.ref.child(self.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
-            // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2.contains(where: {$0.key == item2.key}) == false {
-                
-                if self.loadingIndicatorView.animating {
-                    self.loadingIndicatorView.stopAnimating()
-                }
-                
-                
-                OperationQueue.main.addOperation({
-                    self.items2.insert(item2, at: 0)
-                    let indexPath = IndexPath(item: 0, section: 0)
-                    self.tableNode.insertRows(at: [indexPath], with: .none)
-                    self.tableNode.reloadRows(at: [indexPath], with: .none)
-                })
-                
-            }
-            
-        })
-        
-        // 2: .childChanged observer
-        self.observerChildChanged = self.ref.child(self.path).observe(.childChanged, with: { (snapshot) -> Void in
-            // ParkItem2 is updated; replace item in table array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject] {
-                for i in 0...self.items2.count-1 {
-                    if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2[i].key == item2.key {
-                        let index = i
-                        OperationQueue.main.addOperation({
-                            self.items2[index]  = item2
-                            let indexPath = IndexPath(item: index, section: 0)
-                            self.tableNode.reloadRows(at: [indexPath], with: .fade)
-                        })
-                        
-                    }
-                }
-            }
-            
-        })
-        
-        
-    }
-    
-    func toggleErrorLabelNoItems(show: Bool, shouldRemoveObserver: Bool = true) {
-        if show {
-            if shouldRemoveObserver {
-                removeObserver()
-            }
-            self.loadingIndicatorView.stopAnimating()
-            self.view.addSubview(self.errorLabelNoItems)
-            self.view.addSubview(self.errorImageNoItems)
-            self.errorImageNoItems.rotate360Degrees(duration: 2, completionDelegate: self)
-        } else {
+        // 0. At least 1 x item is in DB; remove error image & label; add loadingindicator
+        if self.obseverCount != nil {
             self.errorLabelNoItems.removeFromSuperview()
             self.errorImageNoItems.removeFromSuperview()
-            self.loadingIndicatorView.startAnimating()
+            self.view.addSubview(self.loadingIndicatorView)
+        
+            // 1: .childAdded observer
+            self.observerChildAdded = self._firebaseRef.child(self._firebasePath).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
+                // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
+                if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark, type: self._realmParkSection.getType()), self.items2.first(where:{$0.key == item2.key}) == nil {
+                    
+                    if self.loadingIndicatorView.animating {
+                        self.loadingIndicatorView.stopAnimating()
+                    }
+                    
+                    self.items2.insert(item2, at: 0)
+                    
+                    self.tableNode.performBatchUpdates({
+                            self.tableNode.insertRows(at: [[0,0]], with: .none)
+                    }, completion: { (inserted) in
+                        
+                        if inserted {
+                            self.tableNode.reloadRows(at: [[0, 0]], with: .none)
+                        }
+                        
+                    })
+                    
+                }
+                
+            })
+            
+            // 2: .childChanged observer
+            self.observerChildChanged = self._firebaseRef.child(self._firebasePath).observe(.childChanged, with: { (snapshot) -> Void in
+                // ParkItem2 is updated; replace item in table array
+                if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject] {
+                    for i in 0...self.items2.count-1 {
+                        if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark, type: self._realmParkSection.getType()), self.items2[i].key == item2.key {
+                            let index = i
+                            OperationQueue.main.addOperation({
+                                self.items2[index]  = item2
+                                let indexPath = IndexPath(item: index, section: 0)
+                                self.tableNode.reloadRows(at: [indexPath], with: .fade)
+                            })
+                            
+                        }
+                    }
+                }
+                
+            })
         }
+        
         
     }
     
     func removeObserver(){
         if self.observerChildAdded != nil {
-            self.ref.removeObserver(withHandle: self.observerChildAdded!)
+            self._firebaseRef.removeObserver(withHandle: self.observerChildAdded!)
         }
-        if self.observerChildAdded != nil {
-            self.ref.removeObserver(withHandle: self.observerChildChanged!)
+        if self.observerChildChanged != nil {
+            self._firebaseRef.removeObserver(withHandle: self.observerChildChanged!)
         }
     }
     
@@ -136,7 +131,6 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         // TableView
         self.view.backgroundColor = UIColor.white
         self.tableNode.view.showsVerticalScrollIndicator    = true
@@ -147,8 +141,6 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         
         // Loading indicator
         self.loadingIndicatorView.frame = CGRect(x: self.view.bounds.width / 2 - 22, y: UIScreen.main.bounds.height / 2 - 22, width: 44, height: 44)
-        self.loadingIndicatorView.startAnimating()
-        self.view.addSubview(self.loadingIndicatorView)
         
         // Error label
         self.errorLabelNoItems.frame = self.tableNode.view.frame
@@ -160,13 +152,15 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
         self.errorImageNoItems.frame = CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30)
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
         
-        toggleErrorLabelNoItems(show: true, shouldRemoveObserver: false)
-
+        
     }
     
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if self._realmParkSection.name == "Community" {
+            print("viewWillAppear")
+        }
         
         self.navigationController?.navigationBar.isHidden = false
         
@@ -176,28 +170,47 @@ class TableAsViewController: ASViewController<ASDisplayNode> {
          * 2. Only attach observer if items.count > 0
          * (only attach once an observer)
          */
-        self.ref.child(self.path).child("count").observe(.value, with: { (snapshot) -> Void in
+        self.obseverCount = self._firebaseRef.child(self._firebasePath).child("count").observe(.value, with: { (snapshot) -> Void in
             if snapshot.exists(), let count: Int = snapshot.value as? Int, count > 0 {
                 self.addObserver()
             }
         })
-        self.ref.child(self.path).child("count").observe(.childChanged, with: { (snapshot) -> Void in
-            if let count: Int = snapshot.value as? Int, count > 0 {
-                self.addObserver()
-            }
-        })
+//        self._firebaseRef.child(self._firebasePath).child("count").observe(.childChanged, with: { (snapshot) -> Void in
+//            if let count: Int = snapshot.value as? Int, count > 0 {
+//                self.addObserver()
+//            }
+//        })
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        if self._realmParkSection.name == "Community" {
+            print("viewDidAppear")
+        }
         super.viewDidAppear(animated)
+        self.view.addSubview(self.errorImageNoItems)
+        self.view.addSubview(self.errorLabelNoItems)
+        self.errorImageNoItems.rotate360Degrees(duration: 2, completionDelegate: self)
+
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        if self._realmParkSection.name == "Community" {
+            print("viewWillDisappear")
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
+        if self._realmParkSection.name == "Community" {
+            print("viewDidDisappear")
+        }
+        self.errorImageNoItems.removeFromSuperview()
+        self.errorLabelNoItems.removeFromSuperview()
+        self.loadingIndicatorView.removeFromSuperview()
         removeObserver()
+        self.obseverCount = nil
+        self.observerChildAdded = nil
+        self.observerChildChanged = nil
     }
     
     

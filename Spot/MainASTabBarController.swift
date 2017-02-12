@@ -12,11 +12,11 @@ import ImagePicker
 import TOCropViewController
 import FirebaseDatabase
 import FirebaseStorage
+import FirebaseAuth
 
 class MainASTabBarController: UITabBarController {
     
-    var _user: User
-    var _park: Park
+    var _realmPark  : RealmPark
     
     var parkController  : ParkASViewController
     var listController  : ListASPagerNode
@@ -26,17 +26,24 @@ class MainASTabBarController: UITabBarController {
     
     var delegateSelectPark: SelectParkDelegate?
     
-    init(park: Park) {
-        self._park = park
-        self._user = User()
-        self.parkController     = ParkASViewController(park: self._park, user: self._user)
-        self.listController     = ListASPagerNode(park: self._park)
+    let _user = User()
+    var _firebaseUser: FIRUser?
+    
+    var _loadedRandom = false
+    
+    init(realmPark: RealmPark, loadedRandom: Bool = false) {
+        self._realmPark = realmPark
+        self.parkController     = ParkASViewController(realmPark: realmPark)
+        self.listController     = ListASPagerNode(realmPark: realmPark)
         
         super.init(nibName: nil, bundle: nil)
         self.delegate = self // UITabBarControllerDelegate to identify CameraDummyView: tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController)
         self.parkController.delegate    = self // SelectParkDelegate
         
         initTabBar(rootParkNavgationController: self.parkController, rootListNavigationController: self.listController)
+        
+        self._loadedRandom = loadedRandom
+        
     }
     
     
@@ -91,6 +98,14 @@ class MainASTabBarController: UITabBarController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = true
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if self._loadedRandom {
+            showAlert(title: "We couldn't find any location. We just loaded a random park for you!")
+            self._loadedRandom = false
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,6 +117,16 @@ class MainASTabBarController: UITabBarController {
         self.progressView.progressTintColor = UIColor(red:0.93, green:0.33, blue:0.39, alpha:1.00)
         self.progressView.trackTintColor = UIColor(red:0.15, green:0.15, blue:0.15, alpha:1.00) // Flat black
         self.progressView.progress = 0.0
+        
+        // Firebase Auth
+        FIRAuth.auth()?.addStateDidChangeListener() { (auth, user) in
+            if user != nil {
+                self._firebaseUser = user
+            } else {
+                self._firebaseUser = nil
+            }
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -109,6 +134,12 @@ class MainASTabBarController: UITabBarController {
     }
     
     func showCameraAndUpload(){
+        
+        guard self._firebaseUser != nil else {
+            showAlert(title: "Please login!")
+            return
+        }
+        
         let imagePicker = ImagePickerController()
         imagePicker.imageLimit = 1
         
@@ -151,9 +182,9 @@ class MainASTabBarController: UITabBarController {
                 
                 // Park unique string key and park full name
                 // ToDo: Get park string key from photo / camera tags
-                let parkKey         = "addo"
-                let parkFullName    = "Addo National Elephant Park"
-                let itemType        = "community"
+                let parkKey         = self._realmPark.key
+                let parkFullName    = self._realmPark.name
+                let itemType        = ItemType.community.rawValue
                 
                 // Key for firebase push
                 let itemKey = ref.child("items/\(parkKey)/\(itemType)").childByAutoId().key
@@ -174,6 +205,11 @@ class MainASTabBarController: UITabBarController {
                         self.progressView.setProgress(percentComplete / 100, animated: true)
                     }
                 }
+                
+                imageOriginalUploadTask.observe(.failure) { error in
+                    print(error.error)
+                }
+                
                 imageOriginalUploadTask.observe(.success) { snapshot in
                     // Progress: 95%
                     self.progressView.setProgress(0.95, animated: true)
@@ -249,6 +285,26 @@ class MainASTabBarController: UITabBarController {
         
         
     }
+    
+    
+    // MARK: - Helpers
+    
+    func showAlert(title: String, showOK: Bool = true) {
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        
+        if showOK {
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+        } else {
+            alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+        }
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     
 }
 

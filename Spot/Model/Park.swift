@@ -50,41 +50,53 @@ enum ItemType: String {
 
 class User {
     let ref = FIRDatabase.database().reference()
-    let key:    String
-    let name:   String
+    var observeUser: FIRDatabaseHandle?
+    var isLoggedIn = false
+    var key:    String?
+    var name:   String?
     
     init() {
-        let user = FIRAuth.auth()!.currentUser!
-        self.key    = user.uid
-        self.name   = user.email ?? user.uid
-        self.ref.child("config").child(self.key).observeSingleEvent(of: .value, with: { (snapshot) in
-            let value = snapshot.value as? NSDictionary
-            
-            // Show Config
-            if let userDefaultsShowConfig = UserDefaults.standard.object(forKey: UserDefaultTypes.showConfig.rawValue) as? Bool {
-                self.setShowConfig(showConfig: userDefaultsShowConfig)
+        FIRAuth.auth()?.addStateDidChangeListener() { (auth, user) in
+            if user != nil {
+                self.key = user!.uid
+                self.name = user!.email ?? user!.uid
+                self.observeUser = self.ref.child("config").child(self.key!).observe(.value, with: { (snapshot) in
+                    let value = snapshot.value as? NSDictionary
+                    
+                    // Show Config
+                    if let userDefaultsShowConfig = UserDefaults.standard.object(forKey: UserDefaultTypes.showConfig.rawValue) as? Bool {
+                        self.setShowConfig(showConfig: userDefaultsShowConfig)
+                    } else {
+                        // No UserDefault settings for showConifg (user loged out and all user settings were deleted)
+                        if let showConfig = value?[UserDefaultTypes.showConfig.rawValue] as? Bool {
+                            UserDefaults.standard.set(showConfig, forKey: UserDefaultTypes.showConfig.rawValue)
+                        } else {
+                            UserDefaults.standard.set(false, forKey: UserDefaultTypes.showConfig.rawValue)
+                        }
+                    }
+                    
+                    // Show NavBar
+                    if let userDefaultsShowNavBar = UserDefaults.standard.object(forKey: UserDefaultTypes.showNavBar.rawValue) as? Bool {
+                        self.setShowNavBar(showNavBar: userDefaultsShowNavBar)
+                    } else {
+                        // No UserDefault settings for showConifg (user loged out and all user settings were deleted)
+                        if let showNavBar = value?[UserDefaultTypes.showNavBar.rawValue] as? Bool {
+                            UserDefaults.standard.set(showNavBar, forKey: UserDefaultTypes.showNavBar.rawValue)
+                        } else {
+                            UserDefaults.standard.set(false, forKey: UserDefaultTypes.showNavBar.rawValue)
+                        }
+                    }
+                    
+                })
             } else {
-                // No UserDefault settings for showConifg (user loged out and all user settings were deleted)
-                if let showConfig = value?[UserDefaultTypes.showConfig.rawValue] as? Bool {
-                    UserDefaults.standard.set(showConfig, forKey: UserDefaultTypes.showConfig.rawValue)
-                } else {
-                    UserDefaults.standard.set(false, forKey: UserDefaultTypes.showConfig.rawValue)
-                }
+                // User is not logged (anymore)
+                self.ref.removeAllObservers()
             }
             
-            // Show NavBar
-            if let userDefaultsShowNavBar = UserDefaults.standard.object(forKey: UserDefaultTypes.showNavBar.rawValue) as? Bool {
-                self.setShowNavBar(showNavBar: userDefaultsShowNavBar)
-            } else {
-                // No UserDefault settings for showConifg (user loged out and all user settings were deleted)
-                if let showNavBar = value?[UserDefaultTypes.showNavBar.rawValue] as? Bool {
-                    UserDefaults.standard.set(showNavBar, forKey: UserDefaultTypes.showNavBar.rawValue)
-                } else {
-                    UserDefaults.standard.set(false, forKey: UserDefaultTypes.showNavBar.rawValue)
-                }
-            }
             
-        })
+        }
+        
+        
     }
     
     func getConfig(configItem: configItem) -> Bool {
@@ -99,27 +111,35 @@ class User {
     }
     
     func setShowConfig(showConfig: Bool){
-        let showConfigItem = ["/config/\(self.key)/\(UserDefaultTypes.showConfig.rawValue)": showConfig]
-        self.ref.updateChildValues(showConfigItem)
-        self.ref.updateChildValues(showConfigItem, withCompletionBlock: { (error, reference) in
-            if((error) != nil){
-                print(error)
-            } else {
-                print(":: USER CONFIG - SAVED showConfig to: \(showConfig)")
-            }
-        })
+        
+        if self.isLoggedIn {
+            let showConfigItem = ["/config/\(self.key)/\(UserDefaultTypes.showConfig.rawValue)": showConfig]
+            self.ref.updateChildValues(showConfigItem)
+            self.ref.updateChildValues(showConfigItem, withCompletionBlock: { (error, reference) in
+                if((error) != nil){
+                    print(error)
+                } else {
+                    print(":: USER CONFIG - SAVED showConfig to: \(showConfig)")
+                }
+            })
+        }
+        
         return UserDefaults.standard.set(showConfig, forKey: UserDefaultTypes.showConfig.rawValue)
     }
     
     func setShowNavBar(showNavBar: Bool){
-        let showNavBarItem = ["/config/\(self.key)/\(UserDefaultTypes.showNavBar.rawValue)": showNavBar]
-        self.ref.updateChildValues(showNavBarItem, withCompletionBlock: { (error, reference) in
-            if((error) != nil){
-                print(error)
-            } else {
-                print(":: USER CONFIG - SAVED showNavBarItem to: \(showNavBar)")
-            }
-        })
+        
+        if self.isLoggedIn {
+            let showNavBarItem = ["/config/\(self.key)/\(UserDefaultTypes.showNavBar.rawValue)": showNavBar]
+            self.ref.updateChildValues(showNavBarItem, withCompletionBlock: { (error, reference) in
+                if((error) != nil){
+                    print(error)
+                } else {
+                    print(":: USER CONFIG - SAVED showNavBarItem to: \(showNavBar)")
+                }
+            })
+        }
+        
         return UserDefaults.standard.set(showNavBar, forKey: UserDefaultTypes.showNavBar.rawValue)
     }
     
@@ -128,14 +148,18 @@ class User {
     }
     
     func setConfig(configItem: configItem, set: Bool){
-        let item = ["/config/\(self.key)/\(configItem.rawValue)": set]
-        self.ref.updateChildValues(item, withCompletionBlock: { (error, reference) in
-            if((error) != nil){
-                print(error)
-            } else {
-                print(":: USER CONFIG - SAVED \(configItem.rawValue) to: \(set)")
-            }
-        })
+        
+        if self.isLoggedIn {
+            let item = ["/config/\(self.key)/\(configItem.rawValue)": set]
+            self.ref.updateChildValues(item, withCompletionBlock: { (error, reference) in
+                if((error) != nil){
+                    print(error)
+                } else {
+                    print(":: USER CONFIG - SAVED \(configItem.rawValue) to: \(set)")
+                }
+            })
+        }
+        
         return UserDefaults.standard.set(set, forKey: configItem.rawValue)
     }
     
@@ -183,7 +207,7 @@ class ParkItem2 {
 //    let ref         :   FIRDatabaseReference
 //    let storage     :   FIRStorage
     let key         :   String
-    let park        :   Park
+    let park        :   RealmPark
     let type        :   ItemType
     let name        :   String
     let image       :   Images?
@@ -193,13 +217,13 @@ class ParkItem2 {
     let longitude   :   Double?
     var tags        =   [String]()
     var spottedBy   =   [[String: String]]()
-    var realmPark: RealmPark?
+    
     /**
      * Park information
      */
     
     
-    init?(key: String, snapshotValue: [String: AnyObject], park: Park, type: ItemType) {
+    init?(key: String, snapshotValue: [String: AnyObject], park: RealmPark, type: ItemType) {
         
         self.key          = key
         self.park         = park

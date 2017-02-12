@@ -23,15 +23,18 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         return node as! ASTableNode
     }
     
-    let _parkItem:      ParkItem2
-    let _park:          Park
-    var _tableHeader:   DetailTableHeaderUIView?
-    let _mapNode:       MapNode!
+    let _parkItem       : ParkItem2
+    let _realmPark      : RealmPark
+    let _park           : Park
+    var _tableHeader    : DetailTableHeaderUIView?
+    let _mapNode        : MapNode!
     
-    init(park: Park, parkItem: ParkItem2) {
-        self._park      = park
-        self._parkItem  = parkItem
-        self._mapNode    = MapNode(parkItem: self._parkItem)
+    init(realmPark: RealmPark, parkItem: ParkItem2) {
+        self._realmPark     = realmPark
+        self._park          = Park(realmPark: realmPark)
+        self._parkItem      = parkItem
+        self._mapNode       = MapNode(parkItem: self._parkItem)
+        
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -84,8 +87,8 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         if let image: UIImage = self._tableHeader?.getFirstImage() {
             self._tableHeader?._slideShow.pauseTimerIfNeeded()
             
-            var text: NSString = NSString(string: "Spotted \(self._parkItem.name) at \(self._park.name)")
-            let url = getSafariDigitalSpotURL(park: self._park.key, type: self._parkItem.type.rawValue, key: self._parkItem.key)
+            let text: NSString = NSString(string: "Spotted \(self._parkItem.name) at \(self._realmPark.name)")
+            let url = getSafariDigitalSpotURL(park: self._realmPark.key, type: self._parkItem.type.rawValue, key: self._parkItem.key)
             let size = image.size
             var map: UIImage = UIImage()
             

@@ -14,23 +14,26 @@ import NVActivityIndicatorView
 
 class ParkTableHeaderMapUIImageView: UIImageView {
 
-    var park: Park
+    let _realmPark: RealmPark
     var delegate: SelectParkMapDelegate?
     let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 22, height: 22), type: NVActivityIndicatorType.ballScale, color: UIColor.flatBlack.withAlphaComponent(0.4), padding: 0.0)
     
-    init(park: Park, frame: CGRect) {
-        self.park = park
+    init(realmPark: RealmPark, frame: CGRect) {
+        self._realmPark = realmPark
+        
         super.init(frame: frame)
-        backgroundColor = UIColor.white
-        contentMode = .scaleAspectFill
-        cornerRadius = 10
-        kf.indicatorType = .activity
+        
+        // Layout options
+        backgroundColor     = UIColor.white
+        contentMode         = .scaleAspectFill
+        cornerRadius        = 10
+        kf.indicatorType    = .activity
         isUserInteractionEnabled = true
         
+        // Loadingindicator
         self.loadingIndicatorView.frame = CGRect(x: frame.width / 2 - 11, y: frame.height / 2 - 11, width: 22, height: 22)
         self.loadingIndicatorView.startAnimating()
         self.addSubview(self.loadingIndicatorView)
-        // self.addInfo(url: self.park.mapImage, country: self.park.country, info: self.park.info)
         
     }
     

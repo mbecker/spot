@@ -59,7 +59,7 @@ class CountryASCellNode: ASCellNode {
         self._bottomSeparatorNode.image = UIImage.as_resizableRoundedImage(withCornerRadius: 0, cornerColor: UIColor.clear, fill: UIColor(red:0.92, green:0.92, blue:0.92, alpha:1.00))  // Lilly White
         self._topSeparatorNode.image    = UIImage.as_resizableRoundedImage(withCornerRadius: 0, cornerColor: UIColor.clear, fill: UIColor.clear)
         super.init()
-        addNodes(name: park.name, country: park.country.country)
+        addNodes(name: park.name, country: park.country?.country)
 
     }
     
@@ -149,12 +149,11 @@ class CountryASCellNode: ASCellNode {
         textVerticalStack.style.flexGrow    = 1.0
         textVerticalStack.style.flexShrink  = 1.0
         textVerticalStack.alignItems        = .stretch
-        
-        
         textVerticalStack.sizeRange        = ASRelativeSizeRangeMake(
             ASLayoutSize(width: ASDimension(unit: .points, value: constrainedSize.max.width), height: ASDimension(unit: .points, value: 0)), // min
             ASLayoutSize(width: ASDimension(unit: .points, value: constrainedSize.max.width), height: ASDimension(unit: .points, value: constrainedSize.max.height)) // max
         )
+        
         if self._countryTextNode.attributedText != nil {
             textVerticalStack.children = [self._parkTextNode, self._countryTextNode]
         } else {

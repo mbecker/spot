@@ -40,15 +40,14 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         "Attractions"
     ]
     
-    let _park: Park
-    let _user: User
+    let _realmPark: RealmPark
     var delegate: SelectParkDelegate?
     
     var showConfig = false
     
-    init(park: Park, user: User){
-        self._park = park
-        self._user = user
+    init(realmPark: RealmPark){
+        self._realmPark = realmPark
+        
         super.init(node: ASTableNode(style: UITableViewStyle.grouped))
         tableNode.delegate = self
         tableNode.dataSource = self
@@ -77,18 +76,16 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
     
     func loadPark(){
-        let parkTableHeader                 = ParkTableHeaderUIView(park: self._park)
+        let parkTableHeader                 = ParkTableHeaderUIView(realmPark: self._realmPark)
         parkTableHeader.delegate            = self
         parkTableHeader.delegateMap         = self
-        if self._user.getConfig(configItem: .showWhiteHeader) {
-            parkTableHeader.backgroundColor = UIColor.white
-        }
+        parkTableHeader.backgroundColor = UIColor.white
         
         
         self.tableNode.view.tableHeaderView = parkTableHeader
         self.tableNode.view.tableFooterView = self.tableFooterView()
         
-        if let mapImageString: String = self._park.mapURL, let mapImageURL: URL = URL(string: mapImageString) {
+        if let mapImageString: String = self._realmPark.mapURL, let mapImageURL: URL = URL(string: mapImageString) {
             parkTableHeader.mapView?.stopAndRemoveLoadingIndicator()
             let processor = RoundCornerImageProcessor(cornerRadius: 10)
             parkTableHeader.mapView?.kf.indicatorType = .activity
@@ -97,8 +94,7 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
                     print(error!)
                     // ToDo: Map Image can't be download; show error?
                 } else {
-                    
-                    self._park.mapImage = image
+                    // We can not stora an image to realm; but the image is cached anyway
                 }
             })
         }
@@ -238,7 +234,7 @@ extension ParkASViewController : ASTableDataSource {
     }
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return self._park.sections.count + parkInformtion.count
+        return self._realmPark.sections.count + parkInformtion.count
     }
     
     /**
@@ -253,9 +249,9 @@ extension ParkASViewController : ASTableDataSource {
             return UIView()
         case parkInformtion.count:
             // The header is between last row of "Encyclopedia" and the first section
-            return sectionHeaderView(text: self._park.sections[section - parkInformtion.count].name, sectionId: section - parkInformtion.count, additionalSpacingToTop: true)
+            return sectionHeaderView(text: self._realmPark.sections[section - parkInformtion.count].name, sectionId: section - parkInformtion.count, additionalSpacingToTop: true)
         default:
-            return sectionHeaderView(text: self._park.sections[section - parkInformtion.count].name, sectionId: section - parkInformtion.count)
+            return sectionHeaderView(text: self._realmPark.sections[section - parkInformtion.count].name, sectionId: section - parkInformtion.count)
         }
         
     }
@@ -282,7 +278,7 @@ extension ParkASViewController : ASTableDataSource {
         footer.backgroundColor = UIColor.clear
         
         switch section {
-        case _ where section == self._park.sections.count + parkInformtion.count - 1:
+        case _ where section == self._realmPark.sections.count + parkInformtion.count - 1:
             // Show not border line for last section
             return footer
         default:
@@ -318,7 +314,7 @@ extension ParkASViewController : ASTableDataSource {
             let node = ParkInfoASTextCellNode(title: self.parkInformtion[section])
             return node
         default:
-            let node = ParkASCellNode(park: self._park, parkSectionNumber: (section - parkInformtion.count))
+            let node = ParkASCellNode(realmPark: self._realmPark, parkSectionNumber: (section - parkInformtion.count))
             node.delegate = self
             return node
         }
@@ -349,13 +345,13 @@ extension ParkASViewController : ASTableDelegate {
             let backItem = UIBarButtonItem()
             backItem.title = ""
             self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
-            let parkDetailUIViewController = ParkDetailViewController(park: self._park)
+            let parkDetailUIViewController = ParkDetailViewController(realmPark: self._realmPark)
             self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
         case 1:
             let backItem = UIBarButtonItem()
             backItem.title = ""
             self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
-            let parkDetailUIViewController = ParkItemsASViewController(park: self._park, type: .animals)
+            let parkDetailUIViewController = ParkItemsASViewController(realmPark: self._realmPark, type: .animals)
             self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
         default:
             return
@@ -366,7 +362,7 @@ extension ParkASViewController : ASTableDelegate {
 
 extension ParkASViewController : ParkASCellNodeDelegate {
     func didSelectPark(_ item: ParkItem2) {
-        let detailTableViewConroller = DetailASViewController(park: self._park, parkItem: item)
+        let detailTableViewConroller = DetailASViewController(realmPark: self._realmPark, parkItem: item)
         self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
     }
 }
@@ -386,7 +382,7 @@ extension ParkASViewController: SelectParkMapDelegate {
         let backItem = UIBarButtonItem()
         backItem.title = ""
         self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
-        let parkDetailUIViewController = ParkDetailViewController(park: self._park)
+        let parkDetailUIViewController = ParkDetailViewController(realmPark: self._realmPark)
         self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
     }
 }

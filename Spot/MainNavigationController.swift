@@ -26,6 +26,7 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
     
     var locationManager: CLLocationManager!
     
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         //Status bar style and visibility
@@ -34,7 +35,7 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
         // Navigationbar
         self.navigationController?.navigationBar.isHidden = true
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -56,25 +57,32 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
         
         self.modalTransitionStyle = .coverVertical
         self.modalPresentationStyle = .fullScreen
+
         
-        FIRAuth.auth()?.addStateDidChangeListener() { (auth, user) in
-            if  user == nil {
-                self.popToRootViewController(animated: true)
-                self.launchImageView.removeFromSuperview()
-                self.loadingIndicatorView.removeFromSuperview()
-                self.loadingLabel.removeFromSuperview()
-                self.alreadSignedinUser = false
-            } else if user != nil && !self.alreadSignedinUser {
-                
-                if self.topViewController is MainASTabBarController {
-                    // ToDO: Negative check? !(a is b) -> !! -> true
-                } else {
-                    self.alreadSignedinUser = true
-                    self.loadPark()
-                }
-                
-            }
+        if self.topViewController is MainASTabBarController {
+            // ToDO: Negative check? !(a is b) -> !! -> true
+        } else {
+            self.alreadSignedinUser = true
+            
         }
+        self.loadPark()
+        /**
+         * Disabled Login
+         */
+        
+//        FIRAuth.auth()?.addStateDidChangeListener() { (auth, user) in
+//            if  user == nil {
+//                self.popToRootViewController(animated: true)
+//                self.launchImageView.removeFromSuperview()
+//                self.loadingIndicatorView.removeFromSuperview()
+//                self.loadingLabel.removeFromSuperview()
+//                self.alreadSignedinUser = false
+//            } else if user != nil && !self.alreadSignedinUser {
+//                
+//                
+//                
+//            }
+//        }
         
     }
 
@@ -83,8 +91,8 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
         // Dispose of any resources that can be recreated.
     }
     
-    func showTabBarController(park: Park) {
-        let mainASTabBarController = MainASTabBarController(park: park)
+    func showTabBarController(realmPark: RealmPark, loadedRandom: Bool = false) {
+        let mainASTabBarController = MainASTabBarController(realmPark: realmPark, loadedRandom: loadedRandom)
         mainASTabBarController.delegateSelectPark = self
         self.pushViewController(mainASTabBarController, animated: true)
         self.loadingIndicatorView.removeFromSuperview()
@@ -92,21 +100,16 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
         self.loadingLabel.removeFromSuperview()
     }
     
-    func showTabBarController(park: RealmPark) {
-        let park = Park(realmPark: park)
-        self.showTabBarController(park: park)
-    }
-    
     func loadPark(){
         if let userDefaultPark = UserDefaults.standard.object(forKey: UserDefaultTypes.parkpath.rawValue) as? String, let realmPark: RealmPark = self.realmTransactions.realm.object(ofType: RealmPark.self, forPrimaryKey: userDefaultPark) {
             
-            self.showTabBarController(park: realmPark)
+            self.showTabBarController(realmPark: realmPark)
             
         } else {
             
             
             // Load parks from file and update with firebase data if possible
-            if let realmParks: [RealmPark] = loadParksJSONFromFile(file: "parks") {
+            if let _: [RealmPark] = loadParksJSONFromFile(file: "parks") {
                 loadingLabel.text = "Parks loaded succesfully."
                 loadAndShowParkBasedOnDistance()
                 /**
@@ -157,13 +160,45 @@ class MainNavigationController: UINavigationController, NVActivityIndicatorViewa
     
     // MARK: - Helpers
     
-    func showAlert(title: String) {
+    func showAlert(title: String, showOK: Bool = true) {
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
-            alert.dismiss(animated: true, completion: nil)
-        }))
+        
+        if showOK {
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+        } else {
+            alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+                alert.dismiss(animated: true, completion: nil)
+            }))
+        }
+        
         self.present(alert, animated: true, completion: nil)
         
+    }
+    
+    func showMessage(message: String) {
+        self.stopAnimating()
+        //Status bar style and visibility
+        UIApplication.shared.isStatusBarHidden = false
+        self.dismiss(animated: false, completion: nil)
+        
+        let image = UIImage(named:"Dinosaur-66")?.withRenderingMode(.alwaysTemplate)
+        let info = MessageView.viewFromNib(layout: .MessageView)
+        info.configureTheme(.error)
+        info.button?.isHidden = true
+        info.iconLabel?.isHidden = true
+        info.configureContent(title: "Error", body: message, iconImage: image!)
+        info.iconImageView?.isHidden = false
+        info.iconImageView?.tintColor = UIColor.white
+        info.configureIcon(withSize: CGSize(width: 30, height: 30), contentMode: .scaleAspectFill)
+        info.backgroundView.backgroundColor = UIColor(red:0.93, green:0.33, blue:0.39, alpha:1.00)
+        var infoConfig = SwiftMessages.defaultConfig
+        infoConfig.presentationStyle = .bottom
+        infoConfig.duration = .seconds(seconds: 2)
+        
+        
+        SwiftMessages.show(config: infoConfig, view: info)
     }
     
 
@@ -245,7 +280,6 @@ extension MainNavigationController {
         for(id, park) : (String, JSON) in json {
             
             let key = id
-            let path = "parkinfo/\(key)"
             
             guard let updated = park["updated"].double else {
                 print("JSON updated was not defined for park: \(id)")
@@ -352,7 +386,6 @@ extension MainNavigationController {
             realmCountry.latitude   = countryLatitude
             realmCountry.longitude  = countryLongitude
             
-            
             realmPark.key           = key
             realmPark.path          = "parkinfo/\(key)"
             realmPark.updated       = updated
@@ -404,7 +437,7 @@ extension MainNavigationController {
             if let updatedJSON: Double = item["updated"].double {
                 updated = updatedJSON
             } else {
-                updated = NSDate.timeIntervalSinceReferenceDate
+                updated = NSDate().timeIntervalSince1970
             }
             
             let realmMarkdown = RealmMarkdown()
@@ -565,46 +598,41 @@ extension MainNavigationController {
 }
 
 extension MainNavigationController: FormCountriesDelegate {
-    func didSelect(country: Country) {
-        //Status bar style and visibility
+    
+    func didSelect(parkKey: String) {
+        // 1. Status bar style and visibility
         UIApplication.shared.isStatusBarHidden = false
-        
+        // 2. Start loading animation
         self.startAnimating(CGSize(width: self.view.bounds.height, height: 44), message: "Loading Park ...", type: NVActivityIndicatorType.ballPulse, color: UIColor.white, padding: 0.0, displayTimeThreshold: 0, minimumDisplayTime: 2000)
-
-        self.realmTransactions.loadParkFromFirebaseAndSaveToRealm(key: country.key, completion: { (park) in
-            if park != nil {
+        
+        // 3. Load park
+        self.realmTransactions.loadParkFromFirebaseAndSaveToRealm(key: parkKey, completion: { (realmPark, parkError) in
+            if realmPark != nil {
                 // loadingParkIndicator.removeFromSuperview()
                 self.stopAnimating()
                 //Status bar style and visibility
                 UIApplication.shared.isStatusBarHidden = false
-                // self.showTabBarController(park: park!)
-                self.dismiss(animated: false, completion: nil)
-            } else {
-                self.stopAnimating()
-                //Status bar style and visibility
-                UIApplication.shared.isStatusBarHidden = false
+                self.showTabBarController(realmPark: realmPark!)
                 self.dismiss(animated: false, completion: nil)
                 
-                let image = UIImage(named:"Dinosaur-66")?.withRenderingMode(.alwaysTemplate)
-                let info = MessageView.viewFromNib(layout: .MessageView)
-                info.configureTheme(.error)
-                info.button?.isHidden = true
-                info.iconLabel?.isHidden = true
-                info.configureContent(title: "Error", body: "We couldn't load the park ...", iconImage: image!)
-                info.iconImageView?.isHidden = false
-                info.iconImageView?.tintColor = UIColor.white
-                info.configureIcon(withSize: CGSize(width: 30, height: 30), contentMode: .scaleAspectFill)
-                info.backgroundView.backgroundColor = UIColor(red:0.93, green:0.33, blue:0.39, alpha:1.00)
-                var infoConfig = SwiftMessages.defaultConfig
-                infoConfig.presentationStyle = .bottom
-                infoConfig.duration = .seconds(seconds: 2)
-                
-                
-                SwiftMessages.show(config: infoConfig, view: info)
+            } else if parkError != nil {
+                switch (parkError!) {
+                case .ParkDoesNotExist:
+                    self.showMessage(message: "We couldn't load any park.")
+                    break;
+                case .UpdateError:
+                    self.showMessage(message: "We couldn't update the park.")
+                    break;
+                default:
+                    self.showMessage(message: "The park is not valid.")
+                    break;
+                }
+                print("Error: Loading park")
+                print(parkError!)
             }
         })
-        
     }
+    
 }
 
 extension MainNavigationController: SelectParkDelegate {
@@ -629,9 +657,8 @@ extension MainNavigationController: CLLocationManagerDelegate {
             let coordinate0 = CLLocation(latitude: (locations.first?.coordinate.latitude)!, longitude: (locations.first?.coordinate.longitude)!)
             
             var distanceToClostesPark: Double = 123456789123456789.0
-            var closestPark = RealmPark()
+            var closestPark: RealmPark?
             for park in self.realmTransactions.realm.objects(RealmPark.self) {
-                closestPark = park
                 if let latitude: Double = park.country?.longitude, let longitude: Double = park.country?.longitude {
                     let coordinate1 = CLLocation(latitude: latitude, longitude: longitude)
                     let distance = coordinate0.distance(from: coordinate1)
@@ -642,8 +669,8 @@ extension MainNavigationController: CLLocationManagerDelegate {
                 }
             }
             
-            if closestPark.key != nil {
-                self.showTabBarController(park: closestPark)
+            if closestPark != nil {
+                self.showTabBarController(realmPark: closestPark!)
             } else {
                 showAlert(title: "We couldn't find any parks downloadded. Please restart the app.")
             }
@@ -655,6 +682,11 @@ extension MainNavigationController: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Failed to find user's location: \(error.localizedDescription)")
-        showAlert(title: "We couldn't find any location. Please restart the app and enable GPS.")
+        
+        if let realmPark = self.realmTransactions.realm.objects(RealmPark.self).first {
+            self.showTabBarController(realmPark: realmPark, loadedRandom: true)
+        } else {
+            showAlert(title: "Now we couldn't load any parks. That shouldn't happen ...")
+        }
     }
 }

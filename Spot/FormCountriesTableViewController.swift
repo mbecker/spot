@@ -9,9 +9,10 @@
 import UIKit
 import FirebaseDatabase
 import CoreLocation
+import RealmSwift
 
 protocol FormCountriesDelegate {
-    func didSelect(country: Country)
+    func didSelect(parkKey: String)
 }
 
 class FormCountriesTableViewController: UITableViewController {
@@ -20,6 +21,7 @@ class FormCountriesTableViewController: UITableViewController {
     let LOADING_COUNTRIES = "Loading countries ..."
     
     let ref: FIRDatabaseReference = FIRDatabase.database().reference()
+    let _realm = try! Realm()
     
     var initialLoad = true
     var showNoParksFound = true
@@ -27,17 +29,17 @@ class FormCountriesTableViewController: UITableViewController {
     var showGPSError = false
     
     let searchController = UISearchController(searchResultsController: nil)
-    var filteredCountries = [Country]()
-    var parksAll = [Country]()
-    var parksClose = [Country]()
+    var _countriesFiltered  = [RealmCountry]()
+    var _countriesAll       = [RealmCountry]()
+    var _countriesClose     = [RealmCountry]()
     
     var locationManager: CLLocationManager!
     
     var formCountriesDelegate: FormCountriesDelegate?
     
     func filterContentForSearchText(searchText: String, scope: String = "All") {
-        filteredCountries.removeAll()
-        filteredCountries = parksAll.filter { park in
+        _countriesFiltered.removeAll()
+        _countriesFiltered = _countriesAll.filter { park in
             var stringToSearchIn: String
             if let detail: String = park.detail {
                 stringToSearchIn = park.country + " " + park.name + " " + detail + " " + park.code
@@ -55,11 +57,11 @@ class FormCountriesTableViewController: UITableViewController {
             }
             return false
         }
-        if filteredCountries.count == 0 && searchText.characters.count > 0 {
+        if _countriesFiltered.count == 0 && searchText.characters.count > 0 {
             showNoParksFound = true
             tableView.reloadData()
         }
-        if filteredCountries.count > 0 && searchText.characters.count > 0 {
+        if _countriesFiltered.count > 0 && searchText.characters.count > 0 {
             initialLoad = false
             showNoParksFound = false
             tableView.reloadData()
@@ -98,15 +100,19 @@ class FormCountriesTableViewController: UITableViewController {
         self.tableView.separatorStyle = .none
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
-//        let realmTransactions = RealmTransactions()
-//        realmTransactions.loadCountriesFromFirebase { (result) in
-//            if let countries: [Country] = result {
-//                self.parksAll = countries
-//                self.tableView.reloadData()
-//            }
-//        }
         
-        self.ref.child("parkcountries").observeSingleEvent(of: .value, with: { (snapshot) in
+        /**
+         * 1. Realm: load items from realm; then add items from firebase
+         */
+        for realmCountry in _realm.objects(RealmCountry.self) {
+            addCountryAndReloadTable(realmCountry: realmCountry)
+        }
+        /**
+         * 2. Firebase: After realm items are added, load firebase items (only if firebase item are not in realm)
+         *    (firebase ref must load from online and not from cache)
+         */
+        self.ref.keepSynced(true)
+        self.ref.child("parkcountries").observe(.value, with: { (snapshot) in
             if let snapshotValue = snapshot.value as? [String: Any] {
                 
                 for (key, item) in snapshotValue {
@@ -126,28 +132,38 @@ class FormCountriesTableViewController: UITableViewController {
                         guard let latitude: Double = itemValue["latitude"] as? Double else {
                             break
                         }
-                        let countryObject = Country(key: key, name: name, country: country, code: code, latitude: latitude, longitude: longitude)
-                        if let detail = itemValue["detail"] as? String {
-                            countryObject.detail = detail
+                        
+                        /**
+                         * Find realmCountry for given 'key'; only if the realmCountry does not exist then save it to realm
+                         */
+                        if self._realm.object(ofType: RealmCountry.self, forPrimaryKey: key) == nil {
+                            let realmCountry        = RealmCountry()
+                            realmCountry.key        = key
+                            realmCountry.name       = name
+                            realmCountry.country    = country
+                            realmCountry.code       = code
+                            realmCountry.latitude   = latitude
+                            realmCountry.longitude  = longitude
+                            
+                            if let detail = itemValue["detail"] as? String {
+                                realmCountry.detail = detail
+                            }
+                            
+                            do {
+                                try self._realm.write {
+                                    self._realm.add(realmCountry)
+                                }
+                            } catch let error as NSError {
+                                print(error)
+                            }
+                            
+                            self.addCountryAndReloadTable(realmCountry: realmCountry)
+                            
                         }
-                        self.parksAll.insert(countryObject, at: 0)
-                        let indexPath = IndexPath(item: 0, section: 1)
-                        if self.parksAll.count > 1 {
-                            // If the parksAll Array = 0 then we show an error; that's wy we can't add a new first row
-                            self.tableView.insertRows(at: [indexPath], with: .none)
-                        }
-                        UIView.setAnimationsEnabled(false)
-                        self.tableView.beginUpdates()
-                        self.tableView.reloadRows(at: [indexPath], with: .none)
-                        self.tableView.endUpdates()
-                        UIView.setAnimationsEnabled(true)
-                    } else {
-                        break
+                        
                     }
                 }
                 
-            } else {
-                self.parksAll.removeAll()
             }
             
         }) { (error) in
@@ -190,17 +206,6 @@ class FormCountriesTableViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    // MARK: - Helpers
-    
-    func showAlert(title: String) {
-        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
-            alert.dismiss(animated: true, completion: nil)
-        }))
-        self.present(alert, animated: true, completion: nil)
-        
-    }
-
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -212,19 +217,19 @@ class FormCountriesTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         switch section {
         case 0:
-            if parksClose.count == 0 {
+            if _countriesClose.count == 0 {
                 return 1
             }
-            return parksClose.count
+            return _countriesClose.count
         default:
-            if searchController.isActive && searchController.searchBar.text != "" && filteredCountries.count == 0 {
+            if searchController.isActive && searchController.searchBar.text != "" && _countriesFiltered.count == 0 {
                 return 1
-            } else if searchController.isActive && searchController.searchBar.text != "" && filteredCountries.count > 0 {
-                return filteredCountries.count
-            } else if parksAll.count == 0 {
+            } else if searchController.isActive && searchController.searchBar.text != "" && _countriesFiltered.count > 0 {
+                return _countriesFiltered.count
+            } else if _countriesAll.count == 0 {
                 return 1
             } else {
-                return parksAll.count
+                return _countriesAll.count
             }
         }
     }
@@ -241,7 +246,7 @@ class FormCountriesTableViewController: UITableViewController {
         let cell: UITableViewCell = UITableViewCell(style: .default, reuseIdentifier: "cell")
         switch indexPath.section {
         case 0:
-            if self.parksClose.count == 0 {
+            if self._countriesClose.count == 0 {
                 if showGPSError {
                     cell.textLabel?.text = "Error fetching parks at your location ..."
                 } else if showGPSfetching {
@@ -251,7 +256,7 @@ class FormCountriesTableViewController: UITableViewController {
                     cell.addSubview(activityIndicator)
                 }
             } else {
-                cell.textLabel!.text = parksClose[indexPath.row].name + ", " + parksClose[indexPath.row].country
+                cell.textLabel!.text = _countriesClose[indexPath.row].name + ", " + _countriesClose[indexPath.row].country
             }
             
             // Bottom border
@@ -263,7 +268,7 @@ class FormCountriesTableViewController: UITableViewController {
             
         default:
             
-            if parksAll.count == 0 {
+            if _countriesAll.count == 0 {
                 let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.gray)
                 activityIndicator.frame = CGRect(x: self.view.bounds.width / 2 - 12, y: 48 / 2 - 12, width: 24, height: 24)
                 activityIndicator.startAnimating()
@@ -274,10 +279,10 @@ class FormCountriesTableViewController: UITableViewController {
                         cell.selectionStyle = .none
                         cell.textLabel!.text = NO_PARKS_FOUND
                     } else {
-                        cell.textLabel!.text = filteredCountries[indexPath.row].name + ", " + filteredCountries[indexPath.row].country
+                        cell.textLabel!.text = _countriesFiltered[indexPath.row].name + ", " + _countriesFiltered[indexPath.row].country
                     }
                 } else {
-                    cell.textLabel!.text = parksAll[indexPath.row].name + ", " + parksAll[indexPath.row].country
+                    cell.textLabel!.text = _countriesAll[indexPath.row].name + ", " + _countriesAll[indexPath.row].country
                 }
                 // Bottom border
                 let vw = UIView()
@@ -297,12 +302,15 @@ class FormCountriesTableViewController: UITableViewController {
          tableView.becomeFirstResponder()
         switch indexPath.section {
         case 0:
-            self.formCountriesDelegate?.didSelect(country: parksClose[indexPath.row])
+            self.formCountriesDelegate?.didSelect(parkKey: self._countriesClose[indexPath.row].key)
+            // self.formCountriesDelegate?.didSelect(country: parksClose[indexPath.row])
         default:
-            if filteredCountries.count > 0 {
-                self.formCountriesDelegate?.didSelect(country: filteredCountries[indexPath.row])
+            if _countriesFiltered.count > 0 {
+                self.formCountriesDelegate?.didSelect(parkKey: self._countriesFiltered[indexPath.row].key )
+                // self.formCountriesDelegate?.didSelect(country: _parksFiltered[indexPath.row])
             } else {
-                self.formCountriesDelegate?.didSelect(country: parksAll[indexPath.row])
+                self.formCountriesDelegate?.didSelect(parkKey: self._countriesAll[indexPath.row].key)
+                // self.formCountriesDelegate?.didSelect(country: parksAll[indexPath.row])
             }
         }
     }
@@ -339,6 +347,31 @@ class FormCountriesTableViewController: UITableViewController {
         return vw
     }
     
+    // MARK: - Helpers
+    
+    func showAlert(title: String) {
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+        
+    }
+    
+    func addCountryAndReloadTable(realmCountry: RealmCountry) {
+        self._countriesAll.insert(realmCountry, at: 0)
+        let indexPath = IndexPath(item: 0, section: 1)
+        if self._countriesAll.count > 0 {
+            // If the parksAll Array = 0 then we show an error; that's wy we can't add a new first row
+            self.tableView.insertRows(at: [indexPath], with: .none)
+        }
+        UIView.setAnimationsEnabled(false)
+        self.tableView.beginUpdates()
+        self.tableView.reloadRows(at: [indexPath], with: .none)
+        self.tableView.endUpdates()
+        UIView.setAnimationsEnabled(true)
+    }
+    
 }
 
 extension FormCountriesTableViewController: UISearchControllerDelegate {
@@ -373,7 +406,7 @@ extension FormCountriesTableViewController: UISearchBarDelegate {
 extension FormCountriesTableViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         if searchController.searchBar.text!.characters.count == 0 {
-            self.filteredCountries.removeAll()
+            self._countriesFiltered.removeAll()
             self.tableView.reloadSections([1], with: .none)
         } else {
             filterContentForSearchText(searchText: searchController.searchBar.text!)
@@ -383,20 +416,19 @@ extension FormCountriesTableViewController: UISearchResultsUpdating {
 
 extension FormCountriesTableViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if locations.first != nil && self.parksClose.count == 0{
+        if locations.first != nil && self._countriesClose.count == 0{
             let coordinate0 = CLLocation(latitude: (locations.first?.coordinate.latitude)!, longitude: (locations.first?.coordinate.longitude)!)
             
-            for park in parksAll {
-                let coordinate1 = CLLocation(latitude: park.latitude, longitude: park.longitude)
+            for country in self._countriesAll {
+                let coordinate1 = CLLocation(latitude: country.latitude, longitude: country.longitude)
                 let distance = coordinate0.distance(from: coordinate1)
                 // print("Distance to \(park.name): \(distance)")
                 let distance1: Double = Double(distance)
                 if distance1 < 9000000 {
                     self.showGPSfetching = false
-                    let parkToAdd = park
+                    let parkToAdd: RealmCountry = country
                     OperationQueue.main.addOperation({
-                        let country = Country(key: "addo", name: "\(parkToAdd.name)", country: "DE", code: "DE", latitude: parkToAdd.latitude, longitude: parkToAdd.longitude)
-                        self.parksClose.insert(country, at: 0)
+                        self._countriesClose.insert(parkToAdd, at: 0)
                         // ToDo: Relaod of seperated rows doesn't work; do not find the bug
                         // let indexPath = IndexPath(item: 0, section: 0)
                         // self.tableView.reloadRows(at: [indexPath], with: .none)

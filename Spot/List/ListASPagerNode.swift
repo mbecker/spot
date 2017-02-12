@@ -30,7 +30,7 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
      * Firebase
      */
     let _ref:   FIRDatabaseReference
-    let _park:  Park
+    let _realmPark:  RealmPark
     let _segmentView: SMSegmentView!
     var margin: CGFloat = 10.0
     var seletionBar: UIView = UIView()
@@ -41,9 +41,9 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     
     
     
-    init(park: Park){
-        self._ref    = FIRDatabase.database().reference()
-        self._park   = park
+    init(realmPark: RealmPark){
+        self._ref           = FIRDatabase.database().reference()
+        self._realmPark     = realmPark
         
         let appearance = SMSegmentAppearance()
         appearance.segmentOnSelectionColour = UIColor.white
@@ -70,14 +70,14 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         
         self._segmentView = SMSegmentView(frame: CGRect.zero, dividerColour: UIColor.clear, dividerWidth: 1.0, segmentAppearance: appearance)
         
-        if let parkSections: [ParkSection] = self._park.sections {
-            for parkSection in parkSections {
-                self._segmentView.addSegmentWithTitle(parkSection.name, onSelectionImage: nil, offSelectionImage: nil)
-            }
-        } else {
-            // park.sections is nil
-            // ToDo: Show Error page
+        
+        if self._realmPark.sections.count < 1 {
+            // ToDo: Show error page
         }
+        for realmParkSection in self._realmPark.sections {
+            self._segmentView.addSegmentWithTitle(realmParkSection.name, onSelectionImage: nil, offSelectionImage: nil)
+        }
+        
         
         super.init(node: ASPagerNode.init())
         
@@ -92,7 +92,7 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     }
     
     func initSelectionBar(){
-        if self._park.sections.count > 1 {
+        if self._realmPark.sections.count > 1 {
             self.seletionBar.removeFromSuperview()
             self.seletionBar.frame = CGRect(x: 0.0, y: self._segmentView.bounds.height - 2, width: self._segmentView.bounds.width/CGFloat(self._segmentView.numberOfSegments), height: 2.0)
             self.seletionBar.backgroundColor = UIColor.black
@@ -183,7 +183,6 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     
     func selectSegmentInSegmentView(segmentView: SMSegmentView) {
         let selectedPage = segmentView.selectedSegmentIndex
-        let scrollViewEndPosX: CGFloat = self.view.bounds.width * CGFloat(selectedPage)
         self._pagerNode.scrollToPage(at: selectedPage, animated: true)
         self.selectedPage = selectedPage
     }
@@ -241,7 +240,6 @@ extension ListASPagerNode: ASPagerDelegate {
         self._segmentView.selectedSegmentIndex = pageIndex
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print(scrollView.contentOffset.x)
         var barFrame = self.seletionBar.frame
         barFrame.origin.x = barFrame.size.width * CGFloat(scrollView.contentOffset.x) / self.view.bounds.width
         self.seletionBar.frame = barFrame
@@ -249,17 +247,23 @@ extension ListASPagerNode: ASPagerDelegate {
 }
 extension ListASPagerNode: ASPagerDataSource {
     func numberOfPages(in pagerNode: ASPagerNode) -> Int {
-        return self._park.sections.count
+        return self._realmPark.sections.count
     }
     
     func pagerNode(_ pagerNode: ASPagerNode, nodeAt index: Int) -> ASCellNode {
         let page        = index
-        let node = ASCellNode(viewControllerBlock: { () -> UIViewController in
-            let view = TableAsViewController(park: self._park, parkSection: self._park.sections[page])
-            view.delegate = self
-            return view
-        }, didLoad: nil)
+//        let node = ASCellNode(viewControllerBlock: { () -> UIViewController in
+//            let view = TableAsViewController(realmPark: self._realmPark, realmParkSection: self._realmPark.sections[page])
+//            view.delegate = self
+//            
+//            
+//            
+//            return view
+//        }, didLoad: nil)
         
+        
+        let node = PageASCellNode(realmPark: self._realmPark, realmParkSection: self._realmPark.sections[page])
+        node.delegate = self
         node.style.preferredSize = pagerNode.bounds.size
         
         return node
@@ -273,7 +277,7 @@ extension ListASPagerNode: ASCollectionDataSource {
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, numberOfItemsInSection section: Int) -> Int {
-        return self._park.sections.count
+        return self._realmPark.sections.count
     }
     
     func collectionNode(_ collectionNode: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {
@@ -286,7 +290,7 @@ extension ListASPagerNode: ASCollectionDataSource {
 
 extension ListASPagerNode : ParkASCellNodeDelegate {
     func didSelectPark(_ item: ParkItem2) {
-        let detailTableViewConroller = DetailASViewController(park: self._park, parkItem: item)
+        let detailTableViewConroller = DetailASViewController(realmPark: self._realmPark, parkItem: item)
         self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
     }
 }

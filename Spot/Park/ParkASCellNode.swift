@@ -21,15 +21,19 @@ protocol ParkASCellNodeDelegate: class {
 }
 class ParkASCellNode: ASCellNode {
     
-    var collectionNode: ASCollectionNode!
-    let parkSection: ParkSection!
-    let park: Park!
-    var items2: [ParkItem2] = [ParkItem2]()
-    var nodes = [ItemASCellNode]()
+    let _realmPark          : RealmPark
+    let _realmParkSection   : RealmParkSection
+    
+    var collectionNode      : ASCollectionNode!
+    
+    var items2: [ParkItem2]     = [ParkItem2]()
+    var nodes: [ItemASCellNode] = [ItemASCellNode]()
+    
     weak var delegate:ParkASCellNodeDelegate?
     
-    var observerChildAdded: FIRDatabaseHandle?
-    var observerChildChanged: FIRDatabaseHandle?
+    var observerChildAdded      : FIRDatabaseHandle?
+    var observerChildChanged    : FIRDatabaseHandle?
+    var obseverCount            : FIRDatabaseHandle?
     let errorLabelNoItems = UILabel()
     let errorImageNoItems = UIImageView()
     
@@ -40,9 +44,9 @@ class ParkASCellNode: ASCellNode {
     
     let loadingIndicatorView = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 88, height: 44), type: NVActivityIndicatorType.ballPulse, color: UIColor(red:0.93, green:0.40, blue:0.44, alpha:1.00), padding: 0.0)
     
-    init(park: Park, parkSectionNumber: Int) {
-        self.park           = park
-        self.parkSection    = park.sections[parkSectionNumber]
+    init(realmPark: RealmPark, parkSectionNumber: Int) {
+        self._realmPark           = realmPark
+        self._realmParkSection    = realmPark.sections[parkSectionNumber]
         
         // Layout
         let layout = UICollectionViewFlowLayout()
@@ -68,29 +72,45 @@ class ParkASCellNode: ASCellNode {
     
     func addObserver(){
         removeObserver()
-        self.toggleErrorLabelNoItems(show: false)
         
-        // 1: .childAdded observer
-        self.observerChildAdded = self.ref.child("park").child(self.park.key).child(self.parkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
-            // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self.park, type: self.parkSection.type), self.items2.contains(where: {$0.key == item2.key}) == false {
-                
-                if self.loadingIndicatorView.animating {
-                    self.loadingIndicatorView.stopAnimating()
+        
+        // 0. At least 1 x item is in DB; remove error image & label; add loadingindicator
+        if self.obseverCount != nil {
+            self.errorLabelNoItems.removeFromSuperview()
+            self.errorImageNoItems.removeFromSuperview()
+            self.view.addSubview(self.loadingIndicatorView)
+            
+            // 1: .childAdded observer
+            self.observerChildAdded = self.ref.child("park").child(self._realmPark.key).child(self._realmParkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
+                // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
+                if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark, type: self._realmParkSection.getType()), self.items2.first(where:{$0.key == item2.key}) == nil {
+                    
+                    if self.loadingIndicatorView.animating {
+                        self.loadingIndicatorView.stopAnimating()
+                    }
+                    
+                    self.items2.insert(item2, at: 0)
+                    
+                    self.collectionNode.performBatchUpdates({
+                        self.collectionNode.insertItems(at: [[0,0]])
+                    }, completion: { (inserted) in
+                        
+                        if inserted {
+                            self.collectionNode.reloadItems(at: [[0,0]])
+                        }
+                        
+                    })
+                    
                 }
                 
-                OperationQueue.main.addOperation({
-                    self.items2.insert(item2, at: 0)
-                    let indexPath = IndexPath(item: 0, section: 0)
-                    self.collectionNode.insertItems(at: [indexPath])
-                    self.collectionNode.reloadItems(at: [indexPath])
-                })
-                
+            }) { (error) in
+                print(error.localizedDescription)
             }
             
-        }) { (error) in
-            print(error.localizedDescription)
         }
+        
+        
+        
         
         // 2: .childChanged observer
 //        self.observerChildChanged = self.ref.child("park").child(self.park.key).child(self.parkSection.path).observe(.childChanged, with: { (snapshot) -> Void in
@@ -113,28 +133,11 @@ class ParkASCellNode: ASCellNode {
     }
     
     
-    func toggleErrorLabelNoItems(show: Bool, shouldRemoveObserver: Bool = true) {
-        if show && self.observerChildAdded == nil{
-            if shouldRemoveObserver {
-                removeObserver()
-            }
-            self.loadingIndicatorView.stopAnimating()
-            self.view.addSubview(self.errorLabelNoItems)
-            self.view.addSubview(self.errorImageNoItems)
-            self.errorImageNoItems.rotate360Degrees(duration: 2, completionDelegate: self)
-        } else {
-            self.errorLabelNoItems.removeFromSuperview()
-            self.errorImageNoItems.removeFromSuperview()
-            self.loadingIndicatorView.startAnimating()
-        }
-        
-    }
-    
     func removeObserver(){
         if self.observerChildAdded != nil {
             self.ref.removeObserver(withHandle: self.observerChildAdded!)
         }
-        if self.observerChildAdded != nil {
+        if self.observerChildChanged != nil {
             self.ref.removeObserver(withHandle: self.observerChildChanged!)
         }
     }
@@ -144,13 +147,17 @@ class ParkASCellNode: ASCellNode {
      */
     override func didEnterPreloadState() {
         super.didEnterPreloadState()
+        if self._realmParkSection.name == "Community" {
+            print("didEnterPreloadState")
+        }
+        
         /**
          * Firebase:
          * 1. Count the items in DB
          * 2. Only attach observer if items.count > 0
          * (only attach once an observer)
          */
-        self.ref.child("park").child(self.park.key).child(self.parkSection.path).child("count").observe(.value, with: { (snapshot) -> Void in
+        self.obseverCount = self.ref.child("park").child(self._realmPark.key).child(self._realmParkSection.path).child("count").observe(.value, with: { (snapshot) -> Void in
             if snapshot.exists(), let count: Int = snapshot.value as? Int, count > 0 {
                 self.addObserver()
             }
@@ -166,10 +173,13 @@ class ParkASCellNode: ASCellNode {
     }
     override func didExitPreloadState() {
         super.didExitPreloadState()
+        if self._realmParkSection.name == "Community" {
+            print("didExitPreloadState")
+        }
+        
         self.ref.removeAllObservers()
         self.observerChildAdded = nil
-        self.observerChildChanged = nil
-        toggleErrorLabelNoItems(show: false)
+        self.obseverCount = nil
     }
     
     /**
@@ -177,9 +187,30 @@ class ParkASCellNode: ASCellNode {
      */
     override func didEnterVisibleState() {
         super.didEnterVisibleState()
+        if self._realmParkSection.name == "Community" {
+            print("didEnterVisibleState")
+        }
+        if self.items2.count == 0 && self.observerChildAdded == nil {
+            self.view.addSubview(self.errorLabelNoItems)
+            self.view.addSubview(self.errorImageNoItems)
+            self.errorImageNoItems.rotate360Degrees(duration: 2, completionDelegate: self)
+        } else if self.items2.count == 0 && self.observerChildAdded != nil {
+            self.errorLabelNoItems.removeFromSuperview()
+            self.errorImageNoItems.removeFromSuperview()
+            self.view.addSubview(self.loadingIndicatorView)
+            self.loadingIndicatorView.startAnimating()
+        } else if self.items2.count > 0 {
+            self.loadingIndicatorView.removeFromSuperview()
+        }
     }
     override func didExitVisibleState() {
         super.didExitVisibleState()
+        if self._realmParkSection.name == "Community" {
+            print("didExitVisibleState")
+        }
+        self.loadingIndicatorView.removeFromSuperview()
+        self.errorImageNoItems.removeFromSuperview()
+        self.errorLabelNoItems.removeFromSuperview()
     }
     
     /**
@@ -187,12 +218,21 @@ class ParkASCellNode: ASCellNode {
      */
     override func displayWillStart() {
         super.displayWillStart()
+        if self._realmParkSection.name == "Community" {
+            print("displayWillStart")
+        }
     }
     override func didEnterDisplayState() {
         super.didEnterDisplayState()
+        if self._realmParkSection.name == "Community" {
+            print("didEnterDisplayState")
+        }
     }
     override func didExitDisplayState() {
         super.didExitDisplayState()
+        if self._realmParkSection.name == "Community" {
+            print("didExitDisplayState")
+        }
     }
     
     
@@ -210,8 +250,6 @@ class ParkASCellNode: ASCellNode {
         
         // Laodingindicator
         self.loadingIndicatorView.frame = CGRect(x: self.view.bounds.width / 2 - 22, y: 188 / 2 - 22, width: 44, height: 44)
-        self.loadingIndicatorView.startAnimating()
-        self.collectionNode.view.addSubview(self.loadingIndicatorView)
         
         // Error label
         self.errorLabelNoItems.frame = self.view.frame
@@ -222,8 +260,6 @@ class ParkASCellNode: ASCellNode {
         
         self.errorImageNoItems.frame = CGRect(x: self.view.bounds.width / 2 - 15, y: self.view.bounds.height / 2 + 22, width: 30, height: 30)
         self.errorImageNoItems.image = UIImage(named:"Turtle-66")
-        
-        toggleErrorLabelNoItems(show: true, shouldRemoveObserver: false)
         
     }
     
