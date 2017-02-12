@@ -8,9 +8,17 @@
 //  of patent rights can be found in the PATENTS file in the same directory.
 //
 
+#import "ASAvailability.h"
+
+#if AS_TARGET_OS_IOS
 #import <UIKit/UIKit.h>
+#else
+#import <QuartzCore/QuartzCore.h>
+#endif
 
 #import <AsyncDisplayKit/ASBaseDefines.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 ASDISPLAYNODE_EXTERN_C_BEGIN
 
@@ -31,11 +39,19 @@ void ASPerformBackgroundDeallocation(id object);
 
 CGFloat ASScreenScale();
 
+CGSize ASFloorSizeValues(CGSize s);
+
 CGFloat ASFloorPixelValue(CGFloat f);
+
+CGSize ASCeilSizeValues(CGSize s);
 
 CGFloat ASCeilPixelValue(CGFloat f);
 
 CGFloat ASRoundPixelValue(CGFloat f);
+
+BOOL ASClassRequiresMainThreadDeallocation(Class _Nullable c);
+
+Class _Nullable ASGetClassFromType(const char * _Nullable type);
 
 ASDISPLAYNODE_EXTERN_C_END
 
@@ -61,7 +77,14 @@ ASDISPLAYNODE_INLINE BOOL ASImageAlphaInfoIsOpaque(CGImageAlphaInfo info) {
  */
 ASDISPLAYNODE_INLINE void ASPerformBlockWithoutAnimation(BOOL withoutAnimation, void (^block)()) {
   if (withoutAnimation) {
+#if AS_TARGET_OS_IOS
     [UIView performWithoutAnimation:block];
+#else
+    [CATransaction begin];
+    [CATransaction setDisableActions: YES];
+    block();
+    [CATransaction commit];
+#endif
   } else {
     block();
   }
@@ -77,3 +100,5 @@ ASDISPLAYNODE_INLINE void ASBoundsAndPositionForFrame(CGRect rect, CGPoint origi
 @interface NSIndexPath (ASInverseComparison)
 - (NSComparisonResult)asdk_inverseCompare:(NSIndexPath *)otherIndexPath;
 @end
+
+NS_ASSUME_NONNULL_END

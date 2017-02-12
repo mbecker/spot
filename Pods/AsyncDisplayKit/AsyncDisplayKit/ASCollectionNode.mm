@@ -10,17 +10,20 @@
 //  of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "ASCollectionInternal.h"
-#import "ASCollectionViewLayoutFacilitatorProtocol.h"
-#import "ASCollectionNode.h"
-#import "ASDisplayNode+Subclasses.h"
-#import "ASEnvironmentInternal.h"
-#import "ASInternalHelpers.h"
-#import "ASCellNode+Internal.h"
-#import "AsyncDisplayKit+Debug.h"
-#import "ASSectionContext.h"
-#import "ASCollectionDataController.h"
-#import "ASCollectionView+Undeprecated.h"
+#import <AsyncDisplayKit/ASCollectionNode.h>
+
+#import <AsyncDisplayKit/ASCollectionInternal.h>
+#import <AsyncDisplayKit/ASCollectionViewLayoutFacilitatorProtocol.h>
+#import <AsyncDisplayKit/ASDisplayNode+Beta.h>
+#import <AsyncDisplayKit/ASDisplayNode+Subclasses.h>
+#import <AsyncDisplayKit/ASDisplayNode+FrameworkPrivate.h>
+#import <AsyncDisplayKit/ASInternalHelpers.h>
+#import <AsyncDisplayKit/ASCellNode+Internal.h>
+#import <AsyncDisplayKit/AsyncDisplayKit+Debug.h>
+#import <AsyncDisplayKit/ASSectionContext.h>
+#import <AsyncDisplayKit/ASCollectionDataController.h>
+#import <AsyncDisplayKit/ASCollectionView+Undeprecated.h>
+#import <AsyncDisplayKit/ASThread.h>
 
 #pragma mark - _ASCollectionPendingState
 
@@ -30,6 +33,7 @@
 @property (nonatomic, assign) ASLayoutRangeMode rangeMode;
 @property (nonatomic, assign) BOOL allowsSelection; // default is YES
 @property (nonatomic, assign) BOOL allowsMultipleSelection; // default is NO
+@property (nonatomic, assign) BOOL inverted; //default is NO
 @end
 
 @implementation _ASCollectionPendingState
@@ -41,6 +45,7 @@
     _rangeMode = ASLayoutRangeModeCount;
     _allowsSelection = YES;
     _allowsMultipleSelection = NO;
+    _inverted = NO;
   }
   return self;
 }
@@ -120,20 +125,17 @@
 
 - (instancetype)initWithFrame:(CGRect)frame collectionViewLayout:(UICollectionViewLayout *)layout layoutFacilitator:(id<ASCollectionViewLayoutFacilitatorProtocol>)layoutFacilitator
 {
+  __weak __typeof__(self) weakSelf = self;
   ASDisplayNodeViewBlock collectionViewBlock = ^UIView *{
-    return [[ASCollectionView alloc] _initWithFrame:frame collectionViewLayout:layout layoutFacilitator:layoutFacilitator];
+    // Variable will be unused if event logging is off.
+    __unused __typeof__(self) strongSelf = weakSelf;
+    return [[ASCollectionView alloc] _initWithFrame:frame collectionViewLayout:layout layoutFacilitator:layoutFacilitator eventLog:ASDisplayNodeGetEventLog(strongSelf)];
   };
 
   if (self = [super initWithViewBlock:collectionViewBlock]) {
     return self;
   }
   return nil;
-}
-
-- (void)dealloc
-{
-  self.delegate = nil;
-  self.dataSource = nil;
 }
 
 #pragma mark ASDisplayNode
@@ -150,6 +152,7 @@
     self.pendingState            = nil;
     view.asyncDelegate           = pendingState.delegate;
     view.asyncDataSource         = pendingState.dataSource;
+    view.inverted                = pendingState.inverted;
     view.allowsSelection         = pendingState.allowsSelection;
     view.allowsMultipleSelection = pendingState.allowsMultipleSelection;
 
@@ -170,10 +173,10 @@
   [self.rangeController clearContents];
 }
 
-- (void)clearFetchedData
+- (void)didExitPreloadState
 {
-  [super clearFetchedData];
-  [self.rangeController clearFetchedData];
+  [super didExitPreloadState];
+  [self.rangeController clearPreloadedData];
 }
 
 - (void)interfaceStateDidChange:(ASInterfaceState)newState fromState:(ASInterfaceState)oldState
@@ -219,13 +222,41 @@
   return _pendingState;
 }
 
+- (void)setInverted:(BOOL)inverted
+{
+  self.transform = inverted ? CATransform3DMakeScale(1, -1, 1)  : CATransform3DIdentity;
+  if ([self pendingState]) {
+    _pendingState.inverted = inverted;
+  } else {
+    ASDisplayNodeAssert([self isNodeLoaded], @"ASCollectionNode should be loaded if pendingState doesn't exist");
+    self.view.inverted = inverted;
+  }
+}
+
+- (BOOL)inverted
+{
+  if ([self pendingState]) {
+    return _pendingState.inverted;
+  } else {
+    return self.view.inverted;
+  }
+}
+
 - (void)setDelegate:(id <ASCollectionDelegate>)delegate
 {
   if ([self pendingState]) {
     _pendingState.delegate = delegate;
   } else {
     ASDisplayNodeAssert([self isNodeLoaded], @"ASCollectionNode should be loaded if pendingState doesn't exist");
-    self.view.asyncDelegate = delegate;
+
+    // Manually trampoline to the main thread. The view requires this be called on main
+    // and asserting here isn't an option – it is a common pattern for users to clear
+    // the delegate/dataSource in dealloc, which may be running on a background thread.
+    // It is important that we avoid retaining self in this block, so that this method is dealloc-safe.
+    ASCollectionView *view = self.view;
+    ASPerformBlockOnMainThread(^{
+      view.asyncDelegate = delegate;
+    });
   }
 }
 
@@ -244,7 +275,14 @@
     _pendingState.dataSource = dataSource;
   } else {
     ASDisplayNodeAssert([self isNodeLoaded], @"ASCollectionNode should be loaded if pendingState doesn't exist");
-    self.view.asyncDataSource = dataSource;
+    // Manually trampoline to the main thread. The view requires this be called on main
+    // and asserting here isn't an option – it is a common pattern for users to clear
+    // the delegate/dataSource in dealloc, which may be running on a background thread.
+    // It is important that we avoid retaining self in this block, so that this method is dealloc-safe.
+    ASCollectionView *view = self.view;
+    ASPerformBlockOnMainThread(^{
+      view.asyncDataSource = dataSource;
+    });
   }
 }
 
@@ -493,7 +531,7 @@
 
 - (void)beginUpdates
 {
-  [self.dataController beginUpdates];
+  [self.view beginUpdates];
 }
 
 - (void)endUpdatesAnimated:(BOOL)animated
@@ -503,7 +541,7 @@
 
 - (void)endUpdatesAnimated:(BOOL)animated completion:(void (^)(BOOL))completion
 {
-  [self.dataController endUpdatesAnimated:animated completion:completion];
+  [self.view endUpdatesAnimated:animated completion:completion];
 }
 
 - (void)insertSections:(NSIndexSet *)sections
@@ -557,8 +595,18 @@
   }
 }
 
-#pragma mark ASEnvironment
+#pragma mark - ASPrimitiveTraitCollection
 
-ASEnvironmentCollectionTableSetEnvironmentState(_environmentStateLock)
+ASLayoutElementCollectionTableSetTraitCollection(_environmentStateLock)
+
+#pragma mark - Debugging (Private)
+
+- (NSMutableArray<NSDictionary *> *)propertiesForDebugDescription
+{
+  NSMutableArray<NSDictionary *> *result = [super propertiesForDebugDescription];
+  [result addObject:@{ @"dataSource" : ASObjectDescriptionMakeTiny(self.dataSource) }];
+  [result addObject:@{ @"delegate" : ASObjectDescriptionMakeTiny(self.delegate) }];
+  return result;
+}
 
 @end

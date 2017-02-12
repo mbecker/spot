@@ -281,9 +281,7 @@ extension ParkItemsASViewController : ASTableDataSource {
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
         let node = ListItemASCellNode(parkItem: self.items2[indexPath.row])
-        node.selectionStyle = .blue
-        // self.items2[indexPath.row].latitude)
-        // self.items2[indexPath.row].longitude
+        
         return node
     }
 }

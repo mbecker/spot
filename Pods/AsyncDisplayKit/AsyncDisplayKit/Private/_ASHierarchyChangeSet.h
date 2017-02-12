@@ -12,6 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <vector>
+#import <AsyncDisplayKit/ASObjectDescriptionHelpers.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -58,7 +59,7 @@ BOOL ASHierarchyChangeTypeIsFinal(_ASHierarchyChangeType changeType);
 
 NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType);
 
-@interface _ASHierarchySectionChange : NSObject
+@interface _ASHierarchySectionChange : NSObject <ASDescriptionProvider, ASDebugDescriptionProvider>
 
 // FIXME: Generalize this to `changeMetadata` dict?
 @property (nonatomic, readonly) ASDataControllerAnimationOptions animationOptions;
@@ -73,7 +74,7 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType);
 - (_ASHierarchySectionChange *)changeByFinalizingType;
 @end
 
-@interface _ASHierarchyItemChange : NSObject
+@interface _ASHierarchyItemChange : NSObject <ASDescriptionProvider, ASDebugDescriptionProvider>
 @property (nonatomic, readonly) ASDataControllerAnimationOptions animationOptions;
 
 /// Index paths are sorted descending for changeType .Delete, ascending otherwise
@@ -81,7 +82,7 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType);
 
 @property (nonatomic, readonly) _ASHierarchyChangeType changeType;
 
-+ (NSDictionary *)sectionToIndexSetMapFromChanges:(NSArray<_ASHierarchyItemChange *> *)changes ofType:(_ASHierarchyChangeType)changeType;
++ (NSDictionary *)sectionToIndexSetMapFromChanges:(NSArray<_ASHierarchyItemChange *> *)changes;
 
 /**
  * If this is a .OriginalInsert or .OriginalDelete change, this returns a copied change
@@ -90,7 +91,7 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType);
 - (_ASHierarchyItemChange *)changeByFinalizingType;
 @end
 
-@interface _ASHierarchyChangeSet : NSObject
+@interface _ASHierarchyChangeSet : NSObject <ASDescriptionProvider, ASDebugDescriptionProvider>
 
 - (instancetype)initWithOldData:(std::vector<NSInteger>)oldItemCounts NS_DESIGNATED_INITIALIZER;
 
@@ -144,6 +145,9 @@ NSString *NSStringFromASHierarchyChangeType(_ASHierarchyChangeType changeType);
 - (void)insertItems:(NSArray<NSIndexPath *> *)indexPaths animationOptions:(ASDataControllerAnimationOptions)options;
 - (void)deleteItems:(NSArray<NSIndexPath *> *)indexPaths animationOptions:(ASDataControllerAnimationOptions)options;
 - (void)reloadItems:(NSArray<NSIndexPath *> *)indexPaths animationOptions:(ASDataControllerAnimationOptions)options;
+- (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection animationOptions:(ASDataControllerAnimationOptions)options;
+- (void)moveItemAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath animationOptions:(ASDataControllerAnimationOptions)options;
+
 @end
 
 NS_ASSUME_NONNULL_END

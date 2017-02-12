@@ -10,22 +10,30 @@
 //  of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "ASPagerNode.h"
-#import "ASDelegateProxy.h"
-#import "ASDisplayNode+Subclasses.h"
-#import "ASPagerFlowLayout.h"
+#import <AsyncDisplayKit/ASPagerNode.h>
+#import <AsyncDisplayKit/ASDelegateProxy.h>
+#import <AsyncDisplayKit/ASDisplayNode+Subclasses.h>
+#import <AsyncDisplayKit/ASPagerFlowLayout.h>
+#import <AsyncDisplayKit/ASAssert.h>
+#import <AsyncDisplayKit/ASCellNode.h>
+#import <AsyncDisplayKit/ASCollectionView+Undeprecated.h>
 
-@interface ASPagerNode () <ASCollectionDataSource, ASCollectionDelegate, ASCollectionViewDelegateFlowLayout, ASDelegateProxyInterceptor>
+@interface ASPagerNode () <ASCollectionDataSource, ASCollectionDelegate, ASCollectionDelegateFlowLayout, ASDelegateProxyInterceptor>
 {
   ASPagerFlowLayout *_flowLayout;
 
   __weak id <ASPagerDataSource> _pagerDataSource;
   ASPagerNodeProxy *_proxyDataSource;
-  BOOL _pagerDataSourceImplementsNodeBlockAtIndex;
+  struct {
+    unsigned nodeBlockAtIndex:1;
+    unsigned nodeAtIndex:1;
+  } _pagerDataSourceFlags;
 
   __weak id <ASPagerDelegate> _pagerDelegate;
+  struct {
+    unsigned constrainedSizeForNode:1;
+  } _pagerDelegateFlags;
   ASPagerNodeProxy *_proxyDelegate;
-  BOOL _pagerDelegateImplementsConstrainedSizeForNode;
 }
 
 @end
@@ -122,12 +130,17 @@
 
 - (ASCellNodeBlock)collectionNode:(ASCollectionNode *)collectionNode nodeBlockForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  ASDisplayNodeAssert(_pagerDataSource != nil, @"ASPagerNode must have a data source to load nodes to display");
-  if (!_pagerDataSourceImplementsNodeBlockAtIndex) {
+  if (_pagerDataSourceFlags.nodeBlockAtIndex) {
+    return [_pagerDataSource pagerNode:self nodeBlockAtIndex:indexPath.item];
+  } else if (_pagerDataSourceFlags.nodeAtIndex) {
     ASCellNode *node = [_pagerDataSource pagerNode:self nodeAtIndex:indexPath.item];
     return ^{ return node; };
+  } else {
+    ASDisplayNodeFailAssert(@"Pager data source must implement either %@ or %@. Data source: %@", NSStringFromSelector(@selector(pagerNode:nodeBlockAtIndex:)), NSStringFromSelector(@selector(pagerNode:nodeAtIndex:)), _pagerDataSource);
+    return ^{
+      return [[ASCellNode alloc] init];
+    };
   }
-  return [_pagerDataSource pagerNode:self nodeBlockAtIndex:indexPath.item];
 }
 
 - (NSInteger)collectionNode:(ASCollectionNode *)collectionNode numberOfItemsInSection:(NSInteger)section
@@ -140,11 +153,14 @@
 
 - (ASSizeRange)collectionNode:(ASCollectionNode *)collectionNode constrainedSizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-  if (_pagerDelegateImplementsConstrainedSizeForNode) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  if (_pagerDelegateFlags.constrainedSizeForNode) {
     return [_pagerDelegate pagerNode:self constrainedSizeForNodeAtIndex:indexPath.item];
   }
+#pragma clang diagnostic pop
 
-  return ASSizeRangeMake(CGSizeZero, self.bounds.size);
+  return ASSizeRangeMake(self.bounds.size);
 }
 
 #pragma mark - Data Source Proxy
@@ -159,9 +175,12 @@
   if (dataSource != _pagerDataSource) {
     _pagerDataSource = dataSource;
     
-    _pagerDataSourceImplementsNodeBlockAtIndex = [_pagerDataSource respondsToSelector:@selector(pagerNode:nodeBlockAtIndex:)];
-    // Data source must implement pagerNode:nodeBlockAtIndex: or pagerNode:nodeAtIndex:
-    ASDisplayNodeAssertTrue(_pagerDataSourceImplementsNodeBlockAtIndex || [_pagerDataSource respondsToSelector:@selector(pagerNode:nodeAtIndex:)]);
+    if (dataSource == nil) {
+      memset(&_pagerDataSourceFlags, 0, sizeof(_pagerDataSourceFlags));
+    } else {
+      _pagerDataSourceFlags.nodeBlockAtIndex = [_pagerDataSource respondsToSelector:@selector(pagerNode:nodeBlockAtIndex:)];
+      _pagerDataSourceFlags.nodeAtIndex = [_pagerDataSource respondsToSelector:@selector(pagerNode:nodeAtIndex:)];
+    }
     
     _proxyDataSource = dataSource ? [[ASPagerNodeProxy alloc] initWithTarget:dataSource interceptor:self] : nil;
     
@@ -174,7 +193,11 @@
   if (delegate != _pagerDelegate) {
     _pagerDelegate = delegate;
     
-    _pagerDelegateImplementsConstrainedSizeForNode = [_pagerDelegate respondsToSelector:@selector(pagerNode:constrainedSizeForNodeAtIndex:)];
+    if (delegate == nil) {
+      memset(&_pagerDelegateFlags, 0, sizeof(_pagerDelegateFlags));
+    } else {
+    	_pagerDelegateFlags.constrainedSizeForNode = [_pagerDelegate respondsToSelector:@selector(pagerNode:constrainedSizeForNodeAtIndex:)];
+    }
     
     _proxyDelegate = delegate ? [[ASPagerNodeProxy alloc] initWithTarget:delegate interceptor:self] : nil;
     

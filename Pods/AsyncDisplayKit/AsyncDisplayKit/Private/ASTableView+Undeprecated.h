@@ -6,7 +6,10 @@
 //  Copyright © 2016 Facebook. All rights reserved.
 //
 
-#import <AsyncDisplayKit/AsyncDisplayKit.h>
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <AsyncDisplayKit/ASTableNode.h>
+#import <AsyncDisplayKit/ASLayoutRangeType.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,6 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
  * In the future, the ASTableView public API will be eliminated and so will this file.
  */
 @interface ASTableView (Undeprecated)
+
+@property (nonatomic, weak) id<ASTableDelegate>   asyncDelegate;
+@property (nonatomic, weak) id<ASTableDataSource> asyncDataSource;
 
 /**
  * Initializer.

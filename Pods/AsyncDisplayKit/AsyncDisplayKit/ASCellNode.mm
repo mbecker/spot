@@ -8,14 +8,13 @@
 //  of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "ASCellNode+Internal.h"
+#import <AsyncDisplayKit/ASCellNode+Internal.h>
 
-#import "ASEqualityHelpers.h"
-#import "ASInternalHelpers.h"
-#import "ASDisplayNodeInternal.h"
-#import "ASDisplayNode+FrameworkPrivate.h"
-#import "ASCollectionView+Undeprecated.h"
-#import "ASTableView+Undeprecated.h"
+#import <AsyncDisplayKit/ASEqualityHelpers.h>
+#import <AsyncDisplayKit/ASInternalHelpers.h>
+#import <AsyncDisplayKit/ASDisplayNode+FrameworkPrivate.h>
+#import <AsyncDisplayKit/ASCollectionView+Undeprecated.h>
+#import <AsyncDisplayKit/ASTableView+Undeprecated.h>
 #import <AsyncDisplayKit/_ASDisplayView.h>
 #import <AsyncDisplayKit/ASDisplayNode+Subclasses.h>
 #import <AsyncDisplayKit/ASDisplayNode+Beta.h>
@@ -58,6 +57,7 @@ static NSMutableSet *__cellClassesForVisibilityNotifications = nil; // See +init
   // Use UITableViewCell defaults
   _selectionStyle = UITableViewCellSelectionStyleDefault;
   self.clipsToBounds = YES;
+
   return self;
 }
 
@@ -117,15 +117,13 @@ static NSMutableSet *__cellClassesForVisibilityNotifications = nil; // See +init
   _viewControllerNode.frame = self.bounds;
 }
 
-- (void)__setNeedsLayout
+- (void)_locked_displayNodeDidInvalidateSizeNewSize:(CGSize)newSize
 {
-  CGSize oldSize = self.calculatedSize;
-  [super __setNeedsLayout];
-  
-  //Adding this lock because lock used to be held when this method was called. Not sure if it's necessary for
-  //didRelayoutFromOldSize:toNewSize:
-  ASDN::MutexLocker l(__instanceLock__);
-  [self didRelayoutFromOldSize:oldSize toNewSize:self.calculatedSize];
+  CGSize oldSize = self.bounds.size;
+  [super _locked_displayNodeDidInvalidateSizeNewSize:newSize];
+  if (CGSizeEqualToSize(oldSize, newSize) == NO) {
+    [self didRelayoutFromOldSize:oldSize toNewSize:newSize];
+  }
 }
 
 - (void)transitionLayoutWithAnimation:(BOOL)animated
@@ -236,6 +234,17 @@ static NSMutableSet *__cellClassesForVisibilityNotifications = nil; // See +init
   return nil;
 }
 
+- (UIViewController *)viewController
+{
+  ASDisplayNodeAssertMainThread();
+  // Force the view to load so that we will create the
+  // view controller if we haven't already.
+  if (self.isNodeLoaded == NO) {
+    [self view];
+  }
+  return _viewController;
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wobjc-missing-super-calls"
 
@@ -329,7 +338,7 @@ static NSMutableSet *__cellClassesForVisibilityNotifications = nil; // See +init
   CGRect cellFrame = CGRectZero;
   
   // Ensure our _scrollView is still valid before converting.  It's also possible that we have already been removed from the _scrollView,
-  // in which case it is not valid to perform a convertRect (this actually crashes on iOS 7 and 8).
+  // in which case it is not valid to perform a convertRect (this actually crashes on iOS 8).
   UIScrollView *scrollView = (_scrollView != nil && view.superview != nil && [view isDescendantOfView:_scrollView]) ? _scrollView : nil;
   if (scrollView) {
     cellFrame = [view convertRect:view.bounds toView:_scrollView];
@@ -386,13 +395,6 @@ static NSMutableSet *__cellClassesForVisibilityNotifications = nil; // See +init
 #pragma mark -
 #pragma mark ASTextCellNode
 
-@interface ASTextCellNode ()
-
-@property (nonatomic, strong) ASTextNode *textNode;
-
-@end
-
-
 @implementation ASTextCellNode
 
 static const CGFloat kASTextCellNodeDefaultFontSize = 18.0f;
@@ -411,7 +413,7 @@ static const CGFloat kASTextCellNodeDefaultVerticalPadding = 11.0f;
     _textInsets = textInsets;
     _textAttributes = [textAttributes copy];
     _textNode = [[ASTextNode alloc] init];
-    [self addSubnode:_textNode];
+    self.automaticallyManagesSubnodes = YES;
   }
   return self;
 }

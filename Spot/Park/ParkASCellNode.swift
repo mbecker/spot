@@ -85,9 +85,7 @@ class ParkASCellNode: ASCellNode {
                 // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
                 if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark, type: self._realmParkSection.getType()), self.items2.first(where:{$0.key == item2.key}) == nil {
                     
-                    if self.loadingIndicatorView.animating {
-                        self.loadingIndicatorView.stopAnimating()
-                    }
+                    
                     
                     self.items2.insert(item2, at: 0)
                     
@@ -96,7 +94,10 @@ class ParkASCellNode: ASCellNode {
                     }, completion: { (inserted) in
                         
                         if inserted {
-                            self.collectionNode.reloadItems(at: [[0,0]])
+                            // self.collectionNode.reloadItems(at: [[0,0]])
+                            if self.loadingIndicatorView.animating {
+                                self.loadingIndicatorView.stopAnimating()
+                            }
                         }
                         
                     })

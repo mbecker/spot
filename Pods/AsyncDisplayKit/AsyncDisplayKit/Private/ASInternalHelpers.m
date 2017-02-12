@@ -8,13 +8,19 @@
 //  of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "ASInternalHelpers.h"
-#import "ASRunLoopQueue.h"
+#import <AsyncDisplayKit/ASInternalHelpers.h>
+
+#if AS_TARGET_OS_IOS
+#import <UIKit/UIKit.h>
+#else
+#import <AppKit/AppKit.h>
+#endif
 
 #import <objc/runtime.h>
-
-#import "ASThread.h"
 #import <tgmath.h>
+
+#import <AsyncDisplayKit/ASRunLoopQueue.h>
+#import <AsyncDisplayKit/ASThread.h>
 
 BOOL ASSubclassOverridesSelector(Class superclass, Class subclass, SEL selector)
 {
@@ -84,21 +90,91 @@ void ASPerformBackgroundDeallocation(id object)
   [[ASDeallocQueue sharedDeallocationQueue] releaseObjectInBackground:object];
 }
 
+BOOL ASClassRequiresMainThreadDeallocation(Class c)
+{
+#if AS_TARGET_OS_IOS
+  if (c == [UIImage class] || c == [UIColor class]) {
+    return NO;
+  }
+  
+  if ([c isSubclassOfClass:[UIResponder class]]
+      || [c isSubclassOfClass:[CALayer class]]
+      || [c isSubclassOfClass:[UIGestureRecognizer class]]) {
+    return YES;
+  }
+#else
+  if (c == [NSImage class] || c == [NSColor class]) {
+    return NO;
+  }
+  
+  if ([c isSubclassOfClass:[NSResponder class]]
+      || [c isSubclassOfClass:[CALayer class]]
+      || [c isSubclassOfClass:[NSGestureRecognizer class]]) {
+    return YES;
+  }
+#endif
+
+
+
+  const char *name = class_getName(c);
+  if (strncmp(name, "UI", 2) == 0 || strncmp(name, "AV", 2) == 0 || strncmp(name, "CA", 2) == 0) {
+    return YES;
+  }
+
+  return NO;
+}
+
+Class _Nullable ASGetClassFromType(const char  * _Nullable type)
+{
+  // Class types all start with @"
+  if (type == NULL || strncmp(type, "@\"", 2) != 0) {
+    return nil;
+  }
+
+  // Ensure length >= 3
+  size_t typeLength = strlen(type);
+  if (typeLength < 3) {
+    ASDisplayNodeCFailAssert(@"Got invalid type-encoding: %s", type);
+    return nil;
+  }
+
+  // Copy type[2..(end-1)]. So @"UIImage" -> UIImage
+  size_t resultLength = typeLength - 3;
+  char className[resultLength + 1];
+  strncpy(className, type + 2, resultLength);
+  className[resultLength] = '\0';
+  return objc_getClass(className);
+}
+
 CGFloat ASScreenScale()
 {
   static CGFloat __scale = 0.0;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     ASDisplayNodeCAssertMainThread();
+#if AS_TARGET_OS_IOS
     __scale = [[UIScreen mainScreen] scale];
+#else
+    __scale = [[NSScreen mainScreen] backingScaleFactor];
+#endif
   });
   return __scale;
+}
+
+CGSize ASFloorSizeValues(CGSize s)
+{
+  return CGSizeMake(ASFloorPixelValue(s.width), ASFloorPixelValue(s.height));
 }
 
 CGFloat ASFloorPixelValue(CGFloat f)
 {
   CGFloat scale = ASScreenScale();
   return floor(f * scale) / scale;
+}
+
+CGSize ASCeilSizeValues(CGSize s)
+{
+  return CGSizeMake(ASCeilPixelValue(s.width), ASCeilPixelValue(s.height));
 }
 
 CGFloat ASCeilPixelValue(CGFloat f)

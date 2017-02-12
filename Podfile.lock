@@ -1,12 +1,10 @@
 PODS:
-  - AsyncDisplayKit (2.0-beta.1):
-    - AsyncDisplayKit/PINRemoteImage (= 2.0-beta.1)
-  - AsyncDisplayKit/ASDealloc2MainObject (2.0-beta.1)
-  - AsyncDisplayKit/Core (2.0-beta.1):
-    - AsyncDisplayKit/ASDealloc2MainObject
-  - AsyncDisplayKit/PINRemoteImage (2.0-beta.1):
+  - AsyncDisplayKit (2.1):
+    - AsyncDisplayKit/PINRemoteImage (= 2.1)
+  - AsyncDisplayKit/Core (2.1)
+  - AsyncDisplayKit/PINRemoteImage (2.1):
     - AsyncDisplayKit/Core
-    - PINRemoteImage/iOS (= 3.0.0-beta.6)
+    - PINRemoteImage/iOS (= 3.0.0-beta.7)
     - PINRemoteImage/PINCache
   - Bolts (1.8.4):
     - Bolts/AppLinks (= 1.8.4)
@@ -105,10 +103,10 @@ PODS:
   - PINCache/Arc-exception-safe (3.0.1-beta.2):
     - PINCache/Core
   - PINCache/Core (3.0.1-beta.2)
-  - PINRemoteImage/Core (3.0.0-beta.6)
-  - PINRemoteImage/iOS (3.0.0-beta.6):
+  - PINRemoteImage/Core (3.0.0-beta.7)
+  - PINRemoteImage/iOS (3.0.0-beta.7):
     - PINRemoteImage/Core
-  - PINRemoteImage/PINCache (3.0.0-beta.6):
+  - PINRemoteImage/PINCache (3.0.0-beta.7):
     - PINCache (= 3.0.1-beta.2)
     - PINRemoteImage/Core
   - SMSegmentView (0.0.2)
@@ -148,7 +146,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AsyncDisplayKit:
-    :commit: d3e942acf79c4a7e806fefbea133e2d18fb1b5b2
+    :commit: ec59c3161adb37d4b5b908019250dddce1c27d84
     :git: https://github.com/facebook/AsyncDisplayKit
   MapboxStatic.swift:
     :commit: 05025a85ecab42f4816fe8bf2881eebe7905bddb
@@ -158,7 +156,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/sima-11/SMSegmentView.git
 
 SPEC CHECKSUMS:
-  AsyncDisplayKit: 4d4403eb61b2b667866e98ca8b7fab6cec497b68
+  AsyncDisplayKit: ea1b0a31396c9c2f06cb6bf879d5fd08e1443a67
   Bolts: 8a7995239dbe724f9cba2248b766d48b7ebdd322
   Down: dea228f55b736ea0a7b96e02dd14b33600ce83a2
   FacebookCore: 2cb3f0fbff218e9d3119cec84bae983b232412de
@@ -185,7 +183,7 @@ SPEC CHECKSUMS:
   MapboxStatic.swift: a3ad6eb4a535718e354ee1928158d921ae59cb1f
   NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
-  PINRemoteImage: 60156f185c9360ca4e93832cd490d6f6c7afbd9a
+  PINRemoteImage: ff63baf185088530db6cfa41cb665e2b5126b5c3
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
   SwiftMessages: 08386e74abe1b32fa8ac2075edb4043c56db709d
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220

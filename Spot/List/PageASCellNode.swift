@@ -69,13 +69,11 @@ class PageASCellNode: ASCellNode {
                     
                     self.tableNode.performBatchUpdates({
                         self.tableNode.insertRows(at: [[0,0]], with: .none)
+                        // self.tableNode.reloadRows(at: [[0, 0]], with: .none)
                     }, completion: { (inserted) in
                         
                         if inserted {
-                            if self.loadingIndicatorView.animating {
-                                self.loadingIndicatorView.removeFromSuperview()
-                            }
-                            self.tableNode.reloadRows(at: [[0, 0]], with: .none)
+                            self.loadingIndicatorView.removeFromSuperview()
                         }
                         
                     })
@@ -275,9 +273,7 @@ extension PageASCellNode : ASTableDataSource {
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
         let node = ListItemASCellNode(parkItem: self.items2[indexPath.row])
-        node.selectionStyle = .blue
-        // self.items2[indexPath.row].latitude)
-        // self.items2[indexPath.row].longitude
+        
         return node
     }
 }

@@ -8,20 +8,20 @@
 //  of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "ASDataController.h"
+#import <AsyncDisplayKit/ASDataController.h>
 
-#import "ASAssert.h"
-#import "ASCellNode.h"
-#import "ASEnvironmentInternal.h"
-#import "ASLayout.h"
-#import "ASMainSerialQueue.h"
-#import "ASMultidimensionalArrayUtils.h"
-#import "ASThread.h"
-#import "ASIndexedNodeContext.h"
-#import "ASDataController+Subclasses.h"
-#import "ASDispatch.h"
-#import "ASInternalHelpers.h"
-#import "ASCellNode+Internal.h"
+#import <AsyncDisplayKit/_ASHierarchyChangeSet.h>
+#import <AsyncDisplayKit/ASAssert.h>
+#import <AsyncDisplayKit/ASCellNode.h>
+#import <AsyncDisplayKit/ASLayout.h>
+#import <AsyncDisplayKit/ASMainSerialQueue.h>
+#import <AsyncDisplayKit/ASMultidimensionalArrayUtils.h>
+#import <AsyncDisplayKit/ASThread.h>
+#import <AsyncDisplayKit/ASIndexedNodeContext.h>
+#import <AsyncDisplayKit/ASDataController+Subclasses.h>
+#import <AsyncDisplayKit/ASDispatch.h>
+#import <AsyncDisplayKit/ASInternalHelpers.h>
+#import <AsyncDisplayKit/ASCellNode+Internal.h>
 
 //#define LOG(...) NSLog(__VA_ARGS__)
 #define LOG(...)
@@ -36,6 +36,7 @@ const static char * kASDataControllerEditingQueueKey = "kASDataControllerEditing
 const static char * kASDataControllerEditingQueueContext = "kASDataControllerEditingQueueContext";
 
 NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
+NSString * const ASCollectionInvalidUpdateException = @"ASCollectionInvalidUpdateException";
 
 #if AS_MEASURE_AVOIDED_DATACONTROLLER_WORK
 @interface ASDataController (AvoidedWorkMeasuring)
@@ -71,14 +72,17 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
 
 #pragma mark - Lifecycle
 
-- (instancetype)initWithDataSource:(id<ASDataControllerSource>)dataSource
+- (instancetype)initWithDataSource:(id<ASDataControllerSource>)dataSource eventLog:(ASEventLog *)eventLog
 {
   if (!(self = [super init])) {
     return nil;
   }
-  ASDisplayNodeAssert(![self isMemberOfClass:[ASDataController class]], @"ASDataController is an abstract class and should not be instantiated. Instantiate a subclass instead.");
   
   _dataSource = dataSource;
+  
+#if ASEVENTLOG_ENABLE
+  _eventLog = eventLog;
+#endif
   
   _nodeContexts = [NSMutableDictionary dictionary];
   _completedNodes = [NSMutableDictionary dictionary];
@@ -102,7 +106,8 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
 {
   ASDisplayNodeFailAssert(@"Failed to call designated initializer.");
   id<ASDataControllerSource> fakeDataSource = nil;
-  return [self initWithDataSource:fakeDataSource];
+  ASEventLog *eventLog = nil;
+  return [self initWithDataSource:fakeDataSource eventLog:eventLog];
 }
 
 - (void)setDelegate:(id<ASDataControllerDelegate>)delegate
@@ -140,6 +145,11 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
 #if AS_MEASURE_AVOIDED_DATACONTROLLER_WORK
     [ASDataController _expectToInsertNodes:contexts.count];
 #endif
+  
+  if (contexts.count == 0) {
+    batchCompletionHandler(@[], @[]);
+    return;
+  }
 
   ASProfilingSignpostStart(2, _dataSource);
   
@@ -163,6 +173,8 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
  */
 - (void)_layoutNode:(ASCellNode *)node withConstrainedSize:(ASSizeRange)constrainedSize
 {
+  ASDisplayNodeAssert(ASSizeRangeHasSignificantArea(constrainedSize), @"Attempt to layout cell node with invalid size range %@", NSStringFromASSizeRange(constrainedSize));
+
   CGRect frame = CGRectZero;
   frame.size = [node layoutThatFits:constrainedSize].size;
   node.frame = frame;
@@ -204,7 +216,12 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
       node = [[ASCellNode alloc] init]; // Fallback to avoid crash for production apps.
     }
     
-    [self _layoutNode:node withConstrainedSize:context.constrainedSize];
+    // Layout the node if the size range is valid.
+    ASSizeRange sizeRange = context.constrainedSize;
+    if (ASSizeRangeHasSignificantArea(sizeRange)) {
+      [self _layoutNode:node withConstrainedSize:sizeRange];
+    }
+
 #if AS_MEASURE_AVOIDED_DATACONTROLLER_WORK
     [ASDataController _didLayoutNode];
 #endif
@@ -297,18 +314,22 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
   }];
 }
 
-- (void)deleteSectionsOfKind:(NSString *)kind atIndexSet:(NSIndexSet *)indexSet completion:(void (^)(NSIndexSet *indexSet))completionBlock
+- (void)deleteSections:(NSIndexSet *)indexSet completion:(void (^)())completionBlock
 {
   ASSERT_ON_EDITING_QUEUE;
   if (!indexSet.count || _dataSource == nil) {
     return;
   }
-  
-  [_editingNodes[kind] removeObjectsAtIndexes:indexSet];
+
+  [_editingNodes enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull kind, NSMutableArray *sections, BOOL * _Nonnull stop) {
+    [sections removeObjectsAtIndexes:indexSet];
+  }];
   [_mainSerialQueue performBlockOnMainThread:^{
-    [_completedNodes[kind] removeObjectsAtIndexes:indexSet];
+    [_completedNodes enumerateKeysAndObjectsUsingBlock:^(NSString *  _Nonnull kind, NSMutableArray *sections, BOOL * _Nonnull stop) {
+      [sections removeObjectsAtIndexes:indexSet];
+    }];
     if (completionBlock) {
-      completionBlock(indexSet);
+      completionBlock();
     }
   }];
 }
@@ -379,7 +400,7 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
 {
   ASSERT_ON_EDITING_QUEUE;
   
-  [self deleteSectionsOfKind:ASDataControllerRowNodeKind atIndexSet:indexSet completion:^(NSIndexSet *indexSet) {
+  [self deleteSections:indexSet completion:^() {
     ASDisplayNodeAssertMainThread();
     
     if (_delegateDidDeleteSections)
@@ -426,38 +447,54 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
   dispatch_group_async(_editingTransactionGroup, _editingTransactionQueue, ^{
     LOG(@"Edit Transaction - reloadData");
     
-    // Remove everything that existed before the reload, now that we're ready to insert replacements
-    NSUInteger oldSectionCount = [_editingNodes[ASDataControllerRowNodeKind] count];
-
-    // If we have old sections, we should delete them inside beginUpdates/endUpdates with inserting the new ones.
-    if (oldSectionCount) {
-      // -beginUpdates
-      [_mainSerialQueue performBlockOnMainThread:^{
-        [_delegate dataControllerBeginUpdates:self];
-      }];
-
-      NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndexesInRange:NSMakeRange(0, oldSectionCount)];
-      [self _deleteSectionsAtIndexSet:indexSet withAnimationOptions:animationOptions];
-    }
+    /**
+     * Leave the current data in the collection view until the first batch of nodes are laid out.
+     * Once the first batch is laid out, in one operation, replace all the sections and insert
+     * the first batch of items.
+     *
+     * We previously would replace all the sections immediately, and then start adding items as they
+     * were laid out. This resulted in more traffic to the UICollectionView and it also caused all the
+     * section headers to bunch up until the items come and fill out the sections.
+     */
+    __block BOOL isFirstBatch = YES;
+    [self batchLayoutNodesFromContexts:newContexts batchCompletion:^(NSArray<ASCellNode *> *nodes, NSArray<NSIndexPath *> *indexPaths) {
+      if (isFirstBatch) {
+        // -beginUpdates
+        [_mainSerialQueue performBlockOnMainThread:^{
+          [_delegate dataControllerBeginUpdates:self];
+          [_delegate dataControllerWillDeleteAllData:self];
+        }];
+        
+        // deleteSections:
+        // Remove everything that existed before the reload, now that we're ready to insert replacements
+        NSUInteger oldSectionCount = [_editingNodes[ASDataControllerRowNodeKind] count];
+        if (oldSectionCount) {
+          NSIndexSet *indexSet = [[NSIndexSet alloc] initWithIndexesInRange:NSMakeRange(0, oldSectionCount)];
+          [self _deleteSectionsAtIndexSet:indexSet withAnimationOptions:animationOptions];
+        }
+        
+        [self willReloadDataWithSectionCount:sectionCount];
+        
+        // insertSections:
+        NSMutableArray *sections = [NSMutableArray arrayWithCapacity:sectionCount];
+        for (int i = 0; i < sectionCount; i++) {
+          [sections addObject:[[NSMutableArray alloc] init]];
+        }
+        [self _insertSections:sections atIndexSet:sectionIndexes withAnimationOptions:animationOptions];
+      }
+      
+      // insertItemsAtIndexPaths:
+      [self _insertNodes:nodes atIndexPaths:indexPaths withAnimationOptions:animationOptions];
+      
+      if (isFirstBatch) {
+        // -endUpdates
+        [_mainSerialQueue performBlockOnMainThread:^{
+          [_delegate dataController:self endUpdatesAnimated:NO completion:nil];
+        }];
+        isFirstBatch = NO;
+      }
+    }];
     
-    [self willReloadDataWithSectionCount:sectionCount];
-    
-    // Insert empty sections
-    NSMutableArray *sections = [NSMutableArray arrayWithCapacity:sectionCount];
-    for (int i = 0; i < sectionCount; i++) {
-      [sections addObject:[[NSMutableArray alloc] init]];
-    }
-    [self _insertSections:sections atIndexSet:sectionIndexes withAnimationOptions:animationOptions];
-
-    if (oldSectionCount) {
-      // -endUpdates
-      [_mainSerialQueue performBlockOnMainThread:^{
-        [_delegate dataController:self endUpdatesAnimated:NO completion:nil];
-      }];
-    }
-    
-    [self _batchLayoutAndInsertNodesFromContexts:newContexts withAnimationOptions:animationOptions];
-
     if (completion) {
       [_mainSerialQueue performBlockOnMainThread:completion];
     }
@@ -487,7 +524,7 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
 {
   ASDisplayNodeAssertMainThread();
   
-  __weak id<ASEnvironment> environment = [self.environmentDelegate dataControllerEnvironment];
+  __weak id<ASTraitEnvironment> environment = [self.environmentDelegate dataControllerEnvironment];
   
   std::vector<NSInteger> counts = [self itemCountsFromDataSource];
   NSMutableArray<ASIndexedNodeContext *> *contexts = [NSMutableArray array];
@@ -553,11 +590,6 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
   });
 }
 
-- (void)endUpdates
-{
-  [self endUpdatesAnimated:YES completion:nil];
-}
-
 - (void)endUpdatesAnimated:(BOOL)animated completion:(void (^)(BOOL))completion
 {
   LOG(@"endUpdatesWithCompletion - beginning");
@@ -574,6 +606,74 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
       [_delegate dataController:self endUpdatesAnimated:animated completion:completion];
     }];
   });
+}
+
+- (void)updateWithChangeSet:(_ASHierarchyChangeSet *)changeSet animated:(BOOL)animated
+{
+  ASDisplayNodeAssertMainThread();
+  
+  void (^batchCompletion)(BOOL) = changeSet.completionHandler;
+  
+  /**
+   * If the initial reloadData has not been called, just bail because we don't have
+   * our old data source counts.
+   * See ASUICollectionViewTests.testThatIssuingAnUpdateBeforeInitialReloadIsUnacceptable
+   * For the issue that UICollectionView has that we're choosing to workaround.
+   */
+  if (!self.initialReloadDataHasBeenCalled) {
+    if (batchCompletion != nil) {
+      batchCompletion(YES);
+    }
+    return;
+  }
+  
+  [self invalidateDataSourceItemCounts];
+  
+  // Attempt to mark the update completed. This is when update validation will occur inside the changeset.
+  // If an invalid update exception is thrown, we catch it and inject our "validationErrorSource" object,
+  // which is the table/collection node's data source, into the exception reason to help debugging.
+  @try {
+    [changeSet markCompletedWithNewItemCounts:[self itemCountsFromDataSource]];
+  } @catch (NSException *e) {
+    id responsibleDataSource = self.validationErrorSource;
+    if (e.name == ASCollectionInvalidUpdateException && responsibleDataSource != nil) {
+      [NSException raise:ASCollectionInvalidUpdateException format:@"%@: %@", [responsibleDataSource class], e.reason];
+    } else {
+      @throw e;
+    }
+  }
+  
+  ASDataControllerLogEvent(self, @"triggeredUpdate: %@", changeSet);
+  
+  [self beginUpdates];
+  
+  for (_ASHierarchyItemChange *change in [changeSet itemChangesOfType:_ASHierarchyChangeTypeDelete]) {
+    [self deleteRowsAtIndexPaths:change.indexPaths withAnimationOptions:change.animationOptions];
+  }
+  
+  for (_ASHierarchySectionChange *change in [changeSet sectionChangesOfType:_ASHierarchyChangeTypeDelete]) {
+    [self deleteSections:change.indexSet withAnimationOptions:change.animationOptions];
+  }
+  
+  for (_ASHierarchySectionChange *change in [changeSet sectionChangesOfType:_ASHierarchyChangeTypeInsert]) {
+    [self insertSections:change.indexSet withAnimationOptions:change.animationOptions];
+  }
+  
+  for (_ASHierarchyItemChange *change in [changeSet itemChangesOfType:_ASHierarchyChangeTypeInsert]) {
+    [self insertRowsAtIndexPaths:change.indexPaths withAnimationOptions:change.animationOptions];
+  }
+  
+#if ASEVENTLOG_ENABLE
+  NSString *changeSetDescription = ASObjectDescriptionMakeTiny(changeSet);
+  batchCompletion = ^(BOOL finished) {
+    if (batchCompletion != nil) {
+      batchCompletion(finished);
+    }
+    ASDataControllerLogEvent(self, @"finishedUpdate: %@", changeSetDescription);
+  };
+#endif
+  
+  [self endUpdatesAnimated:animated completion:batchCompletion];
 }
 
 #pragma mark - Section Editing (External API)
@@ -629,6 +729,8 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
   [_nodeContexts[ASDataControllerRowNodeKind] removeObjectsAtIndexes:sections];
 
   dispatch_group_wait(_editingTransactionGroup, DISPATCH_TIME_FOREVER);
+
+  [self prepareForDeleteSections:sections];
   dispatch_group_async(_editingTransactionGroup, _editingTransactionQueue, ^{
     [self willDeleteSections:sections];
 
@@ -637,50 +739,6 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
     [self _deleteSectionsAtIndexSet:sections withAnimationOptions:animationOptions];
   });
 }
-
-- (void)reloadSections:(NSIndexSet *)sections withAnimationOptions:(ASDataControllerAnimationOptions)animationOptions
-{
-  ASDisplayNodeAssert(NO, @"ASDataController does not support %@. Call this on ASChangeSetDataController the reload will be broken into delete & insert.", NSStringFromSelector(_cmd));
-}
-
-- (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection withAnimationOptions:(ASDataControllerAnimationOptions)animationOptions
-{
-  ASDisplayNodeAssertMainThread();
-  LOG(@"Edit Command - moveSection");
-
-  if (!_initialReloadDataHasBeenCalled) {
-    return;
-  }
-
-  NSMutableArray *rowContexts = _nodeContexts[ASDataControllerRowNodeKind];
-  NSArray *contexts = rowContexts[section];
-  [rowContexts removeObjectAtIndex:section];
-  [rowContexts insertObject:contexts atIndex:section];
-
-  dispatch_group_wait(_editingTransactionGroup, DISPATCH_TIME_FOREVER);
-  dispatch_group_async(_editingTransactionGroup, _editingTransactionQueue, ^{
-    [self willMoveSection:section toSection:newSection];
-
-    // remove elements
-    
-    LOG(@"Edit Transaction - moveSection");
-    NSMutableArray *editingRows = _editingNodes[ASDataControllerRowNodeKind];
-    NSArray *indexPaths = ASIndexPathsForMultidimensionalArrayAtIndexSet(editingRows, [NSIndexSet indexSetWithIndex:section]);
-    NSArray *nodes = ASFindElementsInMultidimensionalArrayAtIndexPaths(editingRows, indexPaths);
-    [self _deleteNodesAtIndexPaths:indexPaths withAnimationOptions:animationOptions];
-
-    // update the section of indexpaths
-    NSMutableArray *updatedIndexPaths = [[NSMutableArray alloc] initWithCapacity:indexPaths.count];
-    for (NSIndexPath *indexPath in indexPaths) {
-      NSIndexPath *updatedIndexPath = [NSIndexPath indexPathForItem:indexPath.item inSection:newSection];
-      [updatedIndexPaths addObject:updatedIndexPath];
-    }
-
-    // Don't re-calculate size for moving
-    [self _insertNodes:nodes atIndexPaths:updatedIndexPaths withAnimationOptions:animationOptions];
-  });
-}
-
 
 #pragma mark - Backing store manipulation optional hooks (Subclass API)
 
@@ -695,6 +753,11 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
 }
 
 - (void)prepareForInsertSections:(NSIndexSet *)sections
+{
+  // Optional template hook for subclasses (See ASDataController+Subclasses.h)
+}
+
+- (void)prepareForDeleteSections:(NSIndexSet *)sections
 {
   // Optional template hook for subclasses (See ASDataController+Subclasses.h)
 }
@@ -750,7 +813,7 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
   NSArray *sortedIndexPaths = [indexPaths sortedArrayUsingSelector:@selector(compare:)];
   NSMutableArray<ASIndexedNodeContext *> *contexts = [[NSMutableArray alloc] initWithCapacity:indexPaths.count];
 
-  __weak id<ASEnvironment> environment = [self.environmentDelegate dataControllerEnvironment];
+  __weak id<ASTraitEnvironment> environment = [self.environmentDelegate dataControllerEnvironment];
   
   for (NSIndexPath *indexPath in sortedIndexPaths) {
     ASCellNodeBlock nodeBlock = [_dataSource dataController:self nodeBlockAtIndexPath:indexPath];
@@ -800,11 +863,6 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
   });
 }
 
-- (void)reloadRowsAtIndexPaths:(NSArray *)indexPaths withAnimationOptions:(ASDataControllerAnimationOptions)animationOptions
-{
-  ASDisplayNodeAssert(NO, @"ASDataController does not support %@. Call this on ASChangeSetDataController and the reload will be broken into delete & insert.", NSStringFromSelector(_cmd));
-}
-
 - (void)relayoutAllNodes
 {
   ASDisplayNodeAssertMainThread();
@@ -842,47 +900,16 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
       RETURN_IF_NO_DATASOURCE();
       NSIndexPath *indexPath = [NSIndexPath indexPathForRow:rowIndex inSection:sectionIndex];
       ASSizeRange constrainedSize = [self constrainedSizeForNodeOfKind:kind atIndexPath:indexPath];
-      [self _layoutNode:node withConstrainedSize:constrainedSize];
+      if (ASSizeRangeHasSignificantArea(constrainedSize)) {
+        [self _layoutNode:node withConstrainedSize:constrainedSize];
+      }
       rowIndex += 1;
     }
     sectionIndex += 1;
   }
 }
 
-- (void)moveRowAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath withAnimationOptions:(ASDataControllerAnimationOptions)animationOptions
-{
-  ASDisplayNodeAssertMainThread();
-  if (!_initialReloadDataHasBeenCalled) {
-    return;
-  }
-
-  NSMutableArray *contexts = _nodeContexts[ASDataControllerRowNodeKind];
-  ASIndexedNodeContext *context = contexts[indexPath.section][indexPath.item];
-  [contexts[indexPath.section] removeObjectAtIndex:indexPath.item];
-  [contexts[newIndexPath.section] insertObject:context atIndex:newIndexPath.item];
-
-  LOG(@"Edit Command - moveRow: %@ > %@", indexPath, newIndexPath);
-  dispatch_group_wait(_editingTransactionGroup, DISPATCH_TIME_FOREVER);
-  
-  dispatch_group_async(_editingTransactionGroup, _editingTransactionQueue, ^{
-    LOG(@"Edit Transaction - moveRow: %@ > %@", indexPath, newIndexPath);
-    NSArray *indexPaths = @[indexPath];
-    NSArray *nodes = ASFindElementsInMultidimensionalArrayAtIndexPaths(_editingNodes[ASDataControllerRowNodeKind], indexPaths);
-    [self _deleteNodesAtIndexPaths:indexPaths withAnimationOptions:animationOptions];
-
-    // Don't re-calculate size for moving
-    NSArray *newIndexPaths = @[newIndexPath];
-    [self _insertNodes:nodes atIndexPaths:newIndexPaths withAnimationOptions:animationOptions];
-  });
-}
-
 #pragma mark - Data Querying (Subclass API)
-
-- (NSArray<NSIndexPath *> *)indexPathsForEditingNodesOfKind:(NSString *)kind
-{
-  NSArray *nodes = _editingNodes[kind];
-  return nodes != nil ? ASIndexPathsForTwoDimensionalArray(nodes) : nil;
-}
 
 - (NSMutableArray *)editingNodesOfKind:(NSString *)kind
 {
@@ -925,6 +952,9 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
 - (ASCellNode *)nodeAtIndexPath:(NSIndexPath *)indexPath
 {
   ASDisplayNodeAssertMainThread();
+  if (indexPath == nil) {
+    return nil;
+  }
   
   NSArray *contexts = _nodeContexts[ASDataControllerRowNodeKind];
   NSInteger section = indexPath.section;
@@ -937,13 +967,15 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
       context = completedNodesSection[row];
     }
   }
-  
   return context.node;
 }
 
 - (ASCellNode *)nodeAtCompletedIndexPath:(NSIndexPath *)indexPath
 {
   ASDisplayNodeAssertMainThread();
+  if (indexPath == nil) {
+    return nil;
+  }
 
   NSArray *completedNodes = [self completedNodes];
   NSInteger section = indexPath.section;
@@ -1030,26 +1062,6 @@ NSString * const ASDataControllerRowNodeKind = @"_ASDataControllerRowNodeKind";
   ASDisplayNodeAssertMainThread();
   ASMoveElementInTwoDimensionalArray(_externalCompletedNodes, indexPath, newIndexPath);
   ASMoveElementInTwoDimensionalArray(_completedNodes[ASDataControllerRowNodeKind], indexPath, newIndexPath);
-}
-
-#pragma mark - Dealloc
-
-- (void)dealloc
-{
-  ASDisplayNodeAssertMainThread();
-  for (NSMutableArray *sections in [_completedNodes objectEnumerator]) {
-    for (NSArray *section in sections) {
-      for (ASCellNode *node in section) {
-        if (node.isNodeLoaded) {
-          if (node.layerBacked) {
-            [node.layer removeFromSuperlayer];
-          } else {
-            [node.view removeFromSuperview];
-          }
-        }
-      }
-    }
-  }
 }
 
 @end

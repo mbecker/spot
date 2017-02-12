@@ -12,9 +12,9 @@ import FirebaseStorage
 
 class ListItemASCellNode: ASCellNode {
     
-    let _parkItem   :   ParkItem2!
-    var _storage     :   FIRStorage
-    var _image      :   ASNetworkImageNode
+    var _parkItem    : ParkItem2
+    var _storage            : FIRStorage
+    var _image              : ASNetworkImageNode
     
     var _title              =   ASTextNode()
     var _detail             =   ASTextNode()
@@ -84,8 +84,6 @@ class ListItemASCellNode: ASCellNode {
         }
     }
     
-    override func 
-    
     init(parkItem: ParkItem2){
         self._parkItem                  = parkItem
         self._storage                   = FIRStorage.storage()
@@ -97,8 +95,8 @@ class ListItemASCellNode: ASCellNode {
         self._image.backgroundColor     = UIColor(red:0.89, green:0.89, blue:0.89, alpha:0.30)
         self._image.contentMode         = .scaleAspectFill
         
-        
         super.init()
+        
         // self.shouldRasterizeDescendants = true // This line will cause the entire node hierarchy from that point on to be rendered into one layer http://asyncdisplaykit.org/docs/subtree-rasterization.html
         
         self._image.delegate            = self
@@ -160,6 +158,7 @@ class ListItemASCellNode: ASCellNode {
         let loadingIndicatorOverlaySpec     = ASOverlayLayoutSpec(child: errorTextOverlaySpec, overlay: loadingIndicatorInsetSpec)
         
         self._title.attributedText          = NSAttributedString(string: self._parkItem.name, attributes: self._titleAttributes)
+        
         //self._title.style.height            = ASDimension(unit: .points, value: (constrainedSize.max.height - 16) / 2)
         self._title.style.width             = ASDimension(unit: .points, value: constrainedSize.max.width - 16 - imageWidth - 16 - 16)
         

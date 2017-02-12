@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '6CED1C12397973FD0BC11DCF237CF51E'
+               BlueprintIdentifier = 'B6F55F0B016B372CEA89721E5BD89BF6'
                BlueprintName = 'PINRemoteImage'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'PINRemoteImage.framework'>

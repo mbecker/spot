@@ -8,17 +8,26 @@
 //  of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "ASLayoutSpec.h"
-#import "ASLayoutSpecPrivate.h"
-#import "ASLayoutSpec+Subclasses.h"
-#import "ASLayoutElementStylePrivate.h"
+#import <AsyncDisplayKit/ASLayoutSpec.h>
+#import <AsyncDisplayKit/ASLayoutSpecPrivate.h>
+
+#import <AsyncDisplayKit/ASLayoutSpec+Subclasses.h>
+
+#import <AsyncDisplayKit/ASLayoutElementStylePrivate.h>
+#import <AsyncDisplayKit/ASTraitCollection.h>
+#import <AsyncDisplayKit/ASEqualityHelpers.h>
+#import <AsyncDisplayKit/ASAvailability.h>
+#import <AsyncDisplayKit/ASInternalHelpers.h>
+
+#import <objc/runtime.h>
+#import <map>
+#import <vector>
 
 @implementation ASLayoutSpec
 
 // Dynamic properties for ASLayoutElements
 @dynamic layoutElementType;
 @synthesize debugName = _debugName;
-@synthesize isFinalLayoutElement = _isFinalLayoutElement;
 
 #pragma mark - Class
 
@@ -26,7 +35,7 @@
 {
   [super initialize];
   if (self != [ASLayoutSpec class]) {
-    ASDisplayNodeAssert(!ASSubclassOverridesSelector([ASLayoutSpec class], self, @selector(measureWithSizeRange:)), @"Subclass %@ must not override measureWithSizeRange: method. Instead overwrite calculateLayoutThatFits:", NSStringFromClass(self));
+    ASDisplayNodeAssert(!ASSubclassOverridesSelector([ASLayoutSpec class], self, @selector(measureWithSizeRange:)), @"Subclass %@ must not override measureWithSizeRange: method. Instead override calculateLayoutThatFits:", NSStringFromClass(self));
   }
 }
 
@@ -40,7 +49,9 @@
   }
   
   _isMutable = YES;
-  _environmentState = ASEnvironmentStateMakeDefault();
+#if AS_TARGET_OS_IOS
+  _primitiveTraitCollection = ASPrimitiveTraitCollectionMakeDefault();
+#endif
   _childrenArray = [[NSMutableArray alloc] init];
   
   return self;
@@ -58,10 +69,7 @@
 
 #pragma mark - Final LayoutElement
 
-- (id<ASLayoutElement>)finalLayoutElement
-{
-  return self;
-}
+ASLayoutElementFinalLayoutElementDefault
 
 #pragma mark - Style
 
@@ -74,7 +82,7 @@
   return _style;
 }
 
-- (instancetype)styledWithBlock:(void (^)(ASLayoutElementStyle *style))styleBlock
+- (instancetype)styledWithBlock:(AS_NOESCAPE void (^)(__kindof ASLayoutElementStyle *style))styleBlock
 {
   styleBlock(self.style);
   return self;
@@ -111,7 +119,7 @@
 {
   ASDisplayNodeAssert(self.isMutable, @"Cannot set properties when layout spec is not mutable");
   ASDisplayNodeAssert(_childrenArray.count < 2, @"This layout spec does not support more than one child. Use the setChildren: or the setChild:AtIndex: API");
-  
+ 
   if (child) {
     id<ASLayoutElement> finalLayoutElement = [self layoutElementToAddFromLayoutElement:child];
     if (finalLayoutElement) {
@@ -136,7 +144,7 @@
 - (void)setChildren:(NSArray<id<ASLayoutElement>> *)children
 {
   ASDisplayNodeAssert(self.isMutable, @"Cannot set properties when layout spec is not mutable");
-  
+
   [_childrenArray removeAllObjects];
   
   NSUInteger i = 0;
@@ -147,7 +155,12 @@
   }
 }
 
-- (NSArray *)children
+- (nullable NSArray<id<ASLayoutElement>> *)children
+{
+  return [_childrenArray copy];
+}
+
+- (NSArray<id<ASLayoutElement>> *)sublayoutElements
 {
   return [_childrenArray copy];
 }
@@ -159,40 +172,35 @@
   return [_childrenArray countByEnumeratingWithState:state objects:buffer count:len];
 }
 
-#pragma mark - ASEnvironment
+#pragma mark - ASTraitEnvironment
 
-- (ASEnvironmentState)environmentState
+#if AS_TARGET_OS_IOS
+
+- (ASPrimitiveTraitCollection)primitiveTraitCollection
 {
-  return _environmentState;
+  return _primitiveTraitCollection;
 }
 
-- (void)setEnvironmentState:(ASEnvironmentState)environmentState
+- (void)setPrimitiveTraitCollection:(ASPrimitiveTraitCollection)traitCollection
 {
-  _environmentState = environmentState;
-}
-
-- (BOOL)supportsTraitsCollectionPropagation
-{
-  return ASEnvironmentStateTraitCollectionPropagationEnabled();
-}
-
-- (ASEnvironmentTraitCollection)environmentTraitCollection
-{
-  return _environmentState.environmentTraitCollection;
-}
-
-- (void)setEnvironmentTraitCollection:(ASEnvironmentTraitCollection)environmentTraitCollection
-{
-  _environmentState.environmentTraitCollection = environmentTraitCollection;
+  _primitiveTraitCollection = traitCollection;
 }
 
 - (ASTraitCollection *)asyncTraitCollection
 {
   ASDN::MutexLocker l(__instanceLock__);
-  return [ASTraitCollection traitCollectionWithASEnvironmentTraitCollection:self.environmentTraitCollection];
+  return [ASTraitCollection traitCollectionWithASPrimitiveTraitCollection:self.primitiveTraitCollection];
 }
 
-ASEnvironmentLayoutExtensibilityForwarding
+#endif
+
+#if AS_TARGET_OS_IOS
+ASPrimitiveTraitCollectionDeprecatedImplementation
+#endif
+
+#pragma mark - ASLayoutElementStyleExtensibility
+
+ASLayoutElementStyleExtensibilityForwarding
 
 #pragma mark - Framework Private
 

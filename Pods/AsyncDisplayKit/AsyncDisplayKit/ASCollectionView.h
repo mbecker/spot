@@ -39,24 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ASCollectionView : UICollectionView
 
 /**
- * The object that acts as the asynchronous delegate of the collection view
- *
- * @discussion The delegate must adopt the ASCollectionDelegate protocol. The collection view maintains a weak reference to the delegate object.
- *
- * The delegate object is responsible for providing size constraints for nodes and indicating whether batch fetching should begin.
- */
-@property (nonatomic, weak) id<ASCollectionDelegate>   asyncDelegate;
-
-/**
- * The object that acts as the asynchronous data source of the collection view
- *
- * @discussion The datasource must adopt the ASCollectionDataSource protocol. The collection view maintains a weak reference to the datasource object.
- *
- * The datasource object is responsible for providing nodes or node creation blocks to the collection view.
- */
-@property (nonatomic, weak) id<ASCollectionDataSource> asyncDataSource;
-
-/**
  * Returns the corresponding ASCollectionNode
  *
  * @return collectionNode The corresponding ASCollectionNode, if one exists.
@@ -124,6 +106,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) ASScrollDirection scrollableDirections;
 
+/*
+ * A Boolean value that determines whether the nodes that the data source renders will be flipped.
+ */
+@property (nonatomic, assign) BOOL inverted;
+
 /**
  * Forces the .contentInset to be UIEdgeInsetsZero.
  *
@@ -137,6 +124,27 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface ASCollectionView (Deprecated)
+
+@property (nonatomic, weak) id<UICollectionViewDelegate> delegate ASDISPLAYNODE_DEPRECATED_MSG("Use ASCollectionNode.delegate instead. If you REALLY want to use this, cast to a UICollectionView but don't rely on the return value.");
+@property (nonatomic, weak) id<UICollectionViewDataSource> dataSource ASDISPLAYNODE_DEPRECATED_MSG("Use ASCollectionNode.dataSource instead. If you REALLY want to use this, cast to a UICollectionView but don't rely on the return value.");
+
+/**
+ * The object that acts as the asynchronous delegate of the collection view
+ *
+ * @discussion The delegate must adopt the ASCollectionDelegate protocol. The collection view maintains a weak reference to the delegate object.
+ *
+ * The delegate object is responsible for providing size constraints for nodes and indicating whether batch fetching should begin.
+ */
+@property (nonatomic, weak) id<ASCollectionDelegate> asyncDelegate ASDISPLAYNODE_DEPRECATED_MSG("Please use ASCollectionNode's .delegate property instead.");
+
+/**
+ * The object that acts as the asynchronous data source of the collection view
+ *
+ * @discussion The datasource must adopt the ASCollectionDataSource protocol. The collection view maintains a weak reference to the datasource object.
+ *
+ * The datasource object is responsible for providing nodes or node creation blocks to the collection view.
+ */
+@property (nonatomic, weak) id<ASCollectionDataSource> asyncDataSource ASDISPLAYNODE_DEPRECATED_MSG("Please use ASCollectionNode's .dataSource property instead.");
 
 /**
  * Initializes an ASCollectionView
@@ -225,7 +233,7 @@ NS_ASSUME_NONNULL_BEGIN
  *                    Boolean parameter that contains the value YES if all of the related animations completed successfully or
  *                    NO if they were interrupted. This parameter may be nil. If supplied, the block is run on the main thread.
  */
-- (void)performBatchAnimated:(BOOL)animated updates:(nullable __attribute((noescape)) void (^)())updates completion:(nullable void (^)(BOOL finished))completion ASDISPLAYNODE_DEPRECATED_MSG("Use ASCollectionNode method instead.");
+- (void)performBatchAnimated:(BOOL)animated updates:(nullable AS_NOESCAPE void (^)())updates completion:(nullable void (^)(BOOL finished))completion ASDISPLAYNODE_DEPRECATED_MSG("Use ASCollectionNode method instead.");
 
 /**
  *  Perform a batch of updates asynchronously.  This method must be called from the main thread.
@@ -236,7 +244,7 @@ NS_ASSUME_NONNULL_BEGIN
  *                    Boolean parameter that contains the value YES if all of the related animations completed successfully or
  *                    NO if they were interrupted. This parameter may be nil. If supplied, the block is run on the main thread.
  */
-- (void)performBatchUpdates:(nullable __attribute((noescape)) void (^)())updates completion:(nullable void (^)(BOOL finished))completion ASDISPLAYNODE_DEPRECATED_MSG("Use ASCollectionNode method instead.");
+- (void)performBatchUpdates:(nullable AS_NOESCAPE void (^)())updates completion:(nullable void (^)(BOOL finished))completion ASDISPLAYNODE_DEPRECATED_MSG("Use ASCollectionNode method instead.");
 
 /**
  * Reload everything from scratch, destroying the working range and all cached nodes.
@@ -411,33 +419,71 @@ ASDISPLAYNODE_DEPRECATED_MSG("Renamed to ASCollectionDelegate.")
 @end
 
 /**
- * Defines methods that let you coordinate with a `UICollectionViewFlowLayout` in combination with an `ASCollectionView`.
+ * Defines methods that let you coordinate a `UICollectionViewFlowLayout` in combination with an `ASCollectionNode`.
  */
-@protocol ASCollectionViewDelegateFlowLayout <ASCollectionDelegate>
+@protocol ASCollectionDelegateFlowLayout <ASCollectionDelegate>
 
 @optional
 
 /**
- * @discussion This method is deprecated and does nothing from 1.9.7 and up
- * Previously it applies the section inset to every cells within the corresponding section.
- * The expected behavior is to apply the section inset to the whole section rather than
- * shrinking each cell individually.
- * If you want this behavior, you can integrate your insets calculation into
- * `constrainedSizeForNodeAtIndexPath`
- * please file a github issue if you would like this to be restored.
+ * Asks the delegate for the inset that should be applied to the given section.
+ *
+ * @see the same method in UICollectionViewDelegate. 
  */
-- (UIEdgeInsets)collectionView:(ASCollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section ASDISPLAYNODE_DEPRECATED_MSG("This method does nothing for 1.9.7+ due to incorrect implementation previously, see the header file for more information.");
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section;
+
+/**
+ * Asks the delegate for the size range that should be used to measure the header in the given flow layout section.
+ *
+ * @param collectionNode The sender.
+ * @param section The section.
+ *
+ * @return The size range for the header, or @c ASSizeRangeZero if there is no header in this section.
+ *
+ * If you want the header to completely determine its own size, return @c ASSizeRangeUnconstrained.
+ *
+ * @note Only the scrollable dimension of the returned size range will be used. In a vertical flow,
+ * only the height will be used. In a horizontal flow, only the width will be used. The other dimension
+ * will be constrained to fill the collection node.
+ *
+ * @discussion If you do not implement this method, ASDK will fall back to calling @c collectionView:layout:referenceSizeForHeaderInSection:
+ * and using that as the exact constrained size. If you don't implement that method, ASDK will read the @c headerReferenceSize from the layout.
+ */
+- (ASSizeRange)collectionNode:(ASCollectionNode *)collectionNode sizeRangeForHeaderInSection:(NSInteger)section;
+
+/**
+ * Asks the delegate for the size range that should be used to measure the footer in the given flow layout section.
+ *
+ * @param collectionNode The sender.
+ * @param section The section.
+ *
+ * @return The size range for the footer, or @c ASSizeRangeZero if there is no footer in this section.
+ *
+ * If you want the footer to completely determine its own size, return @c ASSizeRangeUnconstrained.
+ *
+ * @note Only the scrollable dimension of the returned size range will be used. In a vertical flow,
+ * only the height will be used. In a horizontal flow, only the width will be used. The other dimension
+ * will be constrained to fill the collection node.
+ *
+ * @discussion If you do not implement this method, ASDK will fall back to calling @c collectionView:layout:referenceSizeForFooterInSection:
+ * and using that as the exact constrained size. If you don't implement that method, ASDK will read the @c footerReferenceSize from the layout.
+ */
+- (ASSizeRange)collectionNode:(ASCollectionNode *)collectionNode sizeRangeForFooterInSection:(NSInteger)section;
 
 /**
  * Asks the delegate for the size of the header in the specified section.
  */
-- (CGSize)collectionView:(ASCollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section;
+- (CGSize)collectionView:(ASCollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section ASDISPLAYNODE_DEPRECATED_MSG("Implement collectionNode:sizeRangeForHeaderInSection: instead.");
 
 /**
  * Asks the delegate for the size of the footer in the specified section.
  */
-- (CGSize)collectionView:(ASCollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section;
+- (CGSize)collectionView:(ASCollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section ASDISPLAYNODE_DEPRECATED_MSG("Implement collectionNode:sizeRangeForFooterInSection: instead.");
 
+@end
+
+ASDISPLAYNODE_DEPRECATED_MSG("Renamed to ASCollectionDelegateFlowLayout.")
+@protocol ASCollectionViewDelegateFlowLayout <ASCollectionDelegateFlowLayout>
 @end
 
 NS_ASSUME_NONNULL_END

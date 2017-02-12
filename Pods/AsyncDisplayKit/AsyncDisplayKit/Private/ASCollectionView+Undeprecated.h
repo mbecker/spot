@@ -6,7 +6,7 @@
 //  Copyright © 2016 Facebook. All rights reserved.
 //
 
-#import <AsyncDisplayKit/AsyncDisplayKit.h>
+#import <AsyncDisplayKit/ASCollectionView.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,6 +18,24 @@ NS_ASSUME_NONNULL_BEGIN
  * In the future, the @c ASCollectionView public API will be eliminated and so will this file.
  */
 @interface ASCollectionView (Undeprecated)
+
+/**
+ * The object that acts as the asynchronous delegate of the collection view
+ *
+ * @discussion The delegate must adopt the ASCollectionDelegate protocol. The collection view maintains a weak reference to the delegate object.
+ *
+ * The delegate object is responsible for providing size constraints for nodes and indicating whether batch fetching should begin.
+ */
+@property (nonatomic, weak) id<ASCollectionDelegate> asyncDelegate;
+
+/**
+ * The object that acts as the asynchronous data source of the collection view
+ *
+ * @discussion The datasource must adopt the ASCollectionDataSource protocol. The collection view maintains a weak reference to the datasource object.
+ *
+ * The datasource object is responsible for providing nodes or node creation blocks to the collection view.
+ */
+@property (nonatomic, weak) id<ASCollectionDataSource> asyncDataSource;
 
 /**
  * Initializes an ASCollectionView
@@ -113,7 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
  *                    Boolean parameter that contains the value YES if all of the related animations completed successfully or
  *                    NO if they were interrupted. This parameter may be nil. If supplied, the block is run on the main thread.
  */
-- (void)performBatchAnimated:(BOOL)animated updates:(nullable __attribute((noescape)) void (^)())updates completion:(nullable void (^)(BOOL finished))completion;
+- (void)performBatchAnimated:(BOOL)animated updates:(nullable AS_NOESCAPE void (^)())updates completion:(nullable void (^)(BOOL finished))completion;
 
 /**
  *  Perform a batch of updates asynchronously.  This method must be called from the main thread.
@@ -124,7 +142,7 @@ NS_ASSUME_NONNULL_BEGIN
  *                    Boolean parameter that contains the value YES if all of the related animations completed successfully or
  *                    NO if they were interrupted. This parameter may be nil. If supplied, the block is run on the main thread.
  */
-- (void)performBatchUpdates:(nullable __attribute((noescape)) void (^)())updates completion:(nullable void (^)(BOOL finished))completion;
+- (void)performBatchUpdates:(nullable AS_NOESCAPE void (^)())updates completion:(nullable void (^)(BOOL finished))completion;
 
 /**
  * Reload everything from scratch, destroying the working range and all cached nodes.
