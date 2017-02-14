@@ -8,15 +8,16 @@
 
 import UIKit
 import ImageSlideshow
+import AsyncDisplayKit
 
 class DetailTableHeaderUIView: UIView {
 
     let _title: String
     let _urls: [URL]
     let _slideShow: ImageSlideshow
-    let _viewController: DetailASViewController
+    let _viewController: ASViewController<ASDisplayNode>
     
-    init(title: String, urls: [URL], viewController: DetailASViewController) {
+    init(title: String, urls: [URL], viewController: ASViewController<ASDisplayNode>) {
         self._title = title
         self._urls = urls
         self._viewController = viewController
@@ -98,7 +99,7 @@ class DetailTableHeaderUIView: UIView {
         let download = UIButton(frame: CGRect(x: self._slideShow.bounds.width - 12 - 48, y: self._slideShow.bounds.height - 12 - 48, width: 64, height: 64))
         download.setImage(#imageLiteral(resourceName: "DownloadWhite98"), for: .normal)
         download.setImage(#imageLiteral(resourceName: "DownloadFilledWhite98"), for: .highlighted)
-        download.addTarget(self._viewController, action: #selector(self._viewController.saveImage), for: UIControlEvents.touchUpInside)
+        // download.addTarget(self._viewController, action: #selector(self._viewController.saveImage), for: UIControlEvents.touchUpInside)
         self._slideShow.addSubview(download)
         
     }

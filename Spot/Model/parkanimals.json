@@ -1,61 +1,71 @@
 {
-  
-      "animals" : {
+    
+    "animals" : {
         "Elephant" : {
             "updated": 1486719547,
-          "images" : {
-            
-            "3" : {
-              "public" : "Elephant_additional",
-              "resized" : {
-                "375x300" : {
-                  "public" : "Elephant_additional_resized"
+            "images" : {
+                
+                "3" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/Elephant1.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/Elephant1_375x300.jpg"
+                        }
+                    }
+                },
+                
+                "4": {
+                    "public" : "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/African_elephant_%28Loxodonta_africana%29_reaching_up_1.jpg/1280px-African_elephant_%28Loxodonta_africana%29_reaching_up_1.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/African_elephant_%28Loxodonta_africana%29_reaching_up_1.jpg/375px-African_elephant_%28Loxodonta_africana%29_reaching_up_1.jpg"
+                        }
+                    }
+                },
+                
+                "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg",
+                "resized" : {
+                    
+                    "375x300" : {
+                        "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk_375x300.jpg"
+                    }
                 }
-              }
             },
-            "public" : "Elephant_public",
-            "resized" : {
-              
-              "375x300" : {
-                "public" : "Elephant_resized"
-              }
+            "markdown" : "elephant Markdown",
+            "name" : "Elephant",
+            "parks" : {
+                "asdasd" : "addo",
+                "dsd33dasd" : "kruger"
             }
-          },
-          "markdown" : "elephant Markdown",
-          "name" : "Elephant",
-          "parks" : {
-            "asdasd" : "addo",
-            "dsd33dasd" : "kruger"
-          }
         },
         "Lion" : {
             "updated": 1486719547,
-          "images" : {
-                        "3" : {
-              
-              "public" : "Lion_additioan",
-              "resized" : {
-                "375x300" : {
-                  "public" : "Lion_additional_resized"
+            "images" : {
+                "3" : {
+                    
+                    "public" : "https://upload.wikimedia.org/wikipedia/commons/c/c6/Okonjima_Lioness.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://upload.wikimedia.org/wikipedia/commons/c/c6/Okonjima_Lioness.jpg"
+                        }
+                    }
+                },
+                "public" : "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg",
+                "resized" : {
+                    
+                    "375x300" : {
+                        "public" : "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg"
+                    }
+                    
                 }
-              }
             },
-            "public" : "Lion_public",
-            "resized" : {
-              
-              "375x300" : {
-                "public" : "Lion_resized"
-              }
-                
+            "markdown" : "Lion Markdown",
+            "name" : "Lion",
+            "parks" : {
+                "asdasd" : "addo",
+                "dsd33dasd" : "kruger"
             }
-          },
-          "markdown" : "Lion Markdown",
-          "name" : "Lion",
-          "parks" : {
-            "asdasd" : "addo",
-            "dsd33dasd" : "kruger"
-          }
         }
-      }
-
+    }
+    
 }

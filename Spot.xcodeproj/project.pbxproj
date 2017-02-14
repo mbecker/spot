@@ -17,7 +17,6 @@
 		D10A1FB21E45D8C500E2B7AA /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FAF1E45D8C500E2B7AA /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D10A1FB31E45D8C500E2B7AA /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */; };
 		D10A1FB41E45D8C500E2B7AA /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D10A1FB61E45E17100E2B7AA /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FB51E45E17100E2B7AA /* MainNavigationController.swift */; };
 		D10A1FCD1E476EE100E2B7AA /* RealmTransactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCC1E476EE100E2B7AA /* RealmTransactions.swift */; };
 		D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */; };
 		D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */; };
@@ -25,6 +24,7 @@
 		D12D64F71DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */; };
 		D12D64FB1DEF70500096A847 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64FA1DEF70500096A847 /* UIButton.swift */; };
 		D12D64FD1DEF72D60096A847 /* DB.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64FC1DEF72D60096A847 /* DB.swift */; };
+		D13623E81E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13623E71E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift */; };
 		D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */; };
 		D14D8D371DD25945009AC39B /* Park.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D361DD25945009AC39B /* Park.swift */; };
 		D15405A61DF8054200EAE971 /* ListASPagerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15405A51DF8054200EAE971 /* ListASPagerNode.swift */; };
@@ -42,6 +42,7 @@
 		D1A5FE571E4E8282007DBC1C /* parksmarkdown.json in Resources */ = {isa = PBXBuildFile; fileRef = D1A5FE561E4E8282007DBC1C /* parksmarkdown.json */; };
 		D1ADC92D1E4FA50100E1C4DB /* SplashScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ADC92C1E4FA50100E1C4DB /* SplashScreenViewController.swift */; };
 		D1ADC92F1E5071EF00E1C4DB /* PageASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ADC92E1E5071EF00E1C4DB /* PageASCellNode.swift */; };
+		D1ADC9321E50ADE300E1C4DB /* EncycnlopediaItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1ADC9311E50ADE300E1C4DB /* EncycnlopediaItemASCellNode.swift */; };
 		D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */; };
 		D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */; };
 		D1AFD85E1DCF8B4C0082A6EF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */; };
@@ -368,7 +369,6 @@
 		D10A1FAD1E45D22000E2B7AA /* RealmObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmObjects.swift; sourceTree = "<group>"; };
 		D10A1FAF1E45D8C500E2B7AA /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
-		D10A1FB51E45E17100E2B7AA /* MainNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
 		D10A1FCC1E476EE100E2B7AA /* RealmTransactions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmTransactions.swift; sourceTree = "<group>"; };
 		D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkDetailViewController.swift; sourceTree = "<group>"; };
 		D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemASCellNode.swift; sourceTree = "<group>"; };
@@ -377,6 +377,7 @@
 		D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkTableHeaderMapUIImageView.swift; sourceTree = "<group>"; };
 		D12D64FA1DEF70500096A847 /* UIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
 		D12D64FC1DEF72D60096A847 /* DB.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DB.swift; sourceTree = "<group>"; };
+		D13623E71E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncyclopediaItemASViewController.swift; sourceTree = "<group>"; };
 		D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkASCellNode.swift; sourceTree = "<group>"; };
 		D14D8D361DD25945009AC39B /* Park.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Park.swift; sourceTree = "<group>"; };
 		D15405A51DF8054200EAE971 /* ListASPagerNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListASPagerNode.swift; sourceTree = "<group>"; };
@@ -394,6 +395,7 @@
 		D1A5FE561E4E8282007DBC1C /* parksmarkdown.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = parksmarkdown.json; sourceTree = "<group>"; };
 		D1ADC92C1E4FA50100E1C4DB /* SplashScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreenViewController.swift; sourceTree = "<group>"; };
 		D1ADC92E1E5071EF00E1C4DB /* PageASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageASCellNode.swift; sourceTree = "<group>"; };
+		D1ADC9311E50ADE300E1C4DB /* EncycnlopediaItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncycnlopediaItemASCellNode.swift; sourceTree = "<group>"; };
 		D1AFD84D1DCF8B4C0082A6EF /* Spot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D1AFD8581DCF8B4C0082A6EF /* Spot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Spot.xcdatamodel; sourceTree = "<group>"; };
@@ -785,6 +787,15 @@
 			path = UserSettings;
 			sourceTree = "<group>";
 		};
+		D1ADC9301E50ADC500E1C4DB /* Encyclopedia */ = {
+			isa = PBXGroup;
+			children = (
+				D1ADC9311E50ADE300E1C4DB /* EncycnlopediaItemASCellNode.swift */,
+				D13623E71E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift */,
+			);
+			name = Encyclopedia;
+			sourceTree = "<group>";
+		};
 		D1AFD8441DCF8B4C0082A6EF = {
 			isa = PBXGroup;
 			children = (
@@ -813,6 +824,7 @@
 		D1AFD84F1DCF8B4C0082A6EF /* Spot */ = {
 			isa = PBXGroup;
 			children = (
+				D1ADC9301E50ADC500E1C4DB /* Encyclopedia */,
 				D19358FB1E491C7C000CA357 /* MessageView.xib */,
 				D1C83AB61E452EBD002030A5 /* Forms */,
 				D176F8121E3FD4DF00F34F41 /* Camera */,
@@ -832,7 +844,6 @@
 				D15405A91DF8745600EAE971 /* MainASTabBarController.swift */,
 				D10A7F7E1DD282C100741BF0 /* Spot.entitlements */,
 				D1AFD8571DCF8B4C0082A6EF /* Spot.xcdatamodeld */,
-				D10A1FB51E45E17100E2B7AA /* MainNavigationController.swift */,
 				D1ADC92C1E4FA50100E1C4DB /* SplashScreenViewController.swift */,
 			);
 			path = Spot;
@@ -1779,6 +1790,7 @@
 				D1E4E64A1E0934E60084A229 /* UIColor.swift in Sources */,
 				D1ADC92F1E5071EF00E1C4DB /* PageASCellNode.swift in Sources */,
 				D14D8D371DD25945009AC39B /* Park.swift in Sources */,
+				D13623E81E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift in Sources */,
 				D1C9438F1DFB19600008C38F /* LoginViewController.swift in Sources */,
 				D12D64FB1DEF70500096A847 /* UIButton.swift in Sources */,
 				D1079F091DD2A754007CCE07 /* ActivityIndicatorNode.swift in Sources */,
@@ -1797,13 +1809,13 @@
 				D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */,
 				D1AFD8511DCF8B4C0082A6EF /* AppDelegate.swift in Sources */,
 				D1E4E64C1E0977D90084A229 /* UIImage.swift in Sources */,
-				D10A1FB61E45E17100E2B7AA /* MainNavigationController.swift in Sources */,
 				D10A1FAE1E45D22000E2B7AA /* RealmObjects.swift in Sources */,
 				D19DEAF01E4CC427003F6E55 /* String.swift in Sources */,
 				D1ADC92D1E4FA50100E1C4DB /* SplashScreenViewController.swift in Sources */,
 				D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */,
 				D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */,
 				D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */,
+				D1ADC9321E50ADE300E1C4DB /* EncycnlopediaItemASCellNode.swift in Sources */,
 				D1C7579A1DF05D4E0029E882 /* DetailTableHeaderUIView.swift in Sources */,
 				D1FB21EE1DF2B95D0023F0F2 /* AssetManager.swift in Sources */,
 				D1079F061DD2A637007CCE07 /* KingfisherCache.swift in Sources */,

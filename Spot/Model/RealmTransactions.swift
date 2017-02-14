@@ -17,6 +17,13 @@ class RealmTransactions {
     
     let realm = try! Realm()
     
+    public func loadParkItemsFromRealm(parkKey: String, itemType: ItemType) -> [RealmEncyclopediaItem]? {
+        if let results = self.realm.object(ofType: RealmPark.self, forPrimaryKey: parkKey)?.encyclopediaItems.filter("type = %@", itemType.rawValue) {
+            return Array(results)
+        }
+        return nil
+    }
+    
     public func loadCountriesFromFirebase(completion: @escaping (_ result: [Country]?) -> Void) {
         let ref = FIRDatabase.database().reference()
         ref.child("parkcountries").observeSingleEvent(of: .value, with: { (snapshot) in

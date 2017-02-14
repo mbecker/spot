@@ -499,8 +499,18 @@ class MapNode: UIView {
         view = UIImageView(frame: CGRect(x: 0, y: 86, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 2 / 3))
         super.init(frame: CGRect.zero)
         backgroundColor = UIColor.white
-        
-        if parkItem.latitude != nil, parkItem.longitude != nil {
+        setupView(latitude: parkItem.latitude, longitude: parkItem.longitude)
+    }
+    
+    init(latitude: Double?, longitude: Double?){
+        view = UIImageView(frame: CGRect(x: 0, y: 86, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 2 / 3))
+        super.init(frame: CGRect.zero)
+        backgroundColor = UIColor.white
+        setupView(latitude: latitude, longitude: longitude)
+    }
+    
+    func setupView(latitude: Double?, longitude: Double?) {
+        if latitude != nil, longitude != nil {
             let label = UILabel(frame: CGRect(x: 20, y: 86 / 2 - 19.09375 / 2, width: 100, height: 19.09375))
             label.attributedText = NSAttributedString(
                 string: "Spotted at",
@@ -518,15 +528,15 @@ class MapNode: UIView {
             
             let options = SnapshotOptions(
                 mapIdentifiers: ["mapbox.streets"],
-                centerCoordinate: CLLocationCoordinate2D(latitude: parkItem.latitude!, longitude: parkItem.longitude!),
+                centerCoordinate: CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!),
                 zoomLevel: 9,
                 size: view.bounds.size)
             let customMarker = CustomMarker(
-                coordinate: CLLocationCoordinate2D(latitude: parkItem.latitude!, longitude: parkItem.longitude!),
+                coordinate: CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!),
                 url: URL(string: "https://www.mapbox.com/help/img/screenshots/rocket.png")!
             )
             let markerOverlay = Marker(
-                coordinate: CLLocationCoordinate2D(latitude: parkItem.latitude!, longitude: parkItem.longitude!),
+                coordinate: CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!),
                 size: .medium,
                 iconName: "marker"
             )
@@ -557,7 +567,7 @@ class MapNode: UIView {
             info.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
         }
         
-        
+
     }
     
     required init?(coder aDecoder: NSCoder) {

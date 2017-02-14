@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Delete realm database file
-        // try! FileManager.default.removeItem(at: Realm.Configuration().fileURL!)
+        try! FileManager.default.removeItem(at: Realm.Configuration().fileURL!)
         
         print("::::::: TIME :::::::")
         let timestamp = NSDate().timeIntervalSince1970
@@ -83,7 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white
         //window.rootViewController = UINavigationController(rootViewController: MainViewController())
-        window.rootViewController = MainNavigationController(rootViewController: SplashScreenViewController())
+        window.rootViewController = MainASTabBarController()
         window.makeKeyAndVisible()
         self.window = window
         
