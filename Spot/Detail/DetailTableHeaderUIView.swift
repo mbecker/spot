@@ -12,10 +12,20 @@ import AsyncDisplayKit
 
 class DetailTableHeaderUIView: UIView {
 
-    let _title: String
+    let _title : String
     let _urls: [URL]
     let _slideShow: ImageSlideshow
+    let _downloadButton = UIButton()
     let _viewController: ASViewController<ASDisplayNode>
+    @objc var delegate: ItemDetail? {
+        didSet {
+            self._downloadButton.frame = CGRect(x: self._slideShow.bounds.width - 12 - 48, y: self._slideShow.bounds.height - 12 - 48, width: 64, height: 64)
+            self._downloadButton.setImage(#imageLiteral(resourceName: "DownloadWhite98"), for: .normal)
+            self._downloadButton.setImage(#imageLiteral(resourceName: "DownloadFilledWhite98"), for: .highlighted)
+            self._downloadButton.addTarget(self._viewController, action: #selector(ItemDetail.saveImage), for: UIControlEvents.touchUpInside)
+            self._slideShow.addSubview(self._downloadButton)
+        }
+    }
     
     init(title: String, urls: [URL], viewController: ASViewController<ASDisplayNode>) {
         self._title = title
@@ -33,11 +43,6 @@ class DetailTableHeaderUIView: UIView {
             // addHeadline(text: "No images uploaded.")
         }
         backgroundColor = UIColor.white
-        
-        
-//        let borderLine = UIView(frame: CGRect(x: 20, y: self.bounds.height, width: self.bounds.width - 20, height: 1))
-//        borderLine.backgroundColor = UIColor(red:0.78, green:0.78, blue:0.80, alpha:1.00) // Lavender grey
-//        self.addSubview(borderLine)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -96,11 +101,6 @@ class DetailTableHeaderUIView: UIView {
 //        like.setImage(#imageLiteral(resourceName: "likefilledredlight98"), for: .highlighted)
 //        self._slideShow.addSubview(like)
         
-        let download = UIButton(frame: CGRect(x: self._slideShow.bounds.width - 12 - 48, y: self._slideShow.bounds.height - 12 - 48, width: 64, height: 64))
-        download.setImage(#imageLiteral(resourceName: "DownloadWhite98"), for: .normal)
-        download.setImage(#imageLiteral(resourceName: "DownloadFilledWhite98"), for: .highlighted)
-        // download.addTarget(self._viewController, action: #selector(self._viewController.saveImage), for: UIControlEvents.touchUpInside)
-        self._slideShow.addSubview(download)
         
     }
     

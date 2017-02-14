@@ -290,13 +290,13 @@ extension ParkItemsASViewController : ASTableDataSource {
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
         
         var url: URL? = nil
-        if let results = self._realmEncyclopediaItems[indexPath.row].image?.resized.filter("type = %@", "375x300"), let image: RealmImageOriginal = results.first, let imageURL: URL = URL(string: image.publicURL) {
+        if let results = self._realmEncyclopediaItems[indexPath.row].image?.resized.filter("type = %@", "375x300"), let image: RealmImage = results.first, let imageURL: URL = URL(string: image.publicURL) {
             // 1. resized 375x300
             url = imageURL
-        } else if let results = self._realmEncyclopediaItems[indexPath.row].image?.resized, let image: RealmImageOriginal = results.first, let imageURL: URL = URL(string: image.publicURL) {
+        } else if let results = self._realmEncyclopediaItems[indexPath.row].image?.resized, let image: RealmImage = results.first, let imageURL: URL = URL(string: image.publicURL) {
             // 2. any resized image (first image; better than public image)
             url = imageURL
-        } else if let image: String = self._realmEncyclopediaItems[indexPath.row].image?.original, let imageURL: URL = URL(string: image) {
+        } else if let image: String = self._realmEncyclopediaItems[indexPath.row].image?.original?.publicURL, let imageURL: URL = URL(string: image) {
             // 3. public image
             url = imageURL
         }
@@ -314,7 +314,7 @@ extension ParkItemsASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at: \(indexPath)")
-        let encyclopdeItemASViewController = EncyclopediaItemASViewController(realmEnyclopediaItemKey: self._realmEncyclopediaItems[indexPath.row].name, realmParkKey: self._realmPark.key)
+        let encyclopdeItemASViewController = EncyclopediaItemASViewController(realmEnyclopediaItemKey: self._realmEncyclopediaItems[indexPath.row].key, realmParkKey: self._realmPark.key)
         self.navigationController?.pushViewController(encyclopdeItemASViewController, animated: true)
     }
 }

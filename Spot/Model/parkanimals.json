@@ -5,29 +5,29 @@
             "updated": 1486719547,
             "images" : {
                 
-                "3" : {
-                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/Elephant1.jpg",
+                "1" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Elephant1.jpg",
                     "resized" : {
                         "375x300" : {
-                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/Elephant1_375x300.jpg"
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Elephant1_375x300.jpg"
                         }
                     }
                 },
                 
-                "4": {
-                    "public" : "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/African_elephant_%28Loxodonta_africana%29_reaching_up_1.jpg/1280px-African_elephant_%28Loxodonta_africana%29_reaching_up_1.jpg",
+                "2": {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Elephant2.jpg",
                     "resized" : {
                         "375x300" : {
-                            "public" : "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/African_elephant_%28Loxodonta_africana%29_reaching_up_1.jpg/375px-African_elephant_%28Loxodonta_africana%29_reaching_up_1.jpg"
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Elephant2_375x300.jpg"
                         }
                     }
                 },
                 
-                "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk.jpg",
+                "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Elephant0.jpg",
                 "resized" : {
                     
                     "375x300" : {
-                        "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/animals/African_elephant_warning_raised_trunk_375x300.jpg"
+                        "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Elephant0_375x300.jpg"
                     }
                 }
             },
@@ -43,18 +43,18 @@
             "images" : {
                 "3" : {
                     
-                    "public" : "https://upload.wikimedia.org/wikipedia/commons/c/c6/Okonjima_Lioness.jpg",
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Lion1.jpg",
                     "resized" : {
                         "375x300" : {
-                            "public" : "https://upload.wikimedia.org/wikipedia/commons/c/c6/Okonjima_Lioness.jpg"
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Lion1_375x300.jpg"
                         }
                     }
                 },
-                "public" : "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg",
+                "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Lion0.jpg",
                 "resized" : {
                     
                     "375x300" : {
-                        "public" : "https://upload.wikimedia.org/wikipedia/commons/7/73/Lion_waiting_in_Namibia.jpg"
+                        "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/bundle/animals/Lion0_375x300.jpg"
                     }
                     
                 }
@@ -65,6 +65,117 @@
                 "asdasd" : "addo",
                 "dsd33dasd" : "kruger"
             }
+        }
+    },
+    "attractions" : {
+        "childrenplace-736" : {
+            "updated": 1486719547,
+            "markdown" : "childrenplace Markdown",
+            "parks" : {
+                "asdasd" : "addo",
+                "dsd33dasd" : "kruger"
+            },
+            "images" : {
+                "0" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/home.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/home_375x300.jpg"
+                        }
+                    }
+                },
+                "1" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace_375x300.jpg"
+                        }
+                    }
+                },
+                "2" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/mainentry.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/mainentry_375x300.jpg"
+                        }
+                    }
+                },
+                "3" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/picnic.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/picnic_375x300.jpg"
+                        }
+                    }
+                },
+                "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
+                "resized" : {
+                    "375x300" : {
+                        "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fchildrenplace_375x300.jpg?generation=1484690596541000&alt=media"
+                    }
+                }
+            },
+            "location" : {
+                "latitude" : -23.888061,
+                "longitude" : 31.969589,
+                "parkName" : "Addo National Elephant Park"
+            },
+            "name" : "childrenplace"
+        },
+        "home-622" : {
+            "updated": 1486719547,
+            "markdown" : "home Markdown",
+            "parks" : {
+                "asdasd" : "addo",
+                "dsd33dasd" : "kruger"
+            },
+            "images" : {
+                "0" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/home.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/home_375x300.jpg"
+                        }
+                    }
+                },
+                "1" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/childrenplace_375x300.jpg"
+                        }
+                    }
+                },
+                "2" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/mainentry.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/mainentry_375x300.jpg"
+                        }
+                    }
+                },
+                "3" : {
+                    "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/picnic.jpg",
+                    "resized" : {
+                        "375x300" : {
+                            "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/picnic_375x300.jpg"
+                        }
+                    }
+                },
+                "public" : "https://storage.googleapis.com/safaridigitalapp.appspot.com/attractions/home.jpg",
+                "resized" : {
+                    "375x300" : {
+                        "gcloud" : "gs://safaridigitalapp.appspot.com/attractions/addo/home_375x300.jpg",
+                        "public" : "https://www.googleapis.com/download/storage/v1/b/safaridigitalapp.appspot.com/o/attractions%2Faddo%2Fhome_375x300.jpg?generation=1484690597319000&alt=media"
+                    }
+                }
+            },
+            "location" : {
+                "latitude" : -23.888061,
+                "longitude" : 31.969589,
+                "parkName" : "Addo National Elephant Park"
+            },
+            "name" : "home"
         }
     }
     

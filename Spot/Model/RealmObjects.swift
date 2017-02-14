@@ -275,45 +275,13 @@ class RealmImage: Object {
     
 }
 
-class RealmImageOriginal: Object {
-    dynamic var key = ""
-    dynamic var type = "" // "original", "375x300", etc.
-    dynamic var publicURL = ""
-    let original   = LinkingObjects(fromType: RealmImagesOriginal.self, property: "resized")
-    override static func indexedProperties() -> [String] {
-        return ["key", "type"]
-    }
-    
-    override static func primaryKey() -> String? {
-        return "key"
-    }
-    
-}
-
 class RealmImages: Object {
     dynamic var key = ""
     var original: RealmImage?
     let resized = List<RealmImage>()
+    let realmEncyclopediaItemImage   = LinkingObjects(fromType: RealmEncyclopediaItem.self, property: "image")
+    let realmEncyclopediaItemImages   = LinkingObjects(fromType: RealmEncyclopediaItem.self, property: "images")
     
-    let realmEncyclopediaItem   = LinkingObjects(fromType: RealmEncyclopediaItem.self, property: "images")
-    
-    
-    override static func indexedProperties() -> [String] {
-        return ["key"]
-    }
-    
-    override static func primaryKey() -> String? {
-        return "key"
-    }
-    
-}
-
-class RealmImagesOriginal: Object {
-    dynamic var key = ""
-    dynamic var original = ""
-    let resized = List<RealmImageOriginal>()
-    
-    let realmEncyclopediaItem   = LinkingObjects(fromType: RealmEncyclopediaItem.self, property: "image")
     
     override static func indexedProperties() -> [String] {
         return ["key"]
@@ -327,13 +295,15 @@ class RealmImagesOriginal: Object {
 
 class RealmEncyclopediaItem: Object {
     dynamic var updated: Double = 0
-    dynamic var key = ""
-    dynamic var type = ""
-    dynamic var name = ""
-    dynamic var markdown = ""
-    dynamic var image: RealmImagesOriginal?
-    let images  = List<RealmImages>()
-    let parks   = LinkingObjects(fromType: RealmPark.self, property: "encyclopediaItems")
+    dynamic var key     = ""
+    dynamic var type    = ""
+    dynamic var name    = ""
+    dynamic var latitude: Double    = 0.0
+    dynamic var longitude: Double   = 0.0
+    dynamic var markdown    = ""
+    dynamic var image       : RealmImages?
+    let images              = List<RealmImages>()
+    let parks               = LinkingObjects(fromType: RealmPark.self, property: "encyclopediaItems")
     
     override static func indexedProperties() -> [String] {
         return ["key"]

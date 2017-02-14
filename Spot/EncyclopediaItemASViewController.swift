@@ -96,13 +96,13 @@ class EncyclopediaItemASViewController: ASViewController<ASDisplayNode> {
          */
         var urls = [URL]()
         // 01. Original image
-        if let results = self._realmEnyclopediaItem.image?.resized.filter("type = %@", "375x300"), let image: RealmImageOriginal = results.first, let imageURL: URL = URL(string: image.publicURL) {
+        if let results = self._realmEnyclopediaItem.image?.resized.filter("type = %@", "375x300"), let image: RealmImage = results.first, let imageURL: URL = URL(string: image.publicURL) {
             // 1. resized 375x300
             urls.append(imageURL)
-        } else if let results = self._realmEnyclopediaItem.image?.resized, let image: RealmImageOriginal = results.first, let imageURL: URL = URL(string: image.publicURL) {
+        } else if let results = self._realmEnyclopediaItem.image?.resized, let image: RealmImage = results.first, let imageURL: URL = URL(string: image.publicURL) {
             // 2. any resized image (first image; better than public image)
             urls.append(imageURL)
-        } else if let image: String = self._realmEnyclopediaItem.image?.original, let imageURL: URL = URL(string: image) {
+        } else if let image: String = self._realmEnyclopediaItem.image?.original?.publicURL, let imageURL: URL = URL(string: image) {
             // 3. public image
             urls.append(imageURL)
         }

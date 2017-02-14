@@ -12,6 +12,10 @@ import Kingfisher
 import Mapbox
 import MapboxStatic
 
+@objc protocol ItemDetail {
+    func saveImage()
+}
+
 class DetailASViewController: ASViewController<ASDisplayNode> {
     
     private var shadowImageView: UIImageView?
@@ -129,30 +133,6 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         
     }
     
-    func saveImage() {
-        if let image: UIImage = self._tableHeader?.getImage() {
-            self._tableHeader?._slideShow.pauseTimerIfNeeded()
-            
-            let objectsToShare = [image]
-            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-            //New Excluded Activities Code
-            activityVC.excludedActivityTypes = [UIActivityType.openInIBooks, UIActivityType.addToReadingList, UIActivityType.postToFacebook, UIActivityType.postToFlickr, UIActivityType.postToVimeo, UIActivityType.postToWeibo, UIActivityType.postToTencentWeibo]
-            self.changeStatusbarColor(color: UIColor.clear)
-            self.present(activityVC, animated: true, completion: nil)
-            
-            activityVC.completionWithItemsHandler = { (activityType: UIActivityType?, completed: Bool, returnedItems: [Any]?, activityError: Error?) in
-                self.changeStatusbarColor(color: UIColor.white)
-                self._tableHeader?._slideShow.unpauseTimerIfNeeded()
-                
-                if let error = activityError {
-                    print(":: ERROR UIActivityViewController ::")
-                    print(error)
-                }
-            }
-            
-        }
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -197,6 +177,7 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         self.tableNode.view.allowsSelection = true
         if(urls.count > 0){
             self._tableHeader = DetailTableHeaderUIView.init(title: self._parkItem.name, urls: urls, viewController: self)
+            self._tableHeader!.delegate = self
             self.tableNode.view.tableHeaderView = self._tableHeader
         } else {
             self.tableNode.view.tableHeaderView = tableFooterView
@@ -255,6 +236,32 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         view.addConstraint(constraintCenterYTitle)
         
         return view
+    }
+}
+
+extension DetailASViewController: ItemDetail {
+    @objc func saveImage() {
+        if let image: UIImage = self._tableHeader?.getImage() {
+            self._tableHeader?._slideShow.pauseTimerIfNeeded()
+            
+            let objectsToShare = [image]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            //New Excluded Activities Code
+            activityVC.excludedActivityTypes = [UIActivityType.openInIBooks, UIActivityType.addToReadingList, UIActivityType.postToFacebook, UIActivityType.postToFlickr, UIActivityType.postToVimeo, UIActivityType.postToWeibo, UIActivityType.postToTencentWeibo]
+            self.changeStatusbarColor(color: UIColor.clear)
+            self.present(activityVC, animated: true, completion: nil)
+            
+            activityVC.completionWithItemsHandler = { (activityType: UIActivityType?, completed: Bool, returnedItems: [Any]?, activityError: Error?) in
+                self.changeStatusbarColor(color: UIColor.white)
+                self._tableHeader?._slideShow.unpauseTimerIfNeeded()
+                
+                if let error = activityError {
+                    print(":: ERROR UIActivityViewController ::")
+                    print(error)
+                }
+            }
+            
+        }
     }
 }
 

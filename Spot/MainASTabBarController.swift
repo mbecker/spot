@@ -885,6 +885,12 @@ extension MainASTabBarController {
                 realmEncyclopediaitem.type      = type
                 realmEncyclopediaitem.markdown  = markdown
                 
+                // Location: latitude && longitude
+                if let latitude: Double = item["location"]["latitude"].double, let longitude = item["location"]["longitude"].double {
+                    realmEncyclopediaitem.latitude  = latitude
+                    realmEncyclopediaitem.longitude = longitude
+                }
+                
                 /**
                  * RealmImages:
                  *  - key: String
@@ -901,20 +907,7 @@ extension MainASTabBarController {
                 // 1. Original images
                 
                 if let realmOriginalImageFromJSON: RealmImages = getRealmImages(imageJSON: images, itemKey: itemKey, suffix: "original", resizedKeyInJSON: resizedKeyinJSON) {
-                    
-                    if let realmImageOriginalPublicFromJSON: String = realmOriginalImageFromJSON.original?.publicURL {
-                        realmEncyclopediaitem.image     = RealmImagesOriginal()
-                        realmEncyclopediaitem.image!.original = realmImageOriginalPublicFromJSON
-                        realmEncyclopediaitem.image!.key      = realmOriginalImageFromJSON.key
-                        for resizedRealmImage in realmOriginalImageFromJSON.resized {
-                            let resizedRealmImageOriginal = RealmImageOriginal()
-                            resizedRealmImageOriginal.key = resizedRealmImage.key
-                            resizedRealmImageOriginal.publicURL = resizedRealmImage.publicURL
-                            resizedRealmImageOriginal.type = resizedRealmImage.type
-                            realmEncyclopediaitem.image?.resized.append(resizedRealmImageOriginal)
-                        }
-                    }
-                    
+                    realmEncyclopediaitem.image = realmOriginalImageFromJSON
                 }
                     
                 
@@ -958,8 +951,6 @@ extension MainASTabBarController {
                         }
                     }
                 }
-                
-                
                 
                 
                 
