@@ -194,19 +194,9 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         // Dispose of any resources that can be recreated.
     }
     
-    private func findShadowImage(under view: UIView) -> UIImageView? {
-        if view is UIImageView && view.bounds.size.height <= 1 {
-            return (view as! UIImageView)
-        }
-        
-        for subview in view.subviews {
-            if let imageView = findShadowImage(under: subview) {
-                return imageView
-            }
-        }
-        return nil
-    }
-    
+    /**
+     * Footer
+     */
     lazy var tableFooterView: UIView = {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 0.00000000000000000000000001))
         return view

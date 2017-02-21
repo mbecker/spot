@@ -19,6 +19,8 @@ class ParkDetailViewController: UIViewController {
     let _realmPark: RealmPark
     
     var loadingIndicatorView: NVActivityIndicatorView?
+    let scrollView = UIScrollView(frame: UIScreen.main.bounds)
+    var downView: DownView!
     
     init(realmPark: RealmPark){
         self._realmPark = realmPark
@@ -60,20 +62,7 @@ class ParkDetailViewController: UIViewController {
         
     }
     
-    private func findShadowImage(under view: UIView) -> UIImageView? {
-        if view is UIImageView && view.bounds.size.height <= 1 {
-            return (view as! UIImageView)
-        }
-        
-        for subview in view.subviews {
-            if let imageView = findShadowImage(under: subview) {
-                return imageView
-            }
-        }
-        return nil
-    }
-    let scrollView = UIScrollView(frame: UIScreen.main.bounds)
-    var downView: DownView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

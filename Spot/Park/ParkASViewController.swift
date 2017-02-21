@@ -43,8 +43,6 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     let _realmPark: RealmPark
     var delegate: SelectParkDelegate?
     
-    var showConfig = false
-    
     init(realmPark: RealmPark){
         self._realmPark = realmPark
         
@@ -130,8 +128,6 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
             statusBar.backgroundColor = UIColor.white
         }
         
-        // User Settings: Change view based on settings
-        self.showConfig = UserDefaults.standard.object(forKey: UserDefaultTypes.showConfig.rawValue) as? Bool ?? false
         self.tableNode.view.tableFooterView = self.tableFooterView()
     }
     

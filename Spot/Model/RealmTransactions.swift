@@ -208,6 +208,10 @@ class RealmTransactions {
                     return completion(nil, ParkError.ParkCountryError)
                 }
                 
+                guard let countryZoomLevel = parkCountry["zoomlevel"] as? Double else {
+                    return completion(nil, ParkError.ParkCountryError)
+                }
+                
                 let realmCountry = RealmCountry()
                 realmCountry.updated    = NSDate().timeIntervalSince1970
                 realmCountry.key        = snapshot.key
@@ -216,6 +220,7 @@ class RealmTransactions {
                 realmCountry.country    = countryCountry
                 realmCountry.latitude   = countryLatitude
                 realmCountry.longitude  = countryLongitude
+                realmCountry.zoomlevel  = countryZoomLevel
                 
                 if let countryDetail = parkCountry["detail"] as? String {
                     realmCountry.detail     = countryDetail

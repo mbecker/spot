@@ -13,11 +13,12 @@ import FacebookLogin
 import FacebookCore
 
 class UserSettingsASViewController: ASViewController<ASDisplayNode> {
-    //AsyncDisplayKit
+    
     var _tableNode: ASTableNode {
         return node as! ASTableNode
     }
     let _user: User
+    private var shadowImageView: UIImageView?
     
     init(user: User){
         self._user = user
@@ -38,28 +39,54 @@ class UserSettingsASViewController: ASViewController<ASDisplayNode> {
         UIApplication.shared.statusBarStyle = .default
         // Navigationbar
         self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.navigationBar.backgroundColor = UIColor.white
         
         // Hide navigationBar hairline at the bottom
-        self.navigationController!.navigationBar.topItem?.title = "Profile"
+        if shadowImageView == nil {
+            shadowImageView = findShadowImage(under: navigationController!.navigationBar)
+        }
+        shadowImageView?.isHidden = false
+        
+        // Navigationcontroller back image, tint color, text attributes
+        let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
+        self.navigationController?.navigationBar.backIndicatorImage = backImage
+        self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+        
         self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black,
+            NSBackgroundColorAttributeName: UIColor.clear,
+            NSKernAttributeName: 0.0,
+        ]
         
     }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // navigationctroller title
+        self.navigationController!.navigationBar.topItem?.title = "Profile"
         // View
         self.view.backgroundColor = UIColor.green
         // TableView
+        
+        self._tableNode.view.allowsSelection = true
         self._tableNode.view.showsVerticalScrollIndicator = true
         self._tableNode.view.backgroundColor = UIColor.white
         self._tableNode.view.separatorColor = UIColor.clear
         self._tableNode.view.tableFooterView = tableFooterView
-        self._tableNode.view.allowsSelection = true
+        if let text: String = self._user.name {
+            self._tableNode.view.tableHeaderView = tableHeaderView(text: text)
+        } else {
+            self._tableNode.view.tableHeaderView = tableHeaderView(text: "Please login")
+        }
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        shadowImageView?.isHidden = false
     }
     
     override func didReceiveMemoryWarning() {
@@ -67,14 +94,21 @@ class UserSettingsASViewController: ASViewController<ASDisplayNode> {
         // Dispose of any resources that can be recreated.
     }
     
+    /**
+     * Footer
+     */
     lazy var tableFooterView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 0.00000000000000000000000001))
-        return view
+        let logutView = LogoutNode()
+        logutView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 96)
+        return logutView
     }()
     
-    func sectionHeaderView(text: String) -> UIView {
+    /**
+     * Header
+     */
+    func tableHeaderView(text: String) -> UIView {
         
-        let view = UIView(frame: CGRect.zero)
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: 84))
         view.backgroundColor = UIColor.white
         
         let title = UILabel()
@@ -103,24 +137,46 @@ class UserSettingsASViewController: ASViewController<ASDisplayNode> {
 
 extension UserSettingsASViewController : ASTableDataSource {
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
-        return CONFIGITEMS.count + 1
+        
+        switch section {
+        case 0:
+            return 1
+        default:
+            return CONFIGITEMS.count + 2
+        }
+        
     }
     
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return 1
+        return 2
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if let text: String = self._user.name {
-            return sectionHeaderView(text: text)
-        } else {
-            return sectionHeaderView(text: "Please login")
-        }
+            let vw = UIView()
+            vw.backgroundColor = UIColor.white
+            vw.borderWidth = 0
+            vw.borderColor = UIColor.clear
+            
+            let title = UILabel()
+            title.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightSemibold)
+            title.translatesAutoresizingMaskIntoConstraints = false
+            
+            vw.addSubview(title)
+            title.leadingAnchor.constraint(equalTo: vw.leadingAnchor, constant: 20).isActive = true
+            title.centerYAnchor.constraint(equalTo: vw.centerYAnchor).isActive = true
+            
+            switch section {
+            case 0:
+                title.text = "Offline packs"
+            default:
+                title.text = "Settings"
+            }
+            
+            return vw
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        // From header text to immage horizinta slider
-        return 64
+        return 48
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -134,6 +190,13 @@ extension UserSettingsASViewController : ASTableDataSource {
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeForRowAt indexPath: IndexPath) -> ASCellNode {
+        
+        if indexPath.section == 0 {
+            let textNode = ASTextCellNode()
+            textNode.text = "Parks"
+            return UserSettingsASTextCellNode(title: "Parks")
+        }
+        
         let row = indexPath.row
         var node: ASCellNode
         node = ASCellNode { () -> UIView in
@@ -146,7 +209,9 @@ extension UserSettingsASViewController : ASTableDataSource {
             case 2:
                 return SettingsNode.init(user: self._user, configItem: CONFIGITEMS[2])
             case 3:
-                return LogoutNode()
+                return SettingsNode.init(user: self._user, configItem: CONFIGITEMS[2])
+            case 4:
+                return SettingsNode.init(user: self._user, configItem: CONFIGITEMS[2])
             default:
                 let view = UIView()
                 view.backgroundColor = UIColor.white
@@ -156,7 +221,7 @@ extension UserSettingsASViewController : ASTableDataSource {
         }
         node.selectionStyle = .none
         node.backgroundColor = UIColor.white
-        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 64)
+        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 48)
         return node
     }
 }
@@ -164,7 +229,7 @@ extension UserSettingsASViewController : ASTableDataSource {
 extension UserSettingsASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, constrainedSizeForRowAt indexPath: IndexPath) -> ASSizeRange {
-        return ASSizeRange.init(min: CGSize(width: 0, height: 20), max: CGSize(width: 0, height: 86 + UIScreen.main.bounds.width * 2 / 3))
+        return ASSizeRange.init(min: CGSize(width: 0, height: 48), max: CGSize(width: 0, height: 48))
     }
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
@@ -179,21 +244,23 @@ class LogoutNode: UIView {
     init() {
         super.init(frame: CGRect.zero)
         backgroundColor = UIColor.white
-        let height: CGFloat = 64
-        let view = UIView(frame: CGRect(x: 20, y: 0, width: UIScreen.main.bounds.width - 20 - 20, height: height))
-        addSubview(view)
         
-        let loginButton = LoginButton(frame: CGRect(x: 60, y: 20, width: view.bounds.width - 60 - 60, height: 64 - 20), readPermissions: [ .publicProfile, .email, .userFriends ])
-        loginButton.center = view.center
+        let loginButton = LoginButton(frame: CGRect.zero, readPermissions: [ .publicProfile, .email, .userFriends ])
+        loginButton.translatesAutoresizingMaskIntoConstraints = false
         loginButton.delegate = self
-        view.addSubview(loginButton)
+        self.addSubview(loginButton)
+        loginButton.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: -10).isActive = true
+        loginButton.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0).isActive = true
+        loginButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+        loginButton.widthAnchor.constraint(equalToConstant: 164).isActive = true
+        
         
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         let infoAttributedText = NSAttributedString(
             string: "We use Facebook as a login provider and would never post anything without your permission.",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 11, weight: UIFontWeightMedium),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 11, weight: UIFontWeightLight),
                 NSForegroundColorAttributeName: UIColor(red:0.56, green:0.56, blue:0.56, alpha:1.00),
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.0,
@@ -203,9 +270,9 @@ class LogoutNode: UIView {
         errorLabel.numberOfLines = 0
         errorLabel.attributedText = infoAttributedText
         errorLabel.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(errorLabel)
+        self.addSubview(errorLabel)
         errorLabel.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 8).isActive = true
-        errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        errorLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
         errorLabel.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 64).isActive = true
 
         
@@ -300,11 +367,11 @@ class SettingsNode: UIView {
         self._configItem = configItem
         super.init(frame: CGRect.zero)
         backgroundColor = UIColor.white
-        let height: CGFloat = 64
-        let view = UIView(frame: CGRect(x: 20, y: 0, width: UIScreen.main.bounds.width - 20 - 32 - 20, height: height))
-        addSubview(view)
+//        let height: CGFloat = 48
+//        let view = UIView(frame: CGRect(x: 20, y: 0, width: UIScreen.main.bounds.width - 20 - 32 - 20, height: height))
+//        addSubview(view)
         
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 19.09375))
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.bounds.width, height: 19.09375))
         label.attributedText = NSAttributedString(
             string: _configItem.rawValue,
             attributes: [
@@ -314,28 +381,32 @@ class SettingsNode: UIView {
                 NSKernAttributeName: 0.6,
                 ])
         
-        view.addSubview(label)
+        self.addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        label.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        label.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
         
         let switchControl = UISwitch()
-        switchControl.center = view.center
         switchControl.setOn(_user.getConfig(configItem: self._configItem), animated: false)
         // switchControl.tintColor = UIColor.blue
-        switchControl.onTintColor = UIColor.crimson
+        switchControl.onTintColor = UIColor.radicalRed
         // switchControl.thumbTintColor = UIColor.crimson
         // switchControl.backgroundColor = UIColor.white
         switchControl.addTarget(self, action: #selector(switchChanged(sender:)), for: UIControlEvents.valueChanged)
-        view.addSubview(switchControl)
+        self.addSubview(switchControl)
         
         switchControl.translatesAutoresizingMaskIntoConstraints = false
-        switchControl.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        switchControl.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        switchControl.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        switchControl.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
         
-        let borderBottomView = UIView(frame: CGRect(x: 20, y: height, width: UIScreen.main.bounds.width - 40, height: 1))
+        let borderBottomView = UIView(frame: CGRect.zero)
         borderBottomView.backgroundColor = UIColor(red:0.92, green:0.92, blue:0.92, alpha:1.00) // Lilly White
         addSubview(borderBottomView)
+        borderBottomView.translatesAutoresizingMaskIntoConstraints = false
+        borderBottomView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
+        borderBottomView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 20).isActive = true
+        borderBottomView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        borderBottomView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -1).isActive = true
         
     }
     
@@ -356,4 +427,103 @@ class SettingsNode: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+class UserSettingsASTextCellNode: ASTextCellNode {
+    
+    override var isSelected: Bool {
+        get {
+            return self.isSelected
+        }
+        set {
+            if newValue {
+                self.textAttributes = self._titleAttributesSelected
+                self.backgroundColor = UIColor.radicalRed
+                let modificationBlock = { (originalImage: UIImage) -> UIImage? in
+                    return ASImageNodeTintColorModificationBlock(self._imageColorSelected)(originalImage)
+                }
+                self.chevron.imageModificationBlock = modificationBlock
+                self.setNeedsDisplay()
+            } else {
+                self.backgroundColor = UIColor.clear
+                self.textAttributes = self._titleAttributes
+                self.chevron.imageModificationBlock = ASImageNodeTintColorModificationBlock(self._imageColor)
+                self.setNeedsDisplay()
+            }
+        }
+    }
+    
+    override func __setSelected(fromUIKit selected: Bool) {
+        if selected {
+            self.textAttributes = self._titleAttributesSelected
+            self.backgroundColor = UIColor.radicalRed
+            let modificationBlock = { (originalImage: UIImage) -> UIImage? in
+                return ASImageNodeTintColorModificationBlock(self._imageColorSelected)(originalImage)
+            }
+            self.chevron.imageModificationBlock = modificationBlock
+            self.setNeedsDisplay()
+        } else {
+            self.backgroundColor = UIColor.clear
+            self.textAttributes = self._titleAttributes
+            self.chevron.imageModificationBlock = ASImageNodeTintColorModificationBlock(self._imageColor)
+            self.setNeedsDisplay()
+        }
+    }
+    
+    override func __setHighlighted(fromUIKit highlighted: Bool) {
+        if highlighted {
+            self.textAttributes = self._titleAttributesSelected
+            self.backgroundColor = UIColor.radicalRed
+            let modificationBlock = { (originalImage: UIImage) -> UIImage? in
+                return ASImageNodeTintColorModificationBlock(self._imageColorSelected)(originalImage)
+            }
+            self.chevron.imageModificationBlock = modificationBlock
+            self.setNeedsDisplay()
+        } else {
+            self.textAttributes = self._titleAttributes
+            self.backgroundColor = UIColor.clear
+            self.chevron.imageModificationBlock = ASImageNodeTintColorModificationBlock(self._imageColor)
+            self.setNeedsDisplay()
+        }
+    }
+    
+    let _titleAttributes:[String: Any] = [
+        NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+        NSForegroundColorAttributeName: UIColor.scarlet,
+        NSBackgroundColorAttributeName: UIColor.clear,
+        NSKernAttributeName: 0.0,
+        ]
+    let _titleAttributesSelected:[String: Any] = [
+        NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+        NSForegroundColorAttributeName: UIColor.white,
+        NSBackgroundColorAttributeName: UIColor.clear,
+        NSKernAttributeName: 0.0,
+        ]
+    
+    let chevron = ASImageNode()
+    let _imageColor = UIColor(red:0.78, green:0.78, blue:0.80, alpha:0.60)
+    let _imageColorSelected = UIColor.white
+    
+    convenience init(title: String) {
+        self.init()
+        self.text = title
+        self.textAttributes = self._titleAttributes
+        let chevronImage = UIImage(named: "chevronright_32x17")?.withRenderingMode(.alwaysTemplate)
+        self.chevron.image = chevronImage
+    }
+    
+    override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0), child: self.textNode)
+    }
+    
+    override func didLoad() {
+        let modificationBlock = { (originalImage: UIImage) -> UIImage? in
+            return ASImageNodeTintColorModificationBlock(UIColor(red:0.78, green:0.78, blue:0.80, alpha:0.60))(originalImage)
+        }
+        self.chevron.imageModificationBlock = ASImageNodeTintColorModificationBlock(self._imageColor)
+        self.chevron.frame = CGRect(x: self.frame.width - 20 - 8.5, y: self.frame.height / 2 - 16 / 2, width: 8.5, height: 16)
+        self.addSubnode(self.chevron)
+    }
+    
+}
+
 

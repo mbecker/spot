@@ -243,6 +243,7 @@ class RealmCountry: Object {
     dynamic var code: String = ""
     dynamic var latitude: Double = 0.0
     dynamic var longitude: Double = 0.0
+    dynamic var zoomlevel: Double = 9.0
     var detail: String?
     let park = LinkingObjects(fromType: RealmPark.self, property: "country")
     

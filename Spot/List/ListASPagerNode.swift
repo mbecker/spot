@@ -8,8 +8,6 @@
 
 import UIKit
 import AsyncDisplayKit
-import Firebase
-import FirebaseDatabase
 import SMSegmentView
 
 protocol ChangePage {
@@ -19,17 +17,11 @@ protocol ChangePage {
 
 class ListASPagerNode: ASViewController<ASDisplayNode> {
     private var shadowImageView: UIImageView?
-    /**
-     * AsyncDisplayKit
-     */
+    
     var _pagerNode: ASPagerNode {
         return node as! ASPagerNode
     }
     
-    /**
-     * Firebase
-     */
-    let _ref:   FIRDatabaseReference
     let _realmPark:  RealmPark
     let _segmentView: SMSegmentView!
     var margin: CGFloat = 10.0
@@ -42,26 +34,25 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     
     
     init(realmPark: RealmPark){
-        self._ref           = FIRDatabase.database().reference()
         self._realmPark     = realmPark
         
         let appearance = SMSegmentAppearance()
         appearance.segmentOnSelectionColour = UIColor.white
         appearance.segmentOffSelectionColour = UIColor.white
-        appearance.titleOnSelectionFont = UIFont.systemFont(ofSize: 14.0)
-        appearance.titleOffSelectionFont = UIFont.systemFont(ofSize: 14.0)
+        appearance.titleOnSelectionFont = UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular) // UIFont(name: "Avenir-Heavy", size: 12)!,
+        appearance.titleOffSelectionFont = UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular) // UIFont(name: "Avenir-Heavy", size: 12)!,
         appearance.contentVerticalMargin = 10.0
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         appearance.tileOffSelectionAttributes = [
-            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightSemibold), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
             NSForegroundColorAttributeName: UIColor.black.withAlphaComponent(0.6),
             NSBackgroundColorAttributeName: UIColor.clear,
             NSKernAttributeName: 0.0,
             NSParagraphStyleAttributeName: paragraph,
         ]
         appearance.tileOnSelectionAttributes = [
-            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightSemibold), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightMedium), // UIFont(name: "Avenir-Heavy", size: 12)!,
             NSForegroundColorAttributeName: UIColor.black,
             NSBackgroundColorAttributeName: UIColor.clear,
             NSKernAttributeName: 0.0,
@@ -75,7 +66,7 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
             // ToDo: Show error page
         }
         for realmParkSection in self._realmPark.sections {
-            self._segmentView.addSegmentWithTitle(realmParkSection.name, onSelectionImage: nil, offSelectionImage: nil)
+            self._segmentView.addSegmentWithTitle(" \(realmParkSection.name) ", onSelectionImage: nil, offSelectionImage: nil)
         }
         
         
@@ -101,20 +92,6 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         }
     }
     
-    
-    private func findShadowImage(under view: UIView) -> UIImageView? {
-        if view is UIImageView && view.bounds.size.height <= 1 {
-            return (view as! UIImageView)
-        }
-        
-        for subview in view.subviews {
-            if let imageView = findShadowImage(under: subview) {
-                return imageView
-            }
-        }
-        return nil
-    }
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         shadowImageView?.isHidden = false
@@ -124,9 +101,6 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        //Status bar style and visibility
-        UIApplication.shared.isStatusBarHidden = false
-        UIApplication.shared.statusBarStyle = .default
         // Navigationbar
         self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.navigationBar.backgroundColor = UIColor.white
@@ -137,6 +111,21 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         }
         shadowImageView?.isHidden = false
         
+        // Navigationcontroller back image, tint color, text attributes
+        let backImage = UIImage(named: "back64")?.withRenderingMode(.alwaysTemplate)
+        self.navigationController?.navigationBar.backIndicatorImage = backImage
+        self.navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+        
+        self.navigationController?.navigationBar.tintColor = UIColor(red:0.12, green:0.12, blue:0.12, alpha:1.00)
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black,
+            NSBackgroundColorAttributeName: UIColor.clear,
+            NSKernAttributeName: 0.0,
+        ]
+        
+        
+        // pager
         if self.showSelectedPage {
             if !self.dataLoaded {
                 // User cliked on "See all"; this is the first time that's why the data must be loaded

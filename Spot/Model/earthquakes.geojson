@@ -1,0 +1,62 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+                 {
+                 "type": "Feature",
+                 "properties": {
+                 "marker-color": "#7e7e7e",
+                 "marker-size": "medium",
+                 "marker-symbol": "marker-stroked"
+                 },
+                 "geometry": {
+                 "type": "Point",
+                 "coordinates": [
+                                 25.789031982421875,
+                                 -33.57343808567734
+                                 ]
+                 }
+                 },
+                 {
+                 "type": "Feature",
+                 "properties": {
+                 "marker-color": "#7e7e7e",
+                 "marker-size": "medium",
+                 "marker-symbol": "circle"
+                 },
+                 "geometry": {
+                 "type": "Point",
+                 "coordinates": [
+                                 25.77667236328125,
+                                 -33.49674296343327
+                                 ]
+                 }
+                 },
+                 {
+                 "type": "Feature",
+                 "properties": {},
+                 "geometry": {
+                 "type": "Point",
+                 "coordinates": [
+                                 25.80276489257812,
+                                 -33.44175538910965
+                                 ]
+                 }
+                 },
+                 {
+                 "type": "Feature",
+                 "properties": {
+                 "marker-color": "#7e7e7e",
+                 "marker-size": "medium",
+                 "marker-symbol": "entrance",
+                 "name": "Eingang"
+                 },
+                 "geometry": {
+                 "type": "Point",
+                 "coordinates": [
+                                 25.806884765624996,
+                                 -33.61118827611696
+                                 ]
+                 }
+                 }
+                 ]
+}

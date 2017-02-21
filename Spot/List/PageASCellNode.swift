@@ -124,9 +124,6 @@ class PageASCellNode: ASCellNode {
      */
     override func didEnterPreloadState() {
         super.didEnterPreloadState()
-        if self._realmParkSection.name == "Community" {
-            print("didEnterPreloadState")
-        }
         
         /**
          * Firebase:

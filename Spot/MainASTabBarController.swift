@@ -79,6 +79,8 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
         
         if let rootParkNavgationController = self.parkController, let rootListNavigationController = self.listController {
             
+            UserDefaults.standard.set(self._realmPark?.key, forKey: UserDefaultTypes.parkpath.rawValue)
+            
             /*
              * Complete tabbar is (re-)initialzed to show new park with all it's data (park, list, map)
              * Pop to root
@@ -106,11 +108,13 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
             listNavigationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "ic_list_36pt"), tag: 0)
             listNavigationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
             // TabBar Item: Map
-            let mapNavigationController = UIViewController()
+            let map = MapViewController(realmPark: self._realmPark!)
+            // map.mapView.setCenter(CLLocationCoordinate2D(latitude: (self._realmPark?.country?.latitude)!, longitude: (self._realmPark?.country?.longitude)!), zoomLevel: 9, animated: false)
+            let mapNavigationController = UINavigationController(rootViewController: map)
             mapNavigationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "mapTabBar"), tag: 0)
             mapNavigationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
             // TabBar Item: User
-            let userNavigationController = ASNavigationController(rootViewController: UserSettingsASViewController(user: self._user))
+            let userNavigationController = UINavigationController(rootViewController: SettingsTableViewController(style: .grouped))
             userNavigationController.navigationBar.setBackgroundImage(UIImage.colorForNavBar(color: UIColor.white), for: UIBarMetrics.default)
             userNavigationController.tabBarItem = UITabBarItem(title: "", image: #imageLiteral(resourceName: "user"), tag: 0)
             userNavigationController.tabBarItem.imageInsets = UIEdgeInsets(top:6,left:0,bottom:-6,right:0)
@@ -709,6 +713,11 @@ extension MainASTabBarController {
                 return nil
             }
             
+            guard let countryZoomLevel = park["country"]["zoomlevel"].double else {
+                print("JSON country:longitude was not defined for park: \(id)")
+                return nil
+            }
+            
             /**
              * Sections
              */
@@ -746,6 +755,9 @@ extension MainASTabBarController {
                 realmPark.sections.append(realmSection)
             }
             
+            /**
+             * RealmCountry
+             */
             let realmCountry = RealmCountry()
             realmCountry.key        = key
             realmCountry.name       = countryName
@@ -754,6 +766,7 @@ extension MainASTabBarController {
             realmCountry.detail     = countryDetail
             realmCountry.latitude   = countryLatitude
             realmCountry.longitude  = countryLongitude
+            realmCountry.zoomlevel  = countryZoomLevel
             
             realmPark.key           = key
             realmPark.path          = "parkinfo/\(key)"

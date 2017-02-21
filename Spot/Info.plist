@@ -2,20 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Hola</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We want to show parks, attractions, animals and spots close to you!</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Save photos of your spots.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Take photos of your spots.</string>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>MGLMapboxAccessToken</key>
-	<string>pk.eyJ1IjoibWJlY2tlciIsImEiOiJjaWt2MDZxbDkwMDFzd3ptNXF3djVhYW42In0.9Lavn2fn_0tg-QVrPhwEzA</string>
-	<key>UIStatusBarHidden</key>
-	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -30,26 +16,6 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
-	<key>CFBundleVersion</key>
-	<string>1</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>remote-notification</string>
-	</array>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -59,6 +25,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>1</string>
 	<key>FacebookAppID</key>
 	<string>1723736274621750</string>
 	<key>FacebookDisplayName</key>
@@ -70,5 +38,35 @@
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
 	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>MGLMapboxAccessToken</key>
+	<string>pk.eyJ1IjoibWJlY2tlciIsImEiOiJjaWt2MDZxbDkwMDFzd3ptNXF3djVhYW42In0.9Lavn2fn_0tg-QVrPhwEzA</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Take photos of your spots.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Hola</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We want to show parks, attractions, animals and spots close to you!</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Save photos of your spots.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UIStatusBarHidden</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>

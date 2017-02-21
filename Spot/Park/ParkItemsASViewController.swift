@@ -251,22 +251,6 @@ class ParkItemsASViewController: ASViewController<ASDisplayNode> {
         // Dispose of any resources that can be recreated.
     }
     
-    /**
-     * Helpers
-     */
-    private func findShadowImage(under view: UIView) -> UIImageView? {
-        if view is UIImageView && view.bounds.size.height <= 1 {
-            return (view as! UIImageView)
-        }
-        
-        for subview in view.subviews {
-            if let imageView = findShadowImage(under: subview) {
-                return imageView
-            }
-        }
-        return nil
-    }
-    
     
 }
 
@@ -314,8 +298,11 @@ extension ParkItemsASViewController : ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         print("Row selected at: \(indexPath)")
+        let backItem = UIBarButtonItem()
+        backItem.title = (self._type.rawValue.firstCharacterUpperCase())
+        self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
         let encyclopdeItemASViewController = EncyclopediaItemASViewController(realmEnyclopediaItemKey: self._realmEncyclopediaItems[indexPath.row].key, realmParkKey: self._realmPark.key)
-        self.navigationController?.pushViewController(encyclopdeItemASViewController, animated: true)
+        self.navigationController?.pushViewController(encyclopdeItemASViewController, animated: false)
     }
 }
 

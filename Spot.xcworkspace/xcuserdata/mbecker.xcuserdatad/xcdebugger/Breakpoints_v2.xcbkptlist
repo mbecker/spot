@@ -9,14 +9,221 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Spot/Detail/DetailTableHeaderUIView.swift"
-            timestampString = "508801536.3344"
+            filePath = "Spot/MapViewController.swift"
+            timestampString = "509315365.55008"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
-            landmarkName = "DetailTableHeaderUIView"
-            landmarkType = "3">
+            startingLineNumber = "96"
+            endingLineNumber = "96"
+            landmarkName = "mapViewDidFinishLoadingMap(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Spot.MapViewController.(mapViewDidFinishLoadingMap (__ObjC.MGLMapView) -&gt; ()).(closure #1)"
+                  moduleName = "Spot"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mbecker/apps/safari/spot/Spot/MapViewController.swift"
+                  timestampString = "509314976.374844"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "95"
+                  endingLineNumber = "95"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Spot.MapViewController.(mapViewDidFinishLoadingMap (__ObjC.MGLMapView) -&gt; ()).(closure #1)"
+                  moduleName = "Spot"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mbecker/apps/safari/spot/Spot/MapViewController.swift"
+                  timestampString = "509314976.375902"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "95"
+                  endingLineNumber = "95"
+                  offsetFromSymbolStart = "484">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Spot.MapViewController.(mapViewDidFinishLoadingMap (__ObjC.MGLMapView) -&gt; ()).(closure #1).(closure #1)"
+                  moduleName = "Spot"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mbecker/apps/safari/spot/Spot/MapViewController.swift"
+                  timestampString = "509314976.376922"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "95"
+                  endingLineNumber = "95"
+                  offsetFromSymbolStart = "20">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spot/MapViewController.swift"
+            timestampString = "509315365.55008"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "mapViewDidFinishLoadingMap(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Spot.MapViewController.(mapViewDidFinishLoadingMap (__ObjC.MGLMapView) -&gt; ()).(closure #1)"
+                  moduleName = "Spot"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mbecker/apps/safari/spot/Spot/MapViewController.swift"
+                  timestampString = "509314976.379541"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "97"
+                  endingLineNumber = "97"
+                  offsetFromSymbolStart = "1268">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Spot.MapViewController.(mapViewDidFinishLoadingMap (__ObjC.MGLMapView) -&gt; ()).(closure #1)"
+                  moduleName = "Spot"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mbecker/apps/safari/spot/Spot/MapViewController.swift"
+                  timestampString = "509314976.380557"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "97"
+                  endingLineNumber = "97"
+                  offsetFromSymbolStart = "1308">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spot/MapViewController.swift"
+            timestampString = "509315365.55008"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
+            landmarkName = "mapViewDidFinishLoadingMap(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spot/MapViewController.swift"
+            timestampString = "509315365.55008"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
+            landmarkName = "mapViewDidFinishLoadingMap(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Spot.MapViewController.mapViewDidFinishLoadingMap (__ObjC.MGLMapView) -&gt; ()"
+                  moduleName = "Spot"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mbecker/apps/safari/spot/Spot/MapViewController.swift"
+                  timestampString = "509314976.384439"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "92"
+                  endingLineNumber = "92"
+                  offsetFromSymbolStart = "1708">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Spot.MapViewController.(mapViewDidFinishLoadingMap (__ObjC.MGLMapView) -&gt; ()).(closure #1)"
+                  moduleName = "Spot"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mbecker/apps/safari/spot/Spot/MapViewController.swift"
+                  timestampString = "509314976.38542"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "95"
+                  endingLineNumber = "95"
+                  offsetFromSymbolStart = "40">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Spot/MapViewController.swift"
+            timestampString = "509315365.55008"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "mapViewDidFinishLoadingMap(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Spot.MapViewController.mapViewDidFinishLoadingMap (__ObjC.MGLMapView) -&gt; ()"
+                  moduleName = "Spot"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mbecker/apps/safari/spot/Spot/MapViewController.swift"
+                  timestampString = "509314976.387701"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "992">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Spot.MapViewController.mapViewDidFinishLoadingMap (__ObjC.MGLMapView) -&gt; ()"
+                  moduleName = "Spot"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mbecker/apps/safari/spot/Spot/MapViewController.swift"
+                  timestampString = "509314976.389033"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "1236">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
