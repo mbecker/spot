@@ -463,7 +463,10 @@ extension FilterViewController: UITableViewDataSource {
                     self.tableView.reloadRows(at: [[indexPath.section, 0]], with: .none)
                     self.tableView.beginUpdates()
                     self.tableView.endUpdates()
-                    self.tableView.scrollToRow(at: [indexPath.section, 0], at: .top, animated: true)
+                    if self._dataShowAllTagsForSection[indexPath.section]! {
+                        self.tableView.scrollToRow(at: [indexPath.section, 0], at: .top, animated: true)
+                    }
+                    
                 }
             }
         default:
