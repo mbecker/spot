@@ -41,8 +41,10 @@ class FilterTableViewCell: UITableViewCell {
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         super.setHighlighted(highlighted, animated: animated)
         if highlighted {
+            self.countLabel.backgroundColor = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00) // Persian Green // Hack
             self.backgroundColor = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00)
         } else {
+            self.countLabel.backgroundColor = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00) // Persian Green // Hack
             self.backgroundColor = UIColor.white
         }
     }

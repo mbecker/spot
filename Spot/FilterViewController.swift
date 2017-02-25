@@ -558,7 +558,6 @@ extension FilterViewController: UITableViewDataSource {
                                 NSKernAttributeName: 0.8,
                                 NSParagraphStyleAttributeName: style
                                 ])
-                        let countLabelSize = cell.countLabel.attributedText!.size()
                         cell.countLabel.backgroundColor = self.colorSectionAccessoryLabel
                     }
                     
