@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Delete realm database file
-        try! FileManager.default.removeItem(at: Realm.Configuration().fileURL!)
+        // try! FileManager.default.removeItem(at: Realm.Configuration().fileURL!)
         
         // set badge count to 0
         UIApplication.shared.applicationIconBadgeNumber = 0

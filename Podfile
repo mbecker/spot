@@ -28,6 +28,8 @@ target 'Spot' do
   pod 'SwiftMessages'
   # pod 'EasyAnimation'
   pod 'SwiftyJSON'
+  pod 'DLRadioButton', '~> 1.4'
+  pod 'SwiftDate', '~> 4.0'
 
   target 'SpotTests' do
     inherit! :search_paths

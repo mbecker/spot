@@ -9,23 +9,25 @@ import Foundation
 import UIKit
 import Mapbox
 import FirebaseDatabase
+import SwiftDate
 
 class MapViewController: UIViewController {
     
     let _firebaseReference = FIRDatabase.database().reference()
-    var observerChildAdded      : FIRDatabaseHandle?
-    var observers = [FIRDatabaseHandle]()
+    var observers = [String: FIRDatabaseHandle]()
     
     var mapView: MGLMapView?
     var _realmPark: RealmPark?
+    
+    let _tags = Tags()
+    var weightedTags = [ItemType :[String: Int]]()
     
     var items2: [ParkItem2] = [ParkItem2]()
     var layerIdentifiers: Set<String> = Set<String>()
     
     override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: Bundle!) {
-        self.mapView = nil
+        self.mapView    = nil
         self._realmPark = nil
-        self.observerChildAdded = nil
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
@@ -45,7 +47,7 @@ class MapViewController: UIViewController {
         let styleURL = NSURL(string: "mapbox://styles/mbecker/ciw7woa4z00232pnqx8300j67")
         //mapView = MGLMapView(frame: view.bounds, styleURL: styleURL as URL?)
         mapView = MGLMapView(frame: view.bounds,
-                                 styleURL: MGLStyle.outdoorsStyleURL(withVersion: 9))
+                             styleURL: MGLStyle.outdoorsStyleURL(withVersion: 9))
         
         // Tint the ℹ️ button and the user location annotation.
         mapView!.tintColor = .darkGray
@@ -65,6 +67,27 @@ class MapViewController: UIViewController {
         
         view.addSubview(mapView!)
         
+        let filterButton = UIButton(type: .roundedRect)
+        let tabBarHeight: CGFloat = (self.tabBarController?.tabBar.bounds.height == nil) ? CGFloat(0) : self.tabBarController!.tabBar.bounds.height
+        filterButton.frame = CGRect(x: self.view.bounds.width / 2 - 82 / 2, y: self.view.bounds.height - tabBarHeight - 20 - 32, width: 82, height: 32)
+        filterButton.backgroundColor = UIColor.white
+        filterButton.setAttributedTitle(NSAttributedString(
+            string: "Filter",
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                NSForegroundColorAttributeName: UIColor.flatBlack,
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.6,
+                ]), for: .normal)
+        filterButton.cornerRadius = 16
+        // Shadow and Radius
+        filterButton.layer.shadowColor      = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+        filterButton.layer.shadowOffset     = CGSize(width: 0.0, height: 2.0)
+        filterButton.layer.shadowOpacity    = 0.6
+        filterButton.layer.shadowRadius     = 1.0
+        filterButton.layer.masksToBounds = false
+        filterButton.addTarget(self, action: #selector(showForm(sender:)), for: UIControlEvents.touchUpInside)
+        self.view.addSubview(filterButton)
         
     }
     
@@ -80,8 +103,7 @@ class MapViewController: UIViewController {
         // You can add custom UIImages to the map style.
         // These can be referenced by an MGLSymbolStyleLayer’s iconImage property.
         
-        for (key, value) in icons {
-            print(key.lowercased())
+        for (key, value) in self._tags.getTags() {
             let imageFromAsset = AssetManager.getImage(value)
             style.setImage(imageFromAsset, forName: key.lowercased())
         }
@@ -106,6 +128,31 @@ class MapViewController: UIViewController {
                                 "name": item2.name
                             ]
                             self.addItemsToMap(key: item2.key, tag: item2.tags[0].lowercased(), type: item2.type, features: feature)
+                            
+                            /**
+                             * Weighted Tags
+                             */
+                            for tag in item2.tags {
+                                let itemTypeForTag: ItemType!
+                                
+                                if let tagsForAnimals: [String] = self._tags.getKeys(type: .animals), tagsForAnimals.contains(tag) {
+                                    itemTypeForTag = .animals
+                                } else {
+                                    itemTypeForTag = .attractions
+                                }
+                                
+                                if let weightedTag: [String: Int] = self.weightedTags[itemTypeForTag] {
+                                    if let _: Int = weightedTag[tag] {
+                                        self.weightedTags[itemTypeForTag]![tag] = self.weightedTags[itemTypeForTag]![tag]! + 1
+                                    } else {
+                                        self.weightedTags[itemTypeForTag]![tag] = 1
+                                    }
+                                } else {
+                                    self.weightedTags[itemTypeForTag] = [String: Int]()
+                                    self.weightedTags[itemTypeForTag]![tag] = 1
+                                }
+                                
+                            }
                         }
                         
                     }
@@ -114,44 +161,48 @@ class MapViewController: UIViewController {
                     print(error.localizedDescription)
                 }
                 
-                self.observers.append(sectionObserver)
+                self.observers[section.key] = sectionObserver
                 
             }
         }
         
         
-//        if self.observerChildAdded == nil {
-//            // 1: .childAdded observer
-//            self.observerChildAdded = self._firebaseReference.child("park").child((self._realmPark?.key)!).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
-//                
-//                // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-//                if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: ItemType.animals), self.items2.first(where:{$0.key == item2.key}) == nil {
-//                    
-//                    if let latitude: Double = item2.latitude, let longitude: Double = item2.longitude {
-//                        self.items2.insert(item2, at: 0)
-//                        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-//                        let feature = MGLPointFeature()
-//                        feature.coordinate = coordinate
-//                        feature.title = item2.name
-//                        // A feature’s attributes can used by runtime styling for things like text labels.
-//                        feature.attributes = [
-//                            "name": item2.name
-//                        ]
-//                        self.addItemsToMap(key: item2.key, features: feature)
-//                    }
-//                    
-//                }
-//                
-//            }) { (error) in
-//                print(error.localizedDescription)
-//            }
-//        }
-
+        //        if self.observerChildAdded == nil {
+        //            // 1: .childAdded observer
+        //            self.observerChildAdded = self._firebaseReference.child("park").child((self._realmPark?.key)!).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
+        //
+        //                // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
+        //                if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: ItemType.animals), self.items2.first(where:{$0.key == item2.key}) == nil {
+        //
+        //                    if let latitude: Double = item2.latitude, let longitude: Double = item2.longitude {
+        //                        self.items2.insert(item2, at: 0)
+        //                        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        //                        let feature = MGLPointFeature()
+        //                        feature.coordinate = coordinate
+        //                        feature.title = item2.name
+        //                        // A feature’s attributes can used by runtime styling for things like text labels.
+        //                        feature.attributes = [
+        //                            "name": item2.name
+        //                        ]
+        //                        self.addItemsToMap(key: item2.key, features: feature)
+        //                    }
+        //
+        //                }
+        //
+        //            }) { (error) in
+        //                print(error.localizedDescription)
+        //            }
+        //        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIApplication.shared.statusBarStyle = UIStatusBarStyle.lightContent
+        //Status bar style and visibility
+        UIApplication.shared.isStatusBarHidden = false
+        UIApplication.shared.statusBarStyle = .default
+        
+        
         let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
         if statusBar.responds(to: #selector(setter: UIView.backgroundColor)) {
             statusBar.backgroundColor = UIColor.clear
@@ -188,16 +239,16 @@ class MapViewController: UIViewController {
         
         circles.circleColor     = MGLStyleValue(rawValue: typeColor)
         circles.circleOpacity   = MGLStyleValue(stops: [
-                                        2: MGLStyleValue(rawValue: 0.2),
-                                        4: MGLStyleValue(rawValue: 0.4),
-                                        8: MGLStyleValue(rawValue: 0.6),
-                                        9: MGLStyleValue(rawValue: 0.4),
-                                    ])
+            2: MGLStyleValue(rawValue: 0.2),
+            4: MGLStyleValue(rawValue: 0.4),
+            8: MGLStyleValue(rawValue: 0.6),
+            9: MGLStyleValue(rawValue: 0.4),
+            ])
         circles.circleRadius    = MGLStyleValue(stops: [
-                                        2: MGLStyleValue(rawValue: 10),
-                                        4: MGLStyleValue(rawValue: 10),
-                                        8: MGLStyleValue(rawValue: 10)
-                                    ])
+            2: MGLStyleValue(rawValue: 10),
+            4: MGLStyleValue(rawValue: 10),
+            8: MGLStyleValue(rawValue: 10)
+            ])
         
         // Use MGLSymbolStyleLayer for more complex styling of points including custom icons and text rendering.
         let iconIdentifiers = "\(key)-symbols"
@@ -215,27 +266,27 @@ class MapViewController: UIViewController {
             ])
         
         symbols.iconOpacity     = MGLStyleValue(stops: [
-                                        3.9: MGLStyleValue(rawValue: 0.4),
-                                        7.9: MGLStyleValue(rawValue: 1),
-                                        12: MGLStyleValue(rawValue: 1)
-                                    ])
+            3.9: MGLStyleValue(rawValue: 0.4),
+            7.9: MGLStyleValue(rawValue: 1),
+            12: MGLStyleValue(rawValue: 1)
+            ])
         symbols.iconHaloColor   = MGLStyleValue(rawValue: UIColor.white.withAlphaComponent(0.5))
         symbols.iconHaloWidth   = MGLStyleValue(rawValue: 1)
         
-//        symbols.text            = MGLStyleValue(rawValue: "{name}") // {name} references the "name" key in an MGLPointFeature’s attributes dictionary.
-//        symbols.textColor       = MGLStyleValue(rawValue: UIColor.flatBlack)
-//        symbols.textFontSize    = MGLStyleValue(stops: [
-//                                        10: MGLStyleValue(rawValue: 10),
-//                                        16: MGLStyleValue(rawValue: 16)
-//                                    ])
-//        symbols.textTranslation = MGLStyleValue(rawValue: NSValue(cgVector: CGVector(dx: 10, dy: 0)))
-//        symbols.textOpacity     = symbols.iconOpacity
-//        // symbols.textHaloColor   = symbols.iconHaloColor
-//        symbols.textHaloWidth   = symbols.iconHaloWidth
-//        symbols.textJustification = MGLStyleValue(rawValue: NSValue(mglTextJustification: .left))
-//        symbols.textAnchor      = MGLStyleValue(rawValue: NSValue(mglTextAnchor: .left))
+        //        symbols.text            = MGLStyleValue(rawValue: "{name}") // {name} references the "name" key in an MGLPointFeature’s attributes dictionary.
+        //        symbols.textColor       = MGLStyleValue(rawValue: UIColor.flatBlack)
+        //        symbols.textFontSize    = MGLStyleValue(stops: [
+        //                                        10: MGLStyleValue(rawValue: 10),
+        //                                        16: MGLStyleValue(rawValue: 16)
+        //                                    ])
+        //        symbols.textTranslation = MGLStyleValue(rawValue: NSValue(cgVector: CGVector(dx: 10, dy: 0)))
+        //        symbols.textOpacity     = symbols.iconOpacity
+        //        // symbols.textHaloColor   = symbols.iconHaloColor
+        //        symbols.textHaloWidth   = symbols.iconHaloWidth
+        //        symbols.textJustification = MGLStyleValue(rawValue: NSValue(mglTextJustification: .left))
+        //        symbols.textAnchor      = MGLStyleValue(rawValue: NSValue(mglTextAnchor: .left))
         
-//        style.addLayer(circles)
+        //        style.addLayer(circles)
         style.addLayer(symbols)
     }
     
@@ -286,33 +337,71 @@ class MapViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillAppear(animated)
         UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
-        self.observerChildAdded = nil
-        self.observers = [FIRDatabaseHandle]()
+        self.observers.removeAll()
         self._firebaseReference.removeAllObservers()
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
     
+    
+    // MARK: Helpers
+    func showForm(sender: UIButton){
+        
+        var sections = [RealmParkSection]()
+        if let realmPark: RealmPark = self._realmPark {
+            for section in realmPark.sections {
+                switch section.getType() {
+                case .community: // ToDo: Hack to show community at first position; mapviewcontroller should pass the correct sort of array
+                    sections.insert(section, at: 0)
+                    
+                default:
+                    sections.append(section)
+                }
+            }
+        }
+        let liveSection = RealmParkSection()
+        liveSection.key = "live"
+        liveSection.name = "Live"
+        liveSection.type = ItemType.live.rawValue
+        sections.insert(liveSection, at: 0)
+        
+        let filterViewController = FilterViewController()
+        // filterViewController._realmPark = self._realmPark!
+        filterViewController._realmParkSections = sections
+        filterViewController._weightedTags = self.weightedTags
+        filterViewController.delegate = self
+        let formNavigationController = UINavigationController(rootViewController: filterViewController)
+        self.navigationController?.present(formNavigationController, animated: true, completion: nil)
+    }
+    
+    
+}
+
+extension MapViewController: FilterProtocol {
+    
+    func saveFiler(tags: [String]?, sections: [RealmParkSection : Bool]?, lowerDate: DateInRegion?, upperDate: DateInRegion?) {
+        self.dismiss(animated: true, completion: nil)
+        print("--- MAP ---")
+        print(tags)
+        print("---")
+        if sections != nil {
+            for (section, enabled) in sections! {
+                print("\(section.name) - \(enabled)")
+            }
+        }
+        print("---")
+        print("\(lowerDate) - \(upperDate)")
+    }
 }
 
 extension MapViewController: MGLMapViewDelegate {
     
     func mapView(_ mapView: MGLMapView, imageFor annotation: MGLAnnotation) -> MGLAnnotationImage? {
-               return nil
+        return nil
     }
     
     

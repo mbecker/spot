@@ -259,13 +259,6 @@ class FormCountriesTableViewController: UITableViewController {
                 cell.textLabel!.text = _countriesClose[indexPath.row].name + ", " + _countriesClose[indexPath.row].country
             }
             
-            // Bottom border
-            let vw = UIView()
-            vw.frame = CGRect(x: 20, y: 47, width: UIScreen.main.bounds.width - 40, height: 1)
-            vw.backgroundColor = UIColor(red:0.85, green:0.85, blue:0.85, alpha:1.00).withAlphaComponent(0.6)
-            cell.addSubview(vw)
-            
-            
         default:
             
             if _countriesAll.count == 0 {
@@ -284,14 +277,16 @@ class FormCountriesTableViewController: UITableViewController {
                 } else {
                     cell.textLabel!.text = _countriesAll[indexPath.row].name + ", " + _countriesAll[indexPath.row].country
                 }
-                // Bottom border
-                let vw = UIView()
-                vw.frame = CGRect(x: 20, y: 47, width: UIScreen.main.bounds.width - 40, height: 1)
-                vw.backgroundColor = UIColor(red:0.85, green:0.85, blue:0.85, alpha:1.00).withAlphaComponent(0.6)
-                cell.addSubview(vw)
+                
             }
             
         }
+        // Bottom border
+        let vw = UIView()
+        vw.frame = CGRect(x: 20, y: 47, width: UIScreen.main.bounds.width - 40, height: 1)
+        vw.backgroundColor = UIColor(red:0.85, green:0.85, blue:0.85, alpha:1.00).withAlphaComponent(0.6)
+        cell.addSubview(vw)
+        
         cell.textLabel?.font = UIFont.systemFont(ofSize: 16, weight: UIFontWeightUltraLight)
         cell.textLabel?.textColor = UIColor(red:0.40, green:0.40, blue:0.40, alpha:1.00)
         return cell

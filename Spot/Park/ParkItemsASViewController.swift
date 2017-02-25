@@ -302,7 +302,7 @@ extension ParkItemsASViewController : ASTableDelegate {
         backItem.title = (self._type.rawValue.firstCharacterUpperCase())
         self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
         let encyclopdeItemASViewController = EncyclopediaItemASViewController(realmEnyclopediaItemKey: self._realmEncyclopediaItems[indexPath.row].key, realmParkKey: self._realmPark.key)
-        self.navigationController?.pushViewController(encyclopdeItemASViewController, animated: false)
+        self.navigationController?.pushViewController(encyclopdeItemASViewController, animated: true)
     }
 }
 

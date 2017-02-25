@@ -42,10 +42,11 @@ enum Databasepaths: String {
 
 enum ItemType: String {
     case community = "community"
-    case ad     = "ad"
-    case item   = "item"
-    case animals = "animals"
-    case attractions = "attractions"
+    case ad             = "ad"
+    case item           = "item"
+    case animals        = "animals"
+    case attractions    = "attractions"
+    case live           = "live"
 }
 
 class User {
@@ -533,53 +534,97 @@ let countries = [
     "zw" : "zw.png"
 ]
 
-let icons = [
-    "Alligator" :   "Alligator-66.png",
-    "Bat"       :   "Bat-66.png",
-    "Bear"      :   "Bear-66.png",
-    "Chicken"   :   "Chicken-66.png",
-    "Deer"      :   "Deer-66.png",
-    "Dinosaur"  :   "Dinosaur-66.png",
-    "Dolphin"   :   "Dolphin-66.png",
-    "Duck"      :   "Duck-66.png",
-    "Elephant"  :   "Elephant_64.png",
-    "Falcon"    :   "Falcon-66.png",
-    "Flamingo"  :   "Flamingo-66.png",
-    "Frog"      :   "Frog-66.png",
-    "Giraffe"   :   "Giraffe-66.png",
-    "Gorilla"   :   "Gorilla-66.png",
-    "Hummingbird" : "Hummingbird-66.png",
-    "Ladybird"  :   "Ladybird-66.png",
-    "Lion"      :   "Lion-66.png",
-    "Owl"       :   "Owl-66.png",
-    "Pelican"   :   "Pelican-66.png",
-    "Pinguin"   :   "Pinguin-66.png",
-    "Rhinoceros":   "Rhinoceros-66.png",
-    "Rabbit"    :   "Running Rabbit-66.png",
-    "Stork"     :   "Stork-66.png",
-    "Turtle"    :   "Turtle-66.png",
-    "Bird"      :   "Twitter-66.png",
-    "Tiger"     :   "Year of Tiger-66.png",
-    "Bufallo"   :   "buffalo.png",
-    "Butterfly" :   "butterfly-with-a-heart-on-frontal-wing-on-side-view.png",
-    "Goat"      :   "goat.png",
-    "Sheep"     :   "sheep.png",
-    "Snake"     :   "snake66.png",
-    "Unicorn"   :   "unicorn.png",
-    "Creek"     :   "Creek-66.png",
-    "Forest"    :   "Forest-66.png",
-    "Fountain"  :   "Fountain-66.png",
-    "ParkBench" :   "Park Bench-66.png",
-    "Parking"   :   "Parking-66.png",
-    "Treehouse" :   "Treehouse-66.png",
-    "Hiking"    :   "backpacker.png",
-    "Bicyle Parking"    :   "bicycle-parking.png",
-    "Campfire"  :   "bonfire.png",
-    "Church"    :   "church.png",
-    "Cutlery"   :   "cutlery.png",
-    "Panels"    :   "panel.png",
-    "Tent"      :   "tent.png"
-]
+struct Tags {
+    let animals = [
+        "Alligator" :   "Alligator-66.png",
+        "Bat"       :   "Bat-66.png",
+        "Bear"      :   "Bear-66.png",
+        "Chicken"   :   "Chicken-66.png",
+        "Deer"      :   "Deer-66.png",
+        "Dinosaur"  :   "Dinosaur-66.png",
+        "Dolphin"   :   "Dolphin-66.png",
+        "Duck"      :   "Duck-66.png",
+        "Elephant"  :   "Elephant_64.png",
+        "Falcon"    :   "Falcon-66.png",
+        "Flamingo"  :   "Flamingo-66.png",
+        "Frog"      :   "Frog-66.png",
+        "Giraffe"   :   "Giraffe-66.png",
+        "Gorilla"   :   "Gorilla-66.png",
+        "Hummingbird" : "Hummingbird-66.png",
+        "Ladybird"  :   "Ladybird-66.png",
+        "Lion"      :   "Lion-66.png",
+        "Owl"       :   "Owl-66.png",
+        "Pelican"   :   "Pelican-66.png",
+        "Pinguin"   :   "Pinguin-66.png",
+        "Rhinoceros":   "Rhinoceros-66.png",
+        "Rabbit"    :   "Running Rabbit-66.png",
+        "Stork"     :   "Stork-66.png",
+        "Turtle"    :   "Turtle-66.png",
+        "Bird"      :   "Twitter-66.png",
+        "Tiger"     :   "Year of Tiger-66.png",
+        "Bufallo"   :   "buffalo.png",
+        "Butterfly" :   "butterfly-with-a-heart-on-frontal-wing-on-side-view.png",
+        "Goat"      :   "goat.png",
+        "Sheep"     :   "sheep.png",
+        "Snake"     :   "snake66.png",
+        "Unicorn"   :   "unicorn.png",
+    ]
+    
+    let attractions = [
+        "Creek"     :   "Creek-66.png",
+        "Forest"    :   "Forest-66.png",
+        "Fountain"  :   "Fountain-66.png",
+        "ParkBench" :   "Park Bench-66.png",
+        "Parking"   :   "Parking-66.png",
+        "Treehouse" :   "Treehouse-66.png",
+        "Hiking"    :   "backpacker.png",
+        "Bicyle Parking"    :   "bicycle-parking.png",
+        "Campfire"  :   "bonfire.png",
+        "Church"    :   "church.png",
+        "Cutlery"   :   "cutlery.png",
+        "Panels"    :   "panel.png",
+        "Tent"      :   "tent.png"
+
+    ]
+    
+    var all: [String: String] = [String: String]()
+    
+    init(){
+        for (key, value) in animals {
+            all[key] = value
+        }
+        for (key, value) in attractions {
+            all[key] = value
+        }
+    }
+    
+    func getKeys(type: ItemType) -> [String]? {
+        switch type {
+        case .animals:
+            return Array(animals.keys).sorted { $0 < $1 }
+        case .attractions:
+            return Array(attractions.keys).sorted { $0 < $1 }
+        default:
+            return nil
+        }
+    }
+    
+    func getTags(type: ItemType) -> [String: String]? {
+        switch type {
+        case .animals:
+            return animals
+        case .attractions:
+            return attractions
+        default:
+            return nil
+        }
+    }
+    
+    func getTags() -> [String: String] {
+        return all
+    }
+}
+
 
 class FirebaseModel {
     

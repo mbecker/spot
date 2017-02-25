@@ -64,6 +64,8 @@ class RealmParkSection: Object {
             return ItemType.attractions
         } else if self.type == ItemType.community.rawValue {
             return ItemType.community
+        } else if self.type == ItemType.live.rawValue {
+            return ItemType.live
         }
         return ItemType.item
     }

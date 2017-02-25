@@ -45,14 +45,14 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
         let paragraph = NSMutableParagraphStyle()
         paragraph.alignment = .center
         appearance.tileOffSelectionAttributes = [
-            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
-            NSForegroundColorAttributeName: UIColor.black.withAlphaComponent(0.6),
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightLight), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSForegroundColorAttributeName: UIColor.black.withAlphaComponent(0.4),
             NSBackgroundColorAttributeName: UIColor.clear,
             NSKernAttributeName: 0.0,
             NSParagraphStyleAttributeName: paragraph,
         ]
         appearance.tileOnSelectionAttributes = [
-            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightMedium), // UIFont(name: "Avenir-Heavy", size: 12)!,
+            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightLight), // UIFont(name: "Avenir-Heavy", size: 12)!,
             NSForegroundColorAttributeName: UIColor.black,
             NSBackgroundColorAttributeName: UIColor.clear,
             NSKernAttributeName: 0.0,
@@ -85,7 +85,7 @@ class ListASPagerNode: ASViewController<ASDisplayNode> {
     func initSelectionBar(){
         if self._realmPark.sections.count > 1 {
             self.seletionBar.removeFromSuperview()
-            self.seletionBar.frame = CGRect(x: 0.0, y: self._segmentView.bounds.height - 2, width: self._segmentView.bounds.width/CGFloat(self._segmentView.numberOfSegments), height: 2.0)
+            self.seletionBar.frame = CGRect(x: 0.0, y: self._segmentView.bounds.height - 1, width: self._segmentView.bounds.width/CGFloat(self._segmentView.numberOfSegments), height: 1.0)
             self.seletionBar.backgroundColor = UIColor.black
             // self.placeSelectionBar(posX: 0)
             self._segmentView.addSubview(self.seletionBar)

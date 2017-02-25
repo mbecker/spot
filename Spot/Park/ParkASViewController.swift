@@ -147,14 +147,13 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
     
     func sectionHeaderView(text: String, sectionId: Int = 99, additionalSpacingToTop: Bool = false) -> UIView {
         let view = UIView(frame: CGRect.zero)
-        view.backgroundColor = UIColor.clear
         
         let title = UILabel()
         title.attributedText = NSAttributedString(
             string: text,
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 22, weight: UIFontWeightRegular),
-                NSForegroundColorAttributeName: UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
+                NSFontAttributeName: UIFont.systemFont(ofSize: 18, weight: UIFontWeightSemibold),
+                NSForegroundColorAttributeName: UIColor(red:0.25, green:0.25, blue:0.25, alpha:1.00), // Charcoal //UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.0,
                 ])
@@ -166,49 +165,22 @@ class ParkASViewController: ASViewController<ASDisplayNode> {
         view.addConstraint(constraintCenterYTitle)
         
         if sectionId != 99 {
-            let detailButton = UIButton()
-            detailButton.contentHorizontalAlignment = .right
-            detailButton.setAttributedTitle(NSAttributedString(
-                string: "See all",
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightLight),
-                    NSForegroundColorAttributeName: UIColor.scarlet,
-                    NSBackgroundColorAttributeName: UIColor.clear,
-                    NSKernAttributeName: 0.6,
-                    ])
-                , for: .normal)
-            detailButton.setAttributedTitle(NSAttributedString(
-                string: "See all",
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 13, weight: UIFontWeightLight),
-                    NSForegroundColorAttributeName: UIColor.scarlet.withAlphaComponent(0.6),
-                    NSBackgroundColorAttributeName: UIColor.clear,
-                    NSKernAttributeName: 0.6,
-                    ])
-                , for: .highlighted)
-            // detailButton.setImage(UIImage(named: "next48")?.withRenderingMode(.alwaysTemplate), for: .normal)
-            // detailButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
-            detailButton.tintColor = UIColor.scarlet
-            // detailButton.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-            // detailButton.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-            // detailButton.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
-            detailButton.tag = sectionId
-            detailButton.addTarget(self, action: #selector(self.pushDetail(sender:)), for: UIControlEvents.touchUpInside)
-            detailButton.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(detailButton)
-            detailButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
-            detailButton.centerYAnchor.constraint(equalTo: title.centerYAnchor).isActive = true
-            detailButton.heightAnchor.constraint(equalToConstant: 16.70703125 * 2).isActive = true
+            let moreButton = MoreButtonUIButton(title: "More")
+            moreButton.translatesAutoresizingMaskIntoConstraints = false
+            moreButton.tag = sectionId
+            moreButton.addTarget(self, action: #selector(self.pushDetail(sender:)), for: UIControlEvents.touchUpInside)
+            
+            view.addSubview(moreButton)
+            moreButton.centerYAnchor.constraint(equalTo: title.centerYAnchor, constant: 0).isActive = true
+            moreButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+            moreButton.heightAnchor.constraint(equalTo: title.heightAnchor, constant: 8).isActive = true
+            moreButton.widthAnchor.constraint(equalToConstant: 72).isActive = true
         }
         
         return view
     }
     
     @objc func pushDetail(sender: UIButton) {
-        // self.tabBarController?.selectedIndex = 1
-        print("-- TAGS --")
-        print(sender.tag)
-        
         if let vc = self.tabBarController!.viewControllers![1] as? ASNavigationController {
             vc.popToRootViewController(animated: false)
             if let view = vc.topViewController as? ChangePage {
@@ -245,7 +217,7 @@ extension ParkASViewController : ASTableDataSource {
             return UIView()
         case parkInformtion.count:
             // The header is between last row of "Encyclopedia" and the first section
-            return sectionHeaderView(text: self._realmPark.sections[section - parkInformtion.count].name, sectionId: section - parkInformtion.count, additionalSpacingToTop: true)
+            return sectionHeaderView(text: self._realmPark.sections[section - parkInformtion.count].name, sectionId: section - parkInformtion.count, additionalSpacingToTop: false)
         default:
             return sectionHeaderView(text: self._realmPark.sections[section - parkInformtion.count].name, sectionId: section - parkInformtion.count)
         }
@@ -335,24 +307,19 @@ extension ParkASViewController : ASTableDelegate {
     
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
-        print("Row selected at: \(indexPath)")
+        
+        let backItem = UIBarButtonItem()
+        backItem.title = "Park"
+        self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
+        
         switch indexPath.section {
         case 0:
-            let backItem = UIBarButtonItem()
-            backItem.title = ""
-            self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
             let parkDetailUIViewController = ParkDetailViewController(realmPark: self._realmPark)
             self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
         case 1:
-            let backItem = UIBarButtonItem()
-            backItem.title = ""
-            self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
             let parkDetailUIViewController = ParkItemsASViewController(realmPark: self._realmPark, type: .animals)
             self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
         case 2:
-            let backItem = UIBarButtonItem()
-            backItem.title = ""
-            self.navigationItem.backBarButtonItem = backItem // This will show in the next view controller being pushed
             let parkDetailUIViewController = ParkItemsASViewController(realmPark: self._realmPark, type: .attractions)
             self.navigationController?.pushViewController(parkDetailUIViewController, animated: true)
         default:

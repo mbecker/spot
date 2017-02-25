@@ -20,3 +20,20 @@ func findShadowImage(under view: UIView) -> UIImageView? {
     }
     return nil
 }
+
+extension UINavigationBar {
+    
+    func setBottomBorderColor(color: UIColor, height: CGFloat) {
+        
+        let bottomBorderView = UIView()
+        bottomBorderView.backgroundColor = color
+        bottomBorderView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(bottomBorderView)
+        
+        bottomBorderView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 0).isActive = true
+        bottomBorderView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: 0).isActive = true
+        bottomBorderView.centerYAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        bottomBorderView.heightAnchor.constraint(equalToConstant: height).isActive = true
+        
+    }
+}

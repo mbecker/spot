@@ -20,6 +20,9 @@
 		D10A1FCD1E476EE100E2B7AA /* RealmTransactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCC1E476EE100E2B7AA /* RealmTransactions.swift */; };
 		D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */; };
 		D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */; };
+		D113858F1E5CB84C00E46F4E /* FormFilterTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113858E1E5CB84C00E46F4E /* FormFilterTableViewController.swift */; };
+		D11385951E5CE7FE00E46F4E /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11385941E5CE7FE00E46F4E /* Collection.swift */; };
+		D113859B1E5EC69200E46F4E /* MoreButtonUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113859A1E5EC69200E46F4E /* MoreButtonUIButton.swift */; };
 		D11D05F11E54D21A00A6E907 /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11D05F01E54D21A00A6E907 /* NavigationBar.swift */; };
 		D11D05F31E54D3CB00A6E907 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11D05F21E54D3CB00A6E907 /* SettingsTableViewController.swift */; };
 		D12D64F51DEF44CA0096A847 /* ParkTableHeaderUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */; };
@@ -29,6 +32,16 @@
 		D13623E81E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D13623E71E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift */; };
 		D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */; };
 		D14D8D371DD25945009AC39B /* Park.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14D8D361DD25945009AC39B /* Park.swift */; };
+		D152E4991E606EFA00CE652B /* FilterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4981E606EFA00CE652B /* FilterTableViewCell.swift */; };
+		D152E49E1E607F6100CE652B /* SaveCancelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E49D1E607F6100CE652B /* SaveCancelButton.swift */; };
+		D152E4A01E60818700CE652B /* ExpandingCellTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E49F1E60818700CE652B /* ExpandingCellTransition.swift */; };
+		D152E4A41E6081EA00CE652B /* TagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A11E6081EA00CE652B /* TagCell.swift */; };
+		D152E4A51E6081EA00CE652B /* AnimalCellHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A21E6081EA00CE652B /* AnimalCellHeader.swift */; };
+		D152E4A61E6081EA00CE652B /* AnimalFormCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A31E6081EA00CE652B /* AnimalFormCollections.swift */; };
+		D152E4A81E60E90C00CE652B /* Float.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A71E60E90C00CE652B /* Float.swift */; };
+		D152E4AA1E60EF1900CE652B /* CheckboxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A91E60EF1900CE652B /* CheckboxCell.swift */; };
+		D152E4AC1E619D3000CE652B /* RangeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4AB1E619D3000CE652B /* RangeSlider.swift */; };
+		D152E4AF1E61D79500CE652B /* UILabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4AE1E61D79500CE652B /* UILabel.swift */; };
 		D15405A61DF8054200EAE971 /* ListASPagerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15405A51DF8054200EAE971 /* ListASPagerNode.swift */; };
 		D15405AA1DF8745600EAE971 /* MainASTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15405A91DF8745600EAE971 /* MainASTabBarController.swift */; };
 		D176F8161E3FD54000F34F41 /* CameraSpotViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D176F8151E3FD54000F34F41 /* CameraSpotViewController.swift */; };
@@ -79,6 +92,10 @@
 		D1E4E6461E0820F80084A229 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4E6451E0820F80084A229 /* Fonts.swift */; };
 		D1E4E64A1E0934E60084A229 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4E6491E0934E60084A229 /* UIColor.swift */; };
 		D1E4E64C1E0977D90084A229 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4E64B1E0977D90084A229 /* UIImage.swift */; };
+		D1FA19261E5F11D70000FB54 /* TagsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FA19251E5F11D70000FB54 /* TagsViewController.swift */; };
+		D1FA19301E5F19DE0000FB54 /* StyleKitName.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FA192F1E5F19DE0000FB54 /* StyleKitName.swift */; };
+		D1FA19321E5F1D260000FB54 /* TagsTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FA19311E5F1D260000FB54 /* TagsTableCell.swift */; };
+		D1FA19391E5F81450000FB54 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FA19381E5F81450000FB54 /* FilterViewController.swift */; };
 		D1FB21EA1DF1B1E50023F0F2 /* KingfisherSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FB21E91DF1B1E50023F0F2 /* KingfisherSource.swift */; };
 		D1FB21EE1DF2B95D0023F0F2 /* AssetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FB21ED1DF2B95D0023F0F2 /* AssetManager.swift */; };
 		D1FB21FF1DF2BA1F0023F0F2 /* backpacker.png in Resources */ = {isa = PBXBuildFile; fileRef = D1FB21F11DF2BA1F0023F0F2 /* backpacker.png */; };
@@ -378,6 +395,9 @@
 		D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkDetailViewController.swift; sourceTree = "<group>"; };
 		D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemASCellNode.swift; sourceTree = "<group>"; };
 		D10A7F7E1DD282C100741BF0 /* Spot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spot.entitlements; sourceTree = "<group>"; };
+		D113858E1E5CB84C00E46F4E /* FormFilterTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormFilterTableViewController.swift; sourceTree = "<group>"; };
+		D11385941E5CE7FE00E46F4E /* Collection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
+		D113859A1E5EC69200E46F4E /* MoreButtonUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreButtonUIButton.swift; sourceTree = "<group>"; };
 		D11D05F01E54D21A00A6E907 /* NavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
 		D11D05F21E54D3CB00A6E907 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
 		D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkTableHeaderUIView.swift; sourceTree = "<group>"; };
@@ -387,6 +407,16 @@
 		D13623E71E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncyclopediaItemASViewController.swift; sourceTree = "<group>"; };
 		D14D8D331DD2582B009AC39B /* ParkASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkASCellNode.swift; sourceTree = "<group>"; };
 		D14D8D361DD25945009AC39B /* Park.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Park.swift; sourceTree = "<group>"; };
+		D152E4981E606EFA00CE652B /* FilterTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterTableViewCell.swift; sourceTree = "<group>"; };
+		D152E49D1E607F6100CE652B /* SaveCancelButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaveCancelButton.swift; sourceTree = "<group>"; };
+		D152E49F1E60818700CE652B /* ExpandingCellTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingCellTransition.swift; sourceTree = "<group>"; };
+		D152E4A11E6081EA00CE652B /* TagCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagCell.swift; sourceTree = "<group>"; };
+		D152E4A21E6081EA00CE652B /* AnimalCellHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimalCellHeader.swift; sourceTree = "<group>"; };
+		D152E4A31E6081EA00CE652B /* AnimalFormCollections.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimalFormCollections.swift; sourceTree = "<group>"; };
+		D152E4A71E60E90C00CE652B /* Float.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Float.swift; sourceTree = "<group>"; };
+		D152E4A91E60EF1900CE652B /* CheckboxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxCell.swift; sourceTree = "<group>"; };
+		D152E4AB1E619D3000CE652B /* RangeSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangeSlider.swift; sourceTree = "<group>"; };
+		D152E4AE1E61D79500CE652B /* UILabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UILabel.swift; sourceTree = "<group>"; };
 		D15405A51DF8054200EAE971 /* ListASPagerNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListASPagerNode.swift; sourceTree = "<group>"; };
 		D15405A91DF8745600EAE971 /* MainASTabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainASTabBarController.swift; sourceTree = "<group>"; };
 		D176F8151E3FD54000F34F41 /* CameraSpotViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraSpotViewController.swift; sourceTree = "<group>"; };
@@ -442,6 +472,10 @@
 		D1E4E6451E0820F80084A229 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		D1E4E6491E0934E60084A229 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		D1E4E64B1E0977D90084A229 /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
+		D1FA19251E5F11D70000FB54 /* TagsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsViewController.swift; sourceTree = "<group>"; };
+		D1FA192F1E5F19DE0000FB54 /* StyleKitName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StyleKitName.swift; sourceTree = "<group>"; };
+		D1FA19311E5F1D260000FB54 /* TagsTableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagsTableCell.swift; sourceTree = "<group>"; };
+		D1FA19381E5F81450000FB54 /* FilterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
 		D1FB21E91DF1B1E50023F0F2 /* KingfisherSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherSource.swift; sourceTree = "<group>"; };
 		D1FB21ED1DF2B95D0023F0F2 /* AssetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetManager.swift; sourceTree = "<group>"; };
 		D1FB21F11DF2BA1F0023F0F2 /* backpacker.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backpacker.png; sourceTree = "<group>"; };
@@ -891,6 +925,9 @@
 		D1AFD8851DCF90A90082A6EF /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				D152E49F1E60818700CE652B /* ExpandingCellTransition.swift */,
+				D152E49D1E607F6100CE652B /* SaveCancelButton.swift */,
+				D1FA192F1E5F19DE0000FB54 /* StyleKitName.swift */,
 				D1E4E6451E0820F80084A229 /* Fonts.swift */,
 				D12D64FA1DEF70500096A847 /* UIButton.swift */,
 				D1E4E6491E0934E60084A229 /* UIColor.swift */,
@@ -898,6 +935,11 @@
 				D1D7813C1DD3AA390024B2A9 /* UIViewExtension.swift */,
 				D19DEAEF1E4CC427003F6E55 /* String.swift */,
 				D11D05F01E54D21A00A6E907 /* NavigationBar.swift */,
+				D11385941E5CE7FE00E46F4E /* Collection.swift */,
+				D113859A1E5EC69200E46F4E /* MoreButtonUIButton.swift */,
+				D152E4A71E60E90C00CE652B /* Float.swift */,
+				D152E4AB1E619D3000CE652B /* RangeSlider.swift */,
+				D152E4AE1E61D79500CE652B /* UILabel.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -918,6 +960,15 @@
 			isa = PBXGroup;
 			children = (
 				D1C83AB71E452EE0002030A5 /* FormCountriesTableViewController.swift */,
+				D113858E1E5CB84C00E46F4E /* FormFilterTableViewController.swift */,
+				D1FA19251E5F11D70000FB54 /* TagsViewController.swift */,
+				D1FA19311E5F1D260000FB54 /* TagsTableCell.swift */,
+				D1FA19381E5F81450000FB54 /* FilterViewController.swift */,
+				D152E4981E606EFA00CE652B /* FilterTableViewCell.swift */,
+				D152E4A11E6081EA00CE652B /* TagCell.swift */,
+				D152E4A21E6081EA00CE652B /* AnimalCellHeader.swift */,
+				D152E4A31E6081EA00CE652B /* AnimalFormCollections.swift */,
+				D152E4A91E60EF1900CE652B /* CheckboxCell.swift */,
 			);
 			name = Forms;
 			sourceTree = "<group>";
@@ -1806,30 +1857,39 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D152E4A81E60E90C00CE652B /* Float.swift in Sources */,
 				D18DB6C41E37E60A00D536BC /* UserSettingsASViewController.swift in Sources */,
 				D1E4E6461E0820F80084A229 /* Fonts.swift in Sources */,
 				D181BED91DF9DA0600112CEB /* ListItemASCellNode.swift in Sources */,
 				D1AFD8591DCF8B4C0082A6EF /* Spot.xcdatamodeld in Sources */,
 				D1C10B0C1E03EA70000CF2C7 /* CountryASCellNode.swift in Sources */,
+				D11385951E5CE7FE00E46F4E /* Collection.swift in Sources */,
+				D113859B1E5EC69200E46F4E /* MoreButtonUIButton.swift in Sources */,
 				D1E4E64A1E0934E60084A229 /* UIColor.swift in Sources */,
 				D1ADC92F1E5071EF00E1C4DB /* PageASCellNode.swift in Sources */,
+				D1FA19321E5F1D260000FB54 /* TagsTableCell.swift in Sources */,
 				D14D8D371DD25945009AC39B /* Park.swift in Sources */,
 				D13623E81E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift in Sources */,
 				D1C9438F1DFB19600008C38F /* LoginViewController.swift in Sources */,
+				D152E4A41E6081EA00CE652B /* TagCell.swift in Sources */,
 				D12D64FB1DEF70500096A847 /* UIButton.swift in Sources */,
+				D152E4AC1E619D3000CE652B /* RangeSlider.swift in Sources */,
 				D1A1F9AA1E551C7300D55933 /* MapViewController.swift in Sources */,
 				D1079F091DD2A754007CCE07 /* ActivityIndicatorNode.swift in Sources */,
 				D1C10B0E1E041B48000CF2C7 /* SeparatorASCellNode.swift in Sources */,
+				D152E4A01E60818700CE652B /* ExpandingCellTransition.swift in Sources */,
 				D12D64F71DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift in Sources */,
 				D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */,
 				D1FB21EA1DF1B1E50023F0F2 /* KingfisherSource.swift in Sources */,
 				D15405AA1DF8745600EAE971 /* MainASTabBarController.swift in Sources */,
 				D1AFD8841DCF8D6B0082A6EF /* ParkASViewController.swift in Sources */,
 				D1D7813D1DD3AA390024B2A9 /* UIViewExtension.swift in Sources */,
+				D152E4A51E6081EA00CE652B /* AnimalCellHeader.swift in Sources */,
 				D176F8161E3FD54000F34F41 /* CameraSpotViewController.swift in Sources */,
 				D11D05F31E54D3CB00A6E907 /* SettingsTableViewController.swift in Sources */,
 				D19DEAF21E4D23D7003F6E55 /* ParkItemsASViewController.swift in Sources */,
 				D10A1FCD1E476EE100E2B7AA /* RealmTransactions.swift in Sources */,
+				D1FA19301E5F19DE0000FB54 /* StyleKitName.swift in Sources */,
 				D12D64F51DEF44CA0096A847 /* ParkTableHeaderUIView.swift in Sources */,
 				D1A3E9621E314BB600E0C591 /* ImagePickerCropper.swift in Sources */,
 				D14D8D341DD2582B009AC39B /* ParkASCellNode.swift in Sources */,
@@ -1837,18 +1897,26 @@
 				D1E4E64C1E0977D90084A229 /* UIImage.swift in Sources */,
 				D10A1FAE1E45D22000E2B7AA /* RealmObjects.swift in Sources */,
 				D19DEAF01E4CC427003F6E55 /* String.swift in Sources */,
+				D152E4AF1E61D79500CE652B /* UILabel.swift in Sources */,
 				D1ADC92D1E4FA50100E1C4DB /* SplashScreenViewController.swift in Sources */,
 				D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */,
 				D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */,
 				D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */,
+				D152E4A61E6081EA00CE652B /* AnimalFormCollections.swift in Sources */,
 				D1ADC9321E50ADE300E1C4DB /* EncycnlopediaItemASCellNode.swift in Sources */,
 				D1C7579A1DF05D4E0029E882 /* DetailTableHeaderUIView.swift in Sources */,
 				D1FB21EE1DF2B95D0023F0F2 /* AssetManager.swift in Sources */,
+				D152E4AA1E60EF1900CE652B /* CheckboxCell.swift in Sources */,
+				D152E4991E606EFA00CE652B /* FilterTableViewCell.swift in Sources */,
 				D1079F061DD2A637007CCE07 /* KingfisherCache.swift in Sources */,
 				D11D05F11E54D21A00A6E907 /* NavigationBar.swift in Sources */,
+				D1FA19261E5F11D70000FB54 /* TagsViewController.swift in Sources */,
+				D1FA19391E5F81450000FB54 /* FilterViewController.swift in Sources */,
 				D1A1F9A71E550D6C00D55933 /* SettingsTableViewCell.swift in Sources */,
 				D15405A61DF8054200EAE971 /* ListASPagerNode.swift in Sources */,
 				D1C757981DF0580F0029E882 /* DetailASViewController.swift in Sources */,
+				D113858F1E5CB84C00E46F4E /* FormFilterTableViewController.swift in Sources */,
+				D152E49E1E607F6100CE652B /* SaveCancelButton.swift in Sources */,
 				D12D64FD1DEF72D60096A847 /* DB.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

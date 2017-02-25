@@ -91,8 +91,8 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
             /*
              * Initialize TabBar
              */
-            self.tabBar.unselectedItemTintColor = UIColor.flatBlack
-            self.tabBar.tintColor = UIColor.crimson
+            self.tabBar.unselectedItemTintColor = UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00) // Jumbo // UIColor(red:0.34, green:0.34, blue:0.34, alpha:1.00) // Dark grey
+            self.tabBar.tintColor               = UIColor.radicalRed
             /*
              * Initialize Tabitems for TabBar
              */

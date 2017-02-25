@@ -91,6 +91,7 @@ strip_invalid_archs() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AsyncDisplayKit/AsyncDisplayKit.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Bolts/Bolts.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/DLRadioButton/DLRadioButton.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Down/Down.framework"
   install_framework "$BUILT_PRODUCTS_DIR/FBSDKCoreKit/FBSDKCoreKit.framework"
   install_framework "$BUILT_PRODUCTS_DIR/FBSDKLoginKit/FBSDKLoginKit.framework"
@@ -108,6 +109,7 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/PINCache/PINCache.framework"
   install_framework "$BUILT_PRODUCTS_DIR/PINRemoteImage/PINRemoteImage.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SMSegmentView/SMSegmentView.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/SwiftDate/SwiftDate.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SwiftMessages/SwiftMessages.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SwiftyJSON/SwiftyJSON.framework"
   install_framework "$BUILT_PRODUCTS_DIR/TOCropViewController/TOCropViewController.framework"
@@ -115,6 +117,7 @@ fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/AsyncDisplayKit/AsyncDisplayKit.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Bolts/Bolts.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/DLRadioButton/DLRadioButton.framework"
   install_framework "$BUILT_PRODUCTS_DIR/Down/Down.framework"
   install_framework "$BUILT_PRODUCTS_DIR/FBSDKCoreKit/FBSDKCoreKit.framework"
   install_framework "$BUILT_PRODUCTS_DIR/FBSDKLoginKit/FBSDKLoginKit.framework"
@@ -132,6 +135,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "$BUILT_PRODUCTS_DIR/PINCache/PINCache.framework"
   install_framework "$BUILT_PRODUCTS_DIR/PINRemoteImage/PINRemoteImage.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SMSegmentView/SMSegmentView.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/SwiftDate/SwiftDate.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SwiftMessages/SwiftMessages.framework"
   install_framework "$BUILT_PRODUCTS_DIR/SwiftyJSON/SwiftyJSON.framework"
   install_framework "$BUILT_PRODUCTS_DIR/TOCropViewController/TOCropViewController.framework"

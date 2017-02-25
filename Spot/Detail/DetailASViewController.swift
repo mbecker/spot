@@ -375,9 +375,9 @@ class TagsNode: UIView {
                 count = count - 1
             }
             
-            
+            let tags = Tags()
             for i in 0...count {
-                if let iconName: String = icons[parkItem.tags[i]] {
+                if let iconName: String = tags.all[parkItem.tags[i]] {
                     // Load icon from asset
                     let tagImageView = UIImageView(frame: CGRect(x: CGFloat(100) + (CGFloat(i) * CGFloat(32)), y: 0, width: CGFloat(48), height: CGFloat(48)))
                     tagImageView.backgroundColor = UIColor.white

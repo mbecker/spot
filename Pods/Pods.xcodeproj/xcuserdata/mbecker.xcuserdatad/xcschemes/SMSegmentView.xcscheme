@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'AEB6B2B7F3F3EF168FF5D811B838566E'
+               BlueprintIdentifier = 'F2A1BFE5608BF36E1B9CC58B91A4367F'
                BlueprintName = 'SMSegmentView'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'SMSegmentView.framework'>
