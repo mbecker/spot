@@ -11,12 +11,14 @@ import UIKit
 class FilterTableViewCell: UITableViewCell {
     
     let accessoryLabel: UILabel?
+    let countLabel = UILabel()
 //    let accessoryLabelSize: CGSize?
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String!) {
         self.accessoryLabel = UILabel()
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.addSubview(self.accessoryLabel!)
+        self.addSubview(self.countLabel)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -49,6 +51,12 @@ class FilterTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         if let attributedTextSize: CGSize = self.textLabel?.attributedText?.size() {
             self.textLabel?.frame = CGRect(x: 28, y: self.bounds.height / 2 - attributedTextSize.height / 2, width: attributedTextSize.width, height: attributedTextSize.height)
+            if let countAttributedTextSize: CGSize = self.countLabel.attributedText?.size() {
+                let longerSize = countAttributedTextSize.width > countAttributedTextSize.height ? countAttributedTextSize.width : countAttributedTextSize.height // To have a rounded cirlce both width and heigt must be same
+                let padding = 12 + longerSize
+                self.countLabel.frame = CGRect(x: 28 + attributedTextSize.width + 8, y: self.textLabel!.center.y - padding * 0.75, width: padding, height: padding)
+                self.countLabel.cornerRadius = padding / 2
+            }
         }
 //        if self.accessoryLabelSize != nil {
 //            self.accessoryLabel?.frame = CGRect(x: self.bounds.width - self.accessoryLabelSize!.width - 28, y: self.bounds.height / 2 - self.accessoryLabelSize!.height / 2, width: self.accessoryLabelSize!.width, height: self.accessoryLabelSize!.height)

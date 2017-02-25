@@ -545,6 +545,22 @@ extension FilterViewController: UITableViewDataSource {
                             NSKernAttributeName: 0.8,
                             ])
                     
+                    // countLabel
+                    if let selectedTagsForSection: [String] = self._dataSelectedTagsForSection[indexPath.section] {
+                        let style = NSMutableParagraphStyle()
+                        style.alignment = NSTextAlignment.center
+                        cell.countLabel.attributedText = NSAttributedString(
+                            string: "\(selectedTagsForSection.count)",
+                            attributes: [
+                                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                                NSForegroundColorAttributeName: UIColor.white,
+                                NSBackgroundColorAttributeName: self.colorSectionAccessoryLabel,
+                                NSKernAttributeName: 0.8,
+                                NSParagraphStyleAttributeName: style
+                                ])
+                        let countLabelSize = cell.countLabel.attributedText!.size()
+                        cell.countLabel.backgroundColor = self.colorSectionAccessoryLabel
+                    }
                     
                     
                     var titleForShowOrHideAll = "Show All"
@@ -695,6 +711,7 @@ extension FilterViewController: UICollectionViewDelegate, UICollectionViewDataSo
             
             if !selectedTags.contains(tag) {
                 self._dataSelectedTagsForSection[collectionView.tag]!.append(tag)
+                self.tableView.reloadRows(at: [[collectionView.tag, 0]], with: .none)
             }
             
         }
@@ -705,6 +722,7 @@ extension FilterViewController: UICollectionViewDelegate, UICollectionViewDataSo
             
             if selectedTags.contains(tag) {
                 self._dataSelectedTagsForSection[collectionView.tag]! = self._dataSelectedTagsForSection[collectionView.tag]!.filter{$0 != tag}
+                self.tableView.reloadRows(at: [[collectionView.tag, 0]], with: .none)
             }
             
         }
