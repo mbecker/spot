@@ -16,14 +16,35 @@ class MapViewController: UIViewController {
     let _firebaseReference = FIRDatabase.database().reference()
     var observers = [String: FIRDatabaseHandle]()
     
-    var mapView: MGLMapView?
+    
     var _realmPark: RealmPark?
+    var _realmParkSections = [RealmParkSection]()
     
-    let _tags = Tags()
-    var weightedTags = [ItemType :[String: Int]]()
-    
-    var items2: [ParkItem2] = [ParkItem2]()
+    /**
+     * MapView
+     */
+    var mapView: MGLMapView?
     var layerIdentifiers: Set<String> = Set<String>()
+    var _sources = [MGLShapeSource]()
+    var _symbols = [MGLSymbolStyleLayer]()
+    var _annotations = [MGLAnnotation]()
+    
+    /**
+     * Tags
+     */
+    var filterLoaded    = false
+    var isLive          = true
+    let _tags           = Tags()
+    var weightedTags    = [ItemType : [String: Int]]()
+    var selectedTags    = [String]()
+    var _lowerDate      : DateInRegion?
+    var _upperDate      : DateInRegion?
+    
+    /**
+     * Data
+     */
+    var items2: [ParkItem2] = [ParkItem2]()
+    
     
     override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: Bundle!) {
         self.mapView    = nil
@@ -42,6 +63,16 @@ class MapViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        /**
+         * Data
+         */
+        if let realmPark: RealmPark = self._realmPark {
+            for section in realmPark.sections {
+                self._realmParkSections.append(section)
+            }
+        }
+        
         
         // Fill in the next line with your style URL from Mapbox Studio.
         let styleURL = NSURL(string: "mapbox://styles/mbecker/ciw7woa4z00232pnqx8300j67")
@@ -86,12 +117,51 @@ class MapViewController: UIViewController {
         filterButton.layer.shadowOpacity    = 0.6
         filterButton.layer.shadowRadius     = 1.0
         filterButton.layer.masksToBounds = false
-        filterButton.addTarget(self, action: #selector(showForm(sender:)), for: UIControlEvents.touchUpInside)
+        filterButton.addTarget(self, action: #selector(showFilter(sender:)), for: UIControlEvents.touchUpInside)
         self.view.addSubview(filterButton)
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        
+    }
+    
+    /**
+     * Weighted Tags
+     * tags: all tags which should added and weighted
+     * counTag: which value should be added to weight (the filter tells to save some tags which are not in the DB)
+     */
+    func saveWeightedTags(tags: [String], countTag: Int = 1){
+        
+        func addTagsToWeightedTags(itemType: ItemType, tag: String) {
+            if let weightedTag: [String: Int] = self.weightedTags[itemType] {
+                if let _: Int = weightedTag[tag] {
+                    self.weightedTags[itemType]![tag] = self.weightedTags[itemType]![tag]! + countTag
+                } else {
+                    self.weightedTags[itemType]![tag] = countTag
+                }
+            } else {
+                self.weightedTags[itemType] = [String: Int]()
+                self.weightedTags[itemType]![tag] = countTag
+            }
+        }
+        
+        //        func addTagsToSelectedTags(tag: String){
+        //            if !self.selectedTags.contains(tag) {
+        //                self.selectedTags.append(tag)
+        //            }
+        //        }
+        
+        // 1. Loop through all tags and look if tag is in App Tags
+        for tag in tags {
+            if let tagsForItemType: [String] = self._tags.getKeys(type: .animals), tagsForItemType.contains(tag) {
+                addTagsToWeightedTags(itemType: .animals, tag: tag)
+                //                addTagsToSelectedTags(tag: tag)
+            } else if let tagsForItemType: [String] = self._tags.getKeys(type: .attractions), tagsForItemType.contains(tag) {
+                addTagsToWeightedTags(itemType: .attractions, tag: tag)
+                //                addTagsToSelectedTags(tag: tag)
+            }
+        }
         
     }
     
@@ -108,92 +178,12 @@ class MapViewController: UIViewController {
             style.setImage(imageFromAsset, forName: key.lowercased())
         }
         
-        
-        if let parkKey: String = self._realmPark?.key, let sections = self._realmPark?.sections {
-            for section: RealmParkSection in sections {
-                print(section.path)
-                let sectionObserver = self._firebaseReference.child("park").child(parkKey).child(section.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
-                    
-                    // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-                    if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), self.items2.first(where:{$0.key == item2.key}) == nil {
-                        
-                        if let latitude: Double = item2.latitude, let longitude: Double = item2.longitude {
-                            self.items2.insert(item2, at: 0)
-                            let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                            let feature = MGLPointFeature()
-                            feature.coordinate = coordinate
-                            feature.title = item2.name
-                            // A feature’s attributes can used by runtime styling for things like text labels.
-                            feature.attributes = [
-                                "name": item2.name
-                            ]
-                            self.addItemsToMap(key: item2.key, tag: item2.tags[0].lowercased(), type: item2.type, features: feature)
-                            
-                            /**
-                             * Weighted Tags
-                             */
-                            for tag in item2.tags {
-                                let itemTypeForTag: ItemType!
-                                
-                                if let tagsForAnimals: [String] = self._tags.getKeys(type: .animals), tagsForAnimals.contains(tag) {
-                                    itemTypeForTag = .animals
-                                } else {
-                                    itemTypeForTag = .attractions
-                                }
-                                
-                                if let weightedTag: [String: Int] = self.weightedTags[itemTypeForTag] {
-                                    if let _: Int = weightedTag[tag] {
-                                        self.weightedTags[itemTypeForTag]![tag] = self.weightedTags[itemTypeForTag]![tag]! + 1
-                                    } else {
-                                        self.weightedTags[itemTypeForTag]![tag] = 1
-                                    }
-                                } else {
-                                    self.weightedTags[itemTypeForTag] = [String: Int]()
-                                    self.weightedTags[itemTypeForTag]![tag] = 1
-                                }
-                                
-                            }
-                        }
-                        
-                    }
-                    
-                }) { (error) in
-                    print(error.localizedDescription)
-                }
-                
-                self.observers[section.key] = sectionObserver
-                
+        // Add firebase observer
+        if let parkKey: String = self._realmPark?.key {
+            for section in self._realmParkSections {
+                self.createFirebaseObserver(parkKey: parkKey, section: section, checkTags: false)
             }
         }
-        
-        
-        //        if self.observerChildAdded == nil {
-        //            // 1: .childAdded observer
-        //            self.observerChildAdded = self._firebaseReference.child("park").child((self._realmPark?.key)!).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
-        //
-        //                // Create ParkItem2 object from firebase snapshot, check tah object is not yet in array
-        //                if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: ItemType.animals), self.items2.first(where:{$0.key == item2.key}) == nil {
-        //
-        //                    if let latitude: Double = item2.latitude, let longitude: Double = item2.longitude {
-        //                        self.items2.insert(item2, at: 0)
-        //                        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        //                        let feature = MGLPointFeature()
-        //                        feature.coordinate = coordinate
-        //                        feature.title = item2.name
-        //                        // A feature’s attributes can used by runtime styling for things like text labels.
-        //                        feature.attributes = [
-        //                            "name": item2.name
-        //                        ]
-        //                        self.addItemsToMap(key: item2.key, features: feature)
-        //                    }
-        //
-        //                }
-        //
-        //            }) { (error) in
-        //                print(error.localizedDescription)
-        //            }
-        //        }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -209,6 +199,81 @@ class MapViewController: UIViewController {
         }
         self.navigationController?.navigationBar.isHidden = true
         
+        // Add firebase observer
+        if self.filterLoaded, let parkKey: String = self._realmPark?.key {
+            for section in self._realmParkSections {
+                self.createFirebaseObserver(parkKey: parkKey, section: section, checkTags: true)
+            }
+        }
+        
+    }
+    
+    /**
+     * Firebase
+     */
+    func createFirebaseObserver(parkKey: String, section: RealmParkSection, checkTags: Bool) {
+        
+        func addItemToMap(item2: ParkItem2, tags: [String]){
+            if let latitude: Double = item2.latitude, let longitude: Double = item2.longitude {
+                self.items2.insert(item2, at: 0)
+                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                let feature = MGLPointFeature()
+                feature.coordinate = coordinate
+                feature.title = item2.name
+                // A feature’s attributes can used by runtime styling for things like text labels.
+                feature.attributes = [
+                    "name": item2.name
+                ]
+                self.addItemsToMap(key: item2.key, tag: item2.tags[0].lowercased(), type: item2.type, features: feature)
+                
+                self.saveWeightedTags(tags: tags)
+            }
+        }
+        
+        func checkTagsForItem(item2: ParkItem2){
+            for tag in item2.tags {
+                if self.selectedTags.contains(tag) {
+                    addItemToMap(item2: item2, tags: [tag])
+                    break
+                }
+            }
+        }
+        
+        let sectionObserver = self._firebaseReference.child("park").child(parkKey).child(section.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
+            
+            // Create ParkItem2 object from firebase snapshot, check that object is not yet in array
+            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
+                
+                // If the tags for each item should be checked (aka the filter is set) then chack that the item has at least one tag
+                // We do not check for items .community because we do dot want tot tag these pictures
+                if checkTags && section.getType() != .community {
+                    
+                    if let lowerDate: DateInRegion = self._lowerDate, let upperDate: DateInRegion = self._upperDate {
+                        if item2.timestamp != nil {
+                            if upperDate <= item2.timestamp! && item2.timestamp! <= lowerDate {
+                                checkTagsForItem(item2: item2)
+                                print(":: ITEM2 - Timestamp")
+                                print(item2.timestamp!)
+                            }
+                        }
+                    } else {
+                        // No timerange is set
+                        checkTagsForItem(item2: item2)
+                    }
+                    
+                    
+                } else {
+                    addItemToMap(item2: item2, tags: item2.tags)
+                }
+                
+            }
+            
+        }) { (error) in
+            print(error.localizedDescription)
+        }
+        
+        self.observers[section.key] = sectionObserver
+        
         
     }
     
@@ -219,6 +284,7 @@ class MapViewController: UIViewController {
         // Add the features to the map as a shape source.
         let source = MGLShapeSource(identifier: key, features: [features], options: nil)
         style.addSource(source)
+        self._sources.append(source)
         
         // Use MGLCircleStyleLayer to represent the points with simple circles.
         // In this case, we can use style functions to gradually change properties between zoom level 2 and 7: the circle opacity from 50% to 100% and the circle radius from 2pt to 3pt.
@@ -288,6 +354,7 @@ class MapViewController: UIViewController {
         
         //        style.addLayer(circles)
         style.addLayer(symbols)
+        self._symbols.append(symbols)
     }
     
     // MARK: - Feature interaction
@@ -348,31 +415,63 @@ class MapViewController: UIViewController {
     
     
     
-    // MARK: Helpers
-    func showForm(sender: UIButton){
+    /**
+     * Show Filter
+     */
+    func showFilter(sender: UIButton){
         
+        // Remove annotations from mapview
+        if self._annotations.count > 0 {
+            for annotation in self._annotations {
+                self.mapView?.deselectAnnotation(annotation, animated: true)
+                self.mapView?.removeAnnotation(annotation)
+            }
+            self._annotations = [MGLAnnotation]()
+        }
+        
+        
+        // Preperata data:section for Filter
         var sections = [RealmParkSection]()
+        var sectionsEnabled = [String: Bool]()
         if let realmPark: RealmPark = self._realmPark {
             for section in realmPark.sections {
                 switch section.getType() {
                 case .community: // ToDo: Hack to show community at first position; mapviewcontroller should pass the correct sort of array
                     sections.insert(section, at: 0)
-                    
+                    if self._realmParkSections.contains(section){
+                        sectionsEnabled[section.key] = true
+                    }
                 default:
                     sections.append(section)
                 }
             }
         }
-        let liveSection = RealmParkSection()
-        liveSection.key = "live"
-        liveSection.name = "Live"
-        liveSection.type = ItemType.live.rawValue
+        
+        // Remove not selected tags from weightedTags
+        if self.filterLoaded {
+            for (key, value) in self.weightedTags {
+                for (tag, _) in value {
+                    if !self.selectedTags.contains(tag) {
+                        self.weightedTags[key]?.removeValue(forKey: tag)
+                    }
+                }
+            }
+        }
+        
+        let liveSection     = RealmParkSection()
+        liveSection.key     = "live"
+        liveSection.name    = "Live"
+        liveSection.type    = ItemType.live.rawValue
         sections.insert(liveSection, at: 0)
+        sectionsEnabled[liveSection.key] = self.isLive
         
         let filterViewController = FilterViewController()
         // filterViewController._realmPark = self._realmPark!
         filterViewController._realmParkSections = sections
+        filterViewController._enabledSections = sectionsEnabled
         filterViewController._weightedTags = self.weightedTags
+        filterViewController._dataLowerDate = self._lowerDate
+        filterViewController._dataUpperDate = self._upperDate
         filterViewController.delegate = self
         let formNavigationController = UINavigationController(rootViewController: filterViewController)
         self.navigationController?.present(formNavigationController, animated: true, completion: nil)
@@ -384,7 +483,48 @@ class MapViewController: UIViewController {
 extension MapViewController: FilterProtocol {
     
     func saveFiler(tags: [String]?, sections: [RealmParkSection : Bool]?, lowerDate: DateInRegion?, upperDate: DateInRegion?) {
+        
+        // 1. Tags
+        self.selectedTags = tags != nil ? tags! : [String]()
+        self.weightedTags = [ItemType : [String: Int]]()
+        self.saveWeightedTags(tags: self.selectedTags, countTag: 0)
+        
+        // 2. Sections
+        self._realmParkSections = [RealmParkSection]()
+        if let sectionsEnabled: [RealmParkSection: Bool] = sections {
+            for (section, enabled) in sectionsEnabled {
+                if section.getType() == .live {
+                    self.isLive = enabled
+                } else if section.getType() != .live && enabled {
+                    self._realmParkSections.append(section)
+                }
+            }
+        }
+        
+        // 3. Date
+        self._lowerDate = lowerDate
+        self._upperDate = upperDate
+        
+        // 4. MapView: Remove all data from map
+        self.items2 = [ParkItem2]()
+        
+        if let style = self.mapView!.style {
+            for symbol in self._symbols {
+                style.removeLayer(symbol)
+            }
+            self._symbols = [MGLSymbolStyleLayer]()
+            
+            for source in self._sources {
+                style.removeSource(source)
+            }
+            self._sources = [MGLShapeSource]()
+        }
+        self.filterLoaded = true
+        
         self.dismiss(animated: true, completion: nil)
+        
+        
+        
         print("--- MAP ---")
         print(tags)
         print("---")
@@ -427,10 +567,14 @@ extension MapViewController: MGLMapViewDelegate {
     }
     
     func mapView(_ mapView: MGLMapView, didSelect annotation: MGLAnnotation) {
+        self._annotations.append(annotation)
         print("didSelect: \(annotation)")
     }
     
     func mapView(_ mapView: MGLMapView, didDeselect annotation: MGLAnnotation) {
+        if self._annotations.count > 0 {
+            self._annotations.remove(at: 0)
+        }
         mapView.removeAnnotations([annotation])
     }
     
@@ -439,133 +583,10 @@ extension MapViewController: MGLMapViewDelegate {
         print("Tapped the callout for: \(annotation)")
         
         // Hide the callout
+        if self._annotations.count > 0 {
+            self._annotations.remove(at: 0)
+        }
         mapView.deselectAnnotation(annotation, animated: true)
-    }
-}
-
-class CustomCalloutView: UIView, MGLCalloutView {
-    var representedObject: MGLAnnotation
-    
-    // Lazy initialization of optional vars for protocols causes segmentation fault: 11s in Swift 3.0. https://bugs.swift.org/browse/SR-1825
-    
-    var leftAccessoryView = UIView() /* unused */
-    var rightAccessoryView = UIView() /* unused */
-    
-    weak var delegate: MGLCalloutViewDelegate?
-    
-    let tipHeight: CGFloat = 10.0
-    let tipWidth: CGFloat = 20.0
-    
-    let mainBody: UIButton
-    
-    required init(representedObject: MGLAnnotation) {
-        self.representedObject = representedObject
-        self.mainBody = UIButton(type: .system)
-        
-        super.init(frame: .zero)
-        
-        backgroundColor = .clear
-        
-        mainBody.backgroundColor = .darkGray
-        mainBody.tintColor = .white
-        mainBody.contentEdgeInsets = UIEdgeInsets(top: 10.0, left: 10.0, bottom: 10.0, right: 10.0)
-        mainBody.layer.cornerRadius = 4.0
-        
-        addSubview(mainBody)
-    }
-    
-    required init?(coder decoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - MGLCalloutView API
-    func presentCallout(from rect: CGRect, in view: UIView, constrainedTo constrainedView: UIView, animated: Bool) {
-        if !representedObject.responds(to: Selector("title")) {
-            return
-        }
-        
-        view.addSubview(self)
-        
-        // Prepare title label
-        mainBody.setTitle(representedObject.title!, for: .normal)
-        mainBody.sizeToFit()
-        
-        if isCalloutTappable() {
-            // Handle taps and eventually try to send them to the delegate (usually the map view)
-            mainBody.addTarget(self, action: #selector(CustomCalloutView.calloutTapped), for: .touchUpInside)
-        } else {
-            // Disable tapping and highlighting
-            mainBody.isUserInteractionEnabled = false
-        }
-        
-        // Prepare our frame, adding extra space at the bottom for the tip
-        let frameWidth = mainBody.bounds.size.width
-        let frameHeight = mainBody.bounds.size.height + tipHeight
-        let frameOriginX = rect.origin.x + (rect.size.width/2.0) - (frameWidth/2.0)
-        let frameOriginY = rect.origin.y - frameHeight
-        frame = CGRect(x: frameOriginX, y: frameOriginY, width: frameWidth, height: frameHeight)
-        
-        if animated {
-            alpha = 0
-            
-            UIView.animate(withDuration: 0.2) { [weak self] in
-                self?.alpha = 1
-            }
-        }
-    }
-    
-    func dismissCallout(animated: Bool) {
-        if (superview != nil) {
-            if animated {
-                UIView.animate(withDuration: 0.2, animations: { [weak self] in
-                    self?.alpha = 0
-                    }, completion: { [weak self] _ in
-                        self?.removeFromSuperview()
-                })
-            } else {
-                removeFromSuperview()
-            }
-        }
-    }
-    
-    // MARK: - Callout interaction handlers
-    
-    func isCalloutTappable() -> Bool {
-        if let delegate = delegate {
-            if delegate.responds(to: #selector(MGLCalloutViewDelegate.calloutViewShouldHighlight)) {
-                return delegate.calloutViewShouldHighlight!(self)
-            }
-        }
-        return false
-    }
-    
-    func calloutTapped() {
-        if isCalloutTappable() && delegate!.responds(to: #selector(MGLCalloutViewDelegate.calloutViewTapped)) {
-            delegate!.calloutViewTapped!(self)
-        }
-    }
-    
-    // MARK: - Custom view styling
-    
-    override func draw(_ rect: CGRect) {
-        // Draw the pointed tip at the bottom
-        let fillColor : UIColor = .darkGray
-        
-        let tipLeft = rect.origin.x + (rect.size.width / 2.0) - (tipWidth / 2.0)
-        let tipBottom = CGPoint(x: rect.origin.x + (rect.size.width / 2.0), y: rect.origin.y + rect.size.height)
-        let heightWithoutTip = rect.size.height - tipHeight
-        
-        let currentContext = UIGraphicsGetCurrentContext()!
-        
-        let tipPath = CGMutablePath()
-        tipPath.move(to: CGPoint(x: tipLeft, y: heightWithoutTip))
-        tipPath.addLine(to: CGPoint(x: tipBottom.x, y: tipBottom.y))
-        tipPath.addLine(to: CGPoint(x: tipLeft + tipWidth, y: heightWithoutTip))
-        tipPath.closeSubpath()
-        
-        fillColor.setFill()
-        currentContext.addPath(tipPath)
-        currentContext.fillPath()
     }
 }
 

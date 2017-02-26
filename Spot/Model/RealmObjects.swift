@@ -69,6 +69,8 @@ class RealmParkSection: Object {
         }
         return ItemType.item
     }
+    
+    
 }
 
 class ParkSection {

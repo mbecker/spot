@@ -202,8 +202,8 @@ struct Images {
         self.resized[key] = image
     }
 }
-
-class ParkItem2 {
+import SwiftDate
+class ParkItem2 : Equatable {
     
 //    let ref         :   FIRDatabaseReference
 //    let storage     :   FIRStorage
@@ -218,11 +218,18 @@ class ParkItem2 {
     let longitude   :   Double?
     var tags        =   [String]()
     var spottedBy   =   [[String: String]]()
+    var timestamp   :   DateInRegion?
     
     /**
      * Park information
      */
-    
+    static func ==(lhs: ParkItem2, rhs: ParkItem2) -> Bool {
+        if lhs.key == rhs.key {
+            return true
+        } else {
+            return false
+        }
+    }
     
     init?(key: String, snapshotValue: [String: AnyObject], park: RealmPark, type: ItemType) {
         
@@ -238,6 +245,14 @@ class ParkItem2 {
         }
         
         
+        /**
+         * Timestamp
+         */
+        if let timestampFromSnapshot: Double = snapshotValue["timestamp"] as? Double {
+            let date = Date(timeIntervalSince1970: timestampFromSnapshot / 1000)
+            let dateInRegion = DateInRegion(absoluteDate: date)
+            self.timestamp = dateInRegion
+        }
         
         /**
          * Tags

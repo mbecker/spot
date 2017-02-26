@@ -27,8 +27,11 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     // Data public
     // var _realmPark: RealmPark?
     var _realmParkSections: [RealmParkSection]?
+    var _enabledSections: [String: Bool]?
     var _weightedTags: [ItemType :[String: Int]]?
     var delegate: FilterProtocol?
+    var _dataLowerDate: DateInRegion?
+    var _dataUpperDate: DateInRegion?
     
     // Data private
     fileprivate let _dataAllTags                = Tags()
@@ -39,8 +42,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     fileprivate var _dataRangeSliders           = [Int: RangeSlider]()
     fileprivate var _dataTimeTextForSection     = [Int : String]()
     fileprivate var _dataDateNow                = DateInRegion()
-    fileprivate var _dataLowerDate: DateInRegion?
-    fileprivate var _dataUpperDate: DateInRegion?
+    
     
     // Tableview
     let tableView   = UITableView(frame: CGRect.zero, style: .grouped)
@@ -98,6 +100,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         var upperDate: DateInRegion!
         var lowerValue: String = "todays"
         var upperValue: String = ""
+        
         switch rangeSlider.lowerValue {
         case 0.0..<0.1:
             lowerValue = "today"
@@ -110,7 +113,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
             lowerDate = self._dataDateNow - 2.days
         case 0.3..<0.4:
             lowerValue = "3 days ago"
-            lowerDate = self._dataDateNow - 4.days
+            lowerDate = self._dataDateNow - 3.days
         case 0.4..<0.5:
             lowerValue = "4 days ago"
             lowerDate = self._dataDateNow - 4.days
@@ -212,6 +215,113 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         self.delegate?.saveFiler(tags: tags, sections: sections, lowerDate: self._dataLowerDate, upperDate: self._dataUpperDate)
     }
     
+    func checkDateInterval(lowerDate: DateInRegion, upperDate: DateInRegion) -> (lowerSlider: Double, lowerString: String, lowerDate: DateInRegion, upperSlider: Double, upperString: String, upperDate: DateInRegion) {
+        
+        let now = DateInRegion() // 2016-11-30 10:37:23 +0000
+        let sepreat = (now - lowerDate).in([.day,.hour,.minute]) // -3.days (3 days in the past)
+        
+        print(sepreat)
+        var lowerDateNew: DateInRegion!
+        var lowerString: String = "today"
+        var lowerSlider: Double!
+        
+        switch sepreat[.day]! {
+        case 0..<1:
+            lowerSlider = 0.00
+            lowerString = "today"
+            lowerDateNew = self._dataDateNow
+        case 1..<2:
+            lowerSlider = 0.11
+            lowerString = "yesterday"
+            lowerDateNew = self._dataDateNow - 1.days
+        case 2..<3:
+            lowerSlider = 0.21
+            lowerString = "2 days ago"
+            lowerDateNew = self._dataDateNow - 2.days
+        case 3..<4:
+            lowerSlider = 0.31
+            lowerString = "3 days ago"
+            lowerDateNew = self._dataDateNow - 3.days
+        case 4..<5:
+            lowerSlider = 0.41
+            lowerString = "4 days ago"
+            lowerDateNew = self._dataDateNow - 4.days
+        case 5..<6:
+            lowerSlider = 0.51
+            lowerString = "5 days ago"
+            lowerDateNew = self._dataDateNow - 5.days
+        case 6..<7:
+            lowerSlider = 0.61
+            lowerString = "6 days ago"
+            lowerDateNew = self._dataDateNow - 6.days
+        case 7..<8:
+            lowerSlider = 0.71
+            lowerString = "1 week ago"
+            lowerDateNew = self._dataDateNow - 1.weeks
+        case 8..<(7*2)+1:
+            lowerSlider = 0.81
+            lowerString = "2 weeks ago"
+            lowerDateNew = self._dataDateNow - 2.weeks
+        default:
+            lowerSlider = 0.91
+            lowerString = "1 month"
+            lowerDateNew = self._dataDateNow - 1.months
+        }
+        
+        
+        
+        let sepreatUpper = (now - upperDate).in([.day,.hour,.minute]) // -3.days (3 days in the past)
+        var upperDateNew: DateInRegion!
+        var upperString: String = "yesterday"
+        var upperSlider: Double!
+        print(sepreatUpper)
+        
+        switch sepreatUpper[.day]! - 1 {
+        case 0..<1:
+            upperSlider = 0.09
+            upperString = "yesterday"
+            upperDateNew = self._dataDateNow - 1.days
+        case 1..<2:
+            upperSlider = 0.19
+            upperString = "2 days ago"
+            upperDateNew = self._dataDateNow - 2.days
+        case 2..<3:
+            upperSlider = 0.29
+            upperString = "3 days ago"
+            upperDateNew = self._dataDateNow - 3.days
+        case 3..<4:
+            upperSlider = 0.39
+            upperString = "4 days ago"
+            upperDateNew = self._dataDateNow - 4.days
+        case 4..<5:
+            upperSlider = 0.49
+            upperString = "5 days ago"
+            upperDateNew = self._dataDateNow - 5.days
+        case 5..<6:
+            upperSlider = 0.59
+            upperString = "6 days ago"
+            upperDateNew = self._dataDateNow - 6.days
+        case 6..<(7*2)-1:
+            upperSlider = 0.69
+            upperString = "1 week ago"
+            upperDateNew = self._dataDateNow - 1.weeks
+        case (7*2)-1..<(7*3)-1:
+            upperSlider = 0.79
+            upperString = "2 week ago"
+            upperDateNew = self._dataDateNow - 2.weeks
+        case (7*3)-1..<(7*4)+4: // A month has in general 31 days; so 28+4
+            upperSlider = 0.89
+            upperString = "1 month ago"
+            upperDateNew = self._dataDateNow - 1.months
+        default:
+            upperSlider = 1.0
+            upperString = "all"
+            upperDateNew = self._dataDateNow - 10.years
+        }
+        
+        return(lowerSlider, lowerString, lowerDateNew, upperSlider, upperString, upperDateNew)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.delegate = self
@@ -221,26 +331,45 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         /**
          * Data model
          */
-        print(self._weightedTags)
         if let sections: [RealmParkSection] = self._realmParkSections {
             for section in sections {
                 
                 if let i = sections.index(of: section) {
                     switch section.getType() {
                     case .live:
-                        self._dataCheckboxes[i]         = createCheckbox(isSelected: false)
-                        self._dataRangeSliders[i]       = createRangeSlider(lowerValue: 0.00, upperValue: 0.35)
-                        self._dataTimeTextForSection[i] = "between today and 3 days ago"
-                        self._dataLowerDate             = self._dataDateNow
-                        self._dataUpperDate             = self._dataDateNow - 3.days
+                        
+                        
+                        
+                        if let lowerDate: DateInRegion = self._dataLowerDate, let upperDate: DateInRegion = self._dataUpperDate {
+                            let interval = checkDateInterval(lowerDate: lowerDate, upperDate: upperDate)
+                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
+                            self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
+                            self._dataLowerDate             = interval.lowerDate
+                            self._dataUpperDate             = interval.upperDate
+                        } else {
+                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: 0.00, upperValue: 0.35)
+                            self._dataTimeTextForSection[i] = "between today and 3 days ago"
+                            self._dataLowerDate             = self._dataDateNow
+                            self._dataUpperDate             = self._dataDateNow - 3.days
+                        }
+                        
+                        
+                        if let sectionEnabled: Bool = self._enabledSections?[section.key] {
+                            self._dataCheckboxes[i]         = createCheckbox(isSelected: sectionEnabled)
+                        } else {
+                            self._dataCheckboxes[i]         = createCheckbox(isSelected: false)
+                        }
+                        
                     case .community:
-                        self._dataCheckboxes[i]         = createCheckbox(isSelected: true)
+                        if let sectionEnabled: Bool = self._enabledSections?[section.key] {
+                            self._dataCheckboxes[i]         = createCheckbox(isSelected: sectionEnabled)
+                        } else {
+                            self._dataCheckboxes[i]         = createCheckbox(isSelected: false)
+                        }
                     default:
                         self._dataShowAllTagsForSection[i]  = false
                         self._dataAllTagsForSection[i]      = self._dataAllTags.getKeys(type: section.getType())
                         self._dataSelectedTagsForSection[i] = [String]()
-                        print(section.getType())
-                        print(self._weightedTags?[section.getType()])
                         if let weightedSelectedTags: [String: Int] = self._weightedTags?[section.getType()] {
                             for (tag, _) in weightedSelectedTags {
                                 self._dataSelectedTagsForSection[i]?.append(tag)
@@ -251,7 +380,6 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
                 
             }
         }
-        
         
         
         
@@ -402,8 +530,8 @@ extension FilterViewController: UITableViewDelegate {
                     
                     if let showAllTag: Bool = self._dataShowAllTagsForSection[indexPath.section], showAllTag == true {
                         let numberOfItemsPerLine: Int = Int(sizeOfCollectionView / sizeOfItems.width)
-                        let numberOfLines = numberOfItems / numberOfItemsPerLine
-                        heightOfShowLines = CGFloat(numberOfLines) * sizeOfItems.height
+                        let numberOfLines: CGFloat = ceil(CGFloat(numberOfItems) / CGFloat(numberOfItemsPerLine))
+                        heightOfShowLines = numberOfLines * sizeOfItems.height
                     }
                     return heightOfShowLines + 8 // the "8" is for the padding to the top; see TagsTableCell: The collectionView has an inset top of "8"
                 default:
