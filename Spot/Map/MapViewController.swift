@@ -72,6 +72,8 @@ class MapViewController: UIViewController {
                 self._realmParkSections.append(section)
             }
         }
+        self._lowerDate = DateInRegion() - 4.days // Set default dates; ToDo: If user is logged in or user has subscription enable more days
+        self._upperDate = DateInRegion() - 1.months
         
         
         // Fill in the next line with your style URL from Mapbox Studio.
@@ -145,12 +147,6 @@ class MapViewController: UIViewController {
                 self.weightedTags[itemType]![tag] = countTag
             }
         }
-        
-        //        func addTagsToSelectedTags(tag: String){
-        //            if !self.selectedTags.contains(tag) {
-        //                self.selectedTags.append(tag)
-        //            }
-        //        }
         
         // 1. Loop through all tags and look if tag is in App Tags
         for tag in tags {
@@ -244,26 +240,16 @@ class MapViewController: UIViewController {
             // Create ParkItem2 object from firebase snapshot, check that object is not yet in array
             if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
                 
-                // If the tags for each item should be checked (aka the filter is set) then chack that the item has at least one tag
-                // We do not check for items .community because we do dot want tot tag these pictures
-                if checkTags && section.getType() != .community {
-                    
-                    if let lowerDate: DateInRegion = self._lowerDate, let upperDate: DateInRegion = self._upperDate {
-                        if item2.timestamp != nil {
-                            if upperDate <= item2.timestamp! && item2.timestamp! <= lowerDate {
-                                checkTagsForItem(item2: item2)
-                                print(":: ITEM2 - Timestamp")
-                                print(item2.timestamp!)
-                            }
-                        }
-                    } else {
-                        // No timerange is set
+                
+                // 1. Check timerange: Item should be in timerage
+                if let lowerDate: DateInRegion = self._lowerDate, let upperDate: DateInRegion = self._upperDate, item2.timestamp != nil, upperDate <= item2.timestamp!, item2.timestamp! <= lowerDate {
+                    // 2.   Is Filer set? Then check that item has at least one tag of selected tags; is Filter not set then add item to map (first load of mapview)
+                    //      (.community items are not checked because these items shoudl not have valid tags)
+                    if checkTags && section.getType() != .community {
                         checkTagsForItem(item2: item2)
+                    } else {
+                        addItemToMap(item2: item2, tags: item2.tags)
                     }
-                    
-                    
-                } else {
-                    addItemToMap(item2: item2, tags: item2.tags)
                 }
                 
             }
