@@ -120,6 +120,13 @@ class MapViewController: UIViewController {
         filterButton.layer.shadowRadius     = 1.0
         filterButton.layer.masksToBounds = false
         filterButton.addTarget(self, action: #selector(showFilter(sender:)), for: UIControlEvents.touchUpInside)
+        
+        let filterLabel = UILabel()
+        filterLabel.text = "2"
+        filterLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold)
+        filterLabel.textColor = UIColor.black
+        filterLabel.frame = CGRect(x: filterButton.bounds.width - 20, y: 0, width: 20, height: 20)
+        filterButton.addSubview(filterLabel)
         self.view.addSubview(filterButton)
         
     }
