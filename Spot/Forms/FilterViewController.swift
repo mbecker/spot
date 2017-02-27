@@ -13,6 +13,7 @@ import SwiftDate
 
 protocol FilterProtocol {
     func saveFiler(tags: [String]?, sections: [RealmParkSection: Bool]?, lowerDate: DateInRegion?, upperDate: DateInRegion?)
+    func dismiss()
 }
 
 class FilterViewController: UIViewController, ExpandingTransitionPresentingViewController {
@@ -56,7 +57,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     
     
     
-    func createCheckbox(isSelected: Bool) -> DLRadioButton {
+    func createCheckbox(isSelected: Bool, indicatorColor: UIColor = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00)) -> DLRadioButton {
         let checkBox = DLRadioButton()
         checkBox.backgroundColor = UIColor.clear
         checkBox.iconStrokeWidth = 1.0
@@ -65,7 +66,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         checkBox.isSelected = isSelected
         checkBox.isMultipleSelectionEnabled = true
         checkBox.iconColor = UIColor.lightGray
-        checkBox.indicatorColor = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00)  // Perian green
+        checkBox.indicatorColor = indicatorColor // Perian green
         checkBox.contentHorizontalAlignment = UIControlContentHorizontalAlignment.center
         return checkBox
     }
@@ -355,9 +356,9 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
                         
                         
                         if let sectionEnabled: Bool = self._enabledSections?[section.key] {
-                            self._dataCheckboxes[i]         = createCheckbox(isSelected: sectionEnabled)
+                            self._dataCheckboxes[i]         = createCheckbox(isSelected: sectionEnabled, indicatorColor: UIColor.radicalRed)
                         } else {
-                            self._dataCheckboxes[i]         = createCheckbox(isSelected: false)
+                            self._dataCheckboxes[i]         = createCheckbox(isSelected: false, indicatorColor: UIColor.radicalRed)
                         }
                         
                     case .community:
@@ -450,11 +451,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     
     // Helpers
     func dismiss(sender: UITabBarItem){
-        if self.presentingViewController != nil{
-            self.dismiss(animated: true, completion: nil)
-        }else{
-            self.navigationController?.popViewController(animated: true)
-        }
+        self.delegate?.dismiss()
     }
     
     // MARK: ExpandingTransitionPresentingViewController

@@ -19,6 +19,27 @@ extension UIButton {
         self.setBackgroundImage(colorImage, for: forState)
     }
 }
+import NVActivityIndicatorView
+extension UIButton {
+    func loadingIndicator(_ show: Bool) {
+        let tag = 808404
+        if let indicator = self.viewWithTag(tag) as? NVActivityIndicatorView {
+            indicator.stopAnimating()
+            indicator.removeFromSuperview()
+        }
+        if show {
+            self.isEnabled = true
+            let loadingIndicatorView    = NVActivityIndicatorView(frame: CGRect.zero, type: NVActivityIndicatorType.ballPulse, color: UIColor.radicalRed, padding: 0.0)
+            loadingIndicatorView.isUserInteractionEnabled = false
+            let loadingIndicatorViewWidth = self.bounds.width * 2 / 3
+            let loadingIndicatorViewHeight = self.bounds.height * 2 / 3
+            loadingIndicatorView.frame = CGRect(x: self.bounds.width / 2 - loadingIndicatorViewWidth / 2, y: self.bounds.height / 2 - loadingIndicatorViewHeight / 2, width: loadingIndicatorViewWidth, height: loadingIndicatorViewHeight)
+            loadingIndicatorView.tag = tag
+            self.addSubview(loadingIndicatorView)
+            loadingIndicatorView.startAnimating()
+        }
+    }
+}
 
 func randomNumber(range: ClosedRange<Int> = 1...6) -> Int {
     let min = range.lowerBound

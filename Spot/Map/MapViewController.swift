@@ -11,6 +11,7 @@ import Mapbox
 import FirebaseDatabase
 import SwiftDate
 
+
 class MapViewController: UIViewController {
     
     let _firebaseReference = FIRDatabase.database().reference()
@@ -28,15 +29,38 @@ class MapViewController: UIViewController {
     var _sources = [MGLShapeSource]()
     var _symbols = [MGLSymbolStyleLayer]()
     var _annotations = [MGLAnnotation]()
+    let buttonFilter        = UIButton(type: .roundedRect)
+    let buttonFilterLabel   = UILabel()
+    
+    let liveIcon = UIView()
     
     /**
      * Tags
      */
+    var isLoading       = false {
+        willSet(newValue) {
+            if newValue {
+                buttonFilter.loadingIndicator(true)
+                self.buttonShowText(false)
+            } else {
+                buttonFilter.loadingIndicator(false)
+                self.buttonShowText(true)
+            }
+        }
+    }
     var filterLoaded    = false
-    var isLive          = true
+    var isLive          = false {
+        didSet {
+            if isLive {
+                self.view.addSubview(self.liveIcon)
+            } else {
+                self.liveIcon.removeFromSuperview()
+            }
+        }
+    }
     let _tags           = Tags()
-    var weightedTags    = [ItemType : [String: Int]]()
-    var selectedTags    = [String]()
+    var _weightedTags    = [ItemType : [String: Int]]()
+    var _selectedTags    = [String]()
     var _lowerDate      : DateInRegion?
     var _upperDate      : DateInRegion?
     
@@ -75,7 +99,9 @@ class MapViewController: UIViewController {
         self._lowerDate = DateInRegion() - 4.days // Set default dates; ToDo: If user is logged in or user has subscription enable more days
         self._upperDate = DateInRegion() - 1.months
         
-        
+        /**
+         * Mapview
+         */
         // Fill in the next line with your style URL from Mapbox Studio.
         let styleURL = NSURL(string: "mapbox://styles/mbecker/ciw7woa4z00232pnqx8300j67")
         //mapView = MGLMapView(frame: view.bounds, styleURL: styleURL as URL?)
@@ -98,36 +124,54 @@ class MapViewController: UIViewController {
         // Add our own gesture recognizer to handle taps on our custom map features.
         mapView!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleMapTap(sender:))))
         
-        view.addSubview(mapView!)
+        /**
+         * Button Filter
+         */
+        buttonFilter.backgroundColor        = UIColor.white
+        buttonFilter.cornerRadius           = 16
+        // Shadow and Radius
+        buttonFilter.layer.shadowColor      = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
+        buttonFilter.layer.shadowOffset     = CGSize(width: 0.0, height: 2.0)
+        buttonFilter.layer.shadowOpacity    = 0.6
+        buttonFilter.layer.shadowRadius     = 1.0
+        buttonFilter.layer.masksToBounds    = false
+        buttonFilter.addTarget(self, action: #selector(showFilter(sender:)), for: UIControlEvents.touchUpInside)
         
-        let filterButton = UIButton(type: .roundedRect)
-        let tabBarHeight: CGFloat = (self.tabBarController?.tabBar.bounds.height == nil) ? CGFloat(0) : self.tabBarController!.tabBar.bounds.height
-        filterButton.frame = CGRect(x: self.view.bounds.width / 2 - 82 / 2, y: self.view.bounds.height - tabBarHeight - 20 - 32, width: 82, height: 32)
-        filterButton.backgroundColor = UIColor.white
-        filterButton.setAttributedTitle(NSAttributedString(
-            string: "Filter",
+        /**
+         * View "Live"
+         */
+        let liveIconImage = UIImageView()
+        let scale: CGFloat = 0.5
+        liveIconImage.frame = CGRect(x: 0, y: 0, width: 18 * scale, height: 32 *  scale)
+        liveIconImage.image = StyleKitName.imageOfBolt
+        liveIconImage.tintColor = UIColor.radicalRed
+        liveIconImage.contentMode = .scaleAspectFit
+        
+        let liveIconLabel = UILabel()
+        liveIconLabel.attributedText = NSAttributedString(
+            string: "Live",
             attributes: [
                 NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
-                NSForegroundColorAttributeName: UIColor.flatBlack,
+                NSForegroundColorAttributeName: UIColor.radicalRed,
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.6,
-                ]), for: .normal)
-        filterButton.cornerRadius = 16
-        // Shadow and Radius
-        filterButton.layer.shadowColor      = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
-        filterButton.layer.shadowOffset     = CGSize(width: 0.0, height: 2.0)
-        filterButton.layer.shadowOpacity    = 0.6
-        filterButton.layer.shadowRadius     = 1.0
-        filterButton.layer.masksToBounds = false
-        filterButton.addTarget(self, action: #selector(showFilter(sender:)), for: UIControlEvents.touchUpInside)
+                ])
+        let liveIconLabelSize = NSAttributedString(
+            string: "Live",
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                NSKernAttributeName: 0.6,
+                ]).size()
         
-        let filterLabel = UILabel()
-        filterLabel.text = "2"
-        filterLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold)
-        filterLabel.textColor = UIColor.black
-        filterLabel.frame = CGRect(x: filterButton.bounds.width - 20, y: 0, width: 20, height: 20)
-        filterButton.addSubview(filterLabel)
-        self.view.addSubview(filterButton)
+        liveIcon.frame = CGRect(x: 8, y: UIApplication.shared.statusBarFrame.height + 8, width: liveIconImage.bounds.width + 8 + liveIconLabelSize.width, height: liveIconImage.bounds.height)
+        liveIconLabel.frame = CGRect(x: liveIconImage.bounds.width + 8, y: liveIcon.bounds.height / 2 - liveIconLabelSize.height / 2, width: liveIconLabelSize.width, height: liveIconLabelSize.height)
+        
+        
+        liveIcon.addSubview(liveIconImage)
+        liveIcon.addSubview(liveIconLabel)
+        
+        self.view.addSubview(mapView!)
+        self.view.addSubview(buttonFilter)
         
     }
     
@@ -143,15 +187,15 @@ class MapViewController: UIViewController {
     func saveWeightedTags(tags: [String], countTag: Int = 1){
         
         func addTagsToWeightedTags(itemType: ItemType, tag: String) {
-            if let weightedTag: [String: Int] = self.weightedTags[itemType] {
+            if let weightedTag: [String: Int] = self._weightedTags[itemType] {
                 if let _: Int = weightedTag[tag] {
-                    self.weightedTags[itemType]![tag] = self.weightedTags[itemType]![tag]! + countTag
+                    self._weightedTags[itemType]![tag] = self._weightedTags[itemType]![tag]! + countTag
                 } else {
-                    self.weightedTags[itemType]![tag] = countTag
+                    self._weightedTags[itemType]![tag] = countTag
                 }
             } else {
-                self.weightedTags[itemType] = [String: Int]()
-                self.weightedTags[itemType]![tag] = countTag
+                self._weightedTags[itemType] = [String: Int]()
+                self._weightedTags[itemType]![tag] = countTag
             }
         }
         
@@ -202,11 +246,98 @@ class MapViewController: UIViewController {
         }
         self.navigationController?.navigationBar.isHidden = true
         
-        // Add firebase observer
+        /**
+         * View
+         */
+        buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 82 / 2, y: self.view.bounds.height - 20 - 32, width: 82, height: 32)
+        self.isLoading = true
+        
+        /**
+         * Firebase observer
+         */
         if self.filterLoaded, let parkKey: String = self._realmPark?.key {
             for section in self._realmParkSections {
                 self.createFirebaseObserver(parkKey: parkKey, section: section, checkTags: true)
             }
+        }
+        
+    }
+    
+    func buttonShowText(_ show: Bool){
+        let tag = 91234
+        if let label = buttonFilter.viewWithTag(tag) as? UILabel {
+            label.removeFromSuperview()
+        }
+        
+        if show {
+            buttonFilter.loadingIndicator(false)
+            
+            
+            // Label
+            buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 96 / 2, y: self.view.bounds.height - 20 - 32, width: 96, height: 32)
+            buttonFilter.setAttributedTitle(NSAttributedString(
+                string: "Filter",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                    NSForegroundColorAttributeName: UIColor.flatBlack,
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.6,
+                    ]), for: .normal)
+            
+            // Count
+            var countFilter = 0
+            if self._lowerDate != nil && self._upperDate != nil {
+                countFilter = countFilter + 1
+            }
+            if self._selectedTags != nil {
+                countFilter = countFilter + 1
+            }
+            for section in self._realmParkSections {
+                switch section.getType() {
+                case .animals, .attractions, .live:
+                    break
+                default:
+                    countFilter = countFilter + 1
+                }
+            }
+            
+            buttonFilterLabel.backgroundColor   = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00) // Persian green
+            buttonFilterLabel.tag               = tag
+            let style       = NSMutableParagraphStyle()
+            style.alignment = NSTextAlignment.center
+            buttonFilterLabel.attributedText    = NSAttributedString(
+                string: "\(countFilter)",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 10, weight: UIFontWeightBold),
+                    NSForegroundColorAttributeName: UIColor.white,
+                    NSBackgroundColorAttributeName: UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00),
+                    NSKernAttributeName: 0.6,
+                    NSParagraphStyleAttributeName: style
+                ])
+            let buttonFilterLabelSize           = NSAttributedString(
+                string: "\(countFilter)",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 10, weight: UIFontWeightBold),
+                    NSForegroundColorAttributeName: UIColor.white,
+                    NSBackgroundColorAttributeName: UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00),
+                    NSKernAttributeName: 0.6,
+                    ]).size()
+            let buttonFilterLabelLongerSize     = buttonFilterLabelSize.width > buttonFilterLabelSize.height ? buttonFilterLabelSize.width : buttonFilterLabelSize.height // To have a rounded cirlce both width and heigt must be same
+            let buttonFilterLabelSizePadding    = 4 + buttonFilterLabelLongerSize
+            buttonFilterLabel.frame             = CGRect(x: buttonFilter.bounds.width - buttonFilterLabelSizePadding - 8, y: buttonFilter.bounds.height / 2 - buttonFilterLabelSizePadding / 2, width: buttonFilterLabelSizePadding, height: buttonFilterLabelSizePadding)
+            buttonFilterLabel.layer.cornerRadius = buttonFilterLabelSizePadding / 2
+            buttonFilterLabel.cornerRadius = buttonFilterLabelSizePadding / 2
+            buttonFilter.addSubview(buttonFilterLabel)
+        } else {
+            buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 82 / 2, y: self.view.bounds.height - 20 - 32, width: 82, height: 32)
+            buttonFilter.setAttributedTitle(NSAttributedString(
+                string: "",
+                attributes: [
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                    NSForegroundColorAttributeName: UIColor.clear,
+                    NSBackgroundColorAttributeName: UIColor.clear,
+                    NSKernAttributeName: 0.6,
+                    ]), for: .normal)
         }
         
     }
@@ -235,7 +366,7 @@ class MapViewController: UIViewController {
         
         func checkTagsForItem(item2: ParkItem2){
             for tag in item2.tags {
-                if self.selectedTags.contains(tag) {
+                if self._selectedTags.contains(tag) {
                     addItemToMap(item2: item2, tags: [tag])
                     break
                 }
@@ -243,6 +374,10 @@ class MapViewController: UIViewController {
         }
         
         let sectionObserver = self._firebaseReference.child("park").child(parkKey).child(section.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
+            
+            if self.isLoading {
+                self.isLoading = false
+            }
             
             // Create ParkItem2 object from firebase snapshot, check that object is not yet in array
             if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
@@ -266,7 +401,6 @@ class MapViewController: UIViewController {
         }
         
         self.observers[section.key] = sectionObserver
-        
         
     }
     
@@ -348,6 +482,7 @@ class MapViewController: UIViewController {
         //        style.addLayer(circles)
         style.addLayer(symbols)
         self._symbols.append(symbols)
+        
     }
     
     // MARK: - Feature interaction
@@ -442,10 +577,10 @@ class MapViewController: UIViewController {
         
         // Remove not selected tags from weightedTags
         if self.filterLoaded {
-            for (key, value) in self.weightedTags {
+            for (key, value) in self._weightedTags {
                 for (tag, _) in value {
-                    if !self.selectedTags.contains(tag) {
-                        self.weightedTags[key]?.removeValue(forKey: tag)
+                    if !self._selectedTags.contains(tag) {
+                        self._weightedTags[key]?.removeValue(forKey: tag)
                     }
                 }
             }
@@ -462,7 +597,7 @@ class MapViewController: UIViewController {
         // filterViewController._realmPark = self._realmPark!
         filterViewController._realmParkSections = sections
         filterViewController._enabledSections = sectionsEnabled
-        filterViewController._weightedTags = self.weightedTags
+        filterViewController._weightedTags = self._weightedTags
         filterViewController._dataLowerDate = self._lowerDate
         filterViewController._dataUpperDate = self._upperDate
         filterViewController.delegate = self
@@ -475,12 +610,45 @@ class MapViewController: UIViewController {
 
 extension MapViewController: FilterProtocol {
     
+    func dismiss() {
+        
+        self.isLoading = true
+        
+        // 4. MapView: Remove all data from map
+        self.items2 = [ParkItem2]()
+        
+        if let style = self.mapView!.style {
+            for symbol in self._symbols {
+                style.removeLayer(symbol)
+            }
+            self._symbols = [MGLSymbolStyleLayer]()
+            
+            for source in self._sources {
+                style.removeSource(source)
+            }
+            self._sources = [MGLShapeSource]()
+        }
+        /**
+         * Firebase observer
+         */
+        if !self.filterLoaded, let parkKey: String = self._realmPark?.key {
+            for section in self._realmParkSections {
+                self.createFirebaseObserver(parkKey: parkKey, section: section, checkTags: self.filterLoaded)
+            }
+        }
+        
+        
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     func saveFiler(tags: [String]?, sections: [RealmParkSection : Bool]?, lowerDate: DateInRegion?, upperDate: DateInRegion?) {
         
+        self.isLoading = true
+        
         // 1. Tags
-        self.selectedTags = tags != nil ? tags! : [String]()
-        self.weightedTags = [ItemType : [String: Int]]()
-        self.saveWeightedTags(tags: self.selectedTags, countTag: 0)
+        self._selectedTags = tags != nil ? tags! : [String]()
+        self._weightedTags = [ItemType : [String: Int]]()
+        self.saveWeightedTags(tags: self._selectedTags, countTag: 0)
         
         // 2. Sections
         self._realmParkSections = [RealmParkSection]()
@@ -512,6 +680,7 @@ extension MapViewController: FilterProtocol {
             }
             self._sources = [MGLShapeSource]()
         }
+        
         self.filterLoaded = true
         
         self.dismiss(animated: true, completion: nil)
