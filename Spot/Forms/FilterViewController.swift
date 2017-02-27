@@ -73,14 +73,21 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     
     func createRangeSlider(lowerValue: Double, upperValue: Double) -> RangeSlider {
         let rangeSlider = RangeSlider(frame: CGRect.zero)
-        rangeSlider.trackTintColor          = self.colorBackgroundView
-        rangeSlider.trackHighlightTintColor = self.colorSectionAccessoryLabel
+        rangeSlider.trackTintColor      = self.colorBackgroundView
         rangeSlider.thumbTintColor      = UIColor.white
-        rangeSlider.thumbBorderColor    = self.colorSectionAccessoryLabel
         rangeSlider.thumbBorderWidth    = 1.0
-        rangeSlider.curvaceousness = 1.0
-        rangeSlider.lowerValue = lowerValue
-        rangeSlider.upperValue = upperValue
+        rangeSlider.curvaceousness      = 1.0
+        rangeSlider.lowerValue          = lowerValue
+        rangeSlider.upperValue          = upperValue
+        
+        if lowerValue < 0.1 && upperValue > 0.9 {
+            rangeSlider.trackHighlightTintColor = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00)
+            rangeSlider.thumbBorderColor        = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00)
+        } else {
+            rangeSlider.trackHighlightTintColor = self.colorSectionAccessoryLabel
+            rangeSlider.thumbBorderColor        = self.colorSectionAccessoryLabel
+        }
+        
         return rangeSlider
         /*
          minimumValue : The minimum possible value of the range
@@ -105,7 +112,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         switch rangeSlider.lowerValue {
         case 0.0..<0.1:
             lowerValue = "today"
-            lowerDate = self._dataDateNow
+            lowerDate = nil // self._dataDateNow
         case 0.1..<0.2:
             lowerValue = "yesterday"
             lowerDate = self._dataDateNow - 1.days
@@ -168,7 +175,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
             upperDate = self._dataDateNow - 1.months
         case 0.9...1.0:
             upperValue = "all"
-            upperDate = self._dataDateNow - 10.years
+            upperDate = nil //self._dataDateNow - 10.years
         default:
             upperValue = "yesterday"
             upperDate = self._dataDateNow - 1.days
@@ -180,14 +187,13 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     
     func saveFilter() {
         var tags: [String]?
-        if let selectedTagsForSections: [Int: [String]] = self._dataSelectedTagsForSection {
-            for (key, selectedTags) in selectedTagsForSections {
-                for selectedTag in selectedTags {
-                    if tags == nil {
-                        tags = [String]()
-                    }
-                    tags!.append(selectedTag)
+        
+        for (_, selectedTags) in self._dataSelectedTagsForSection {
+            for selectedTag in selectedTags {
+                if tags == nil {
+                    tags = [String]()
                 }
+                tags!.append(selectedTag)
             }
         }
         
@@ -216,7 +222,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         self.delegate?.saveFiler(tags: tags, sections: sections, lowerDate: self._dataLowerDate, upperDate: self._dataUpperDate)
     }
     
-    func checkDateInterval(lowerDate: DateInRegion, upperDate: DateInRegion) -> (lowerSlider: Double, lowerString: String, lowerDate: DateInRegion, upperSlider: Double, upperString: String, upperDate: DateInRegion) {
+    func checkDateInterval(lowerDate: DateInRegion, upperDate: DateInRegion) -> (lowerSlider: Double, lowerString: String, lowerDate: DateInRegion?, upperSlider: Double, upperString: String, upperDate: DateInRegion?) {
         
         let now = DateInRegion() // 2016-11-30 10:37:23 +0000
         let sepreat = (now - lowerDate).in([.day,.hour,.minute]) // -3.days (3 days in the past)
@@ -230,7 +236,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         case 0..<1:
             lowerSlider = 0.00
             lowerString = "today"
-            lowerDateNew = self._dataDateNow
+            lowerDateNew = nil //self._dataDateNow
         case 1..<2:
             lowerSlider = 0.11
             lowerString = "yesterday"
@@ -317,7 +323,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         default:
             upperSlider = 1.0
             upperString = "all"
-            upperDateNew = self._dataDateNow - 10.years
+            upperDateNew = nil // self._dataDateNow - 10.years
         }
         
         return(lowerSlider, lowerString, lowerDateNew, upperSlider, upperString, upperDateNew)
@@ -347,11 +353,23 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
                             self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
                             self._dataLowerDate             = interval.lowerDate
                             self._dataUpperDate             = interval.upperDate
+                        } else if let lowerDate: DateInRegion = self._dataLowerDate, self._dataUpperDate == nil {
+                            let interval = checkDateInterval(lowerDate: lowerDate, upperDate: DateInRegion()-11.years)
+                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
+                            self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
+                            self._dataLowerDate             = interval.lowerDate
+                            self._dataUpperDate             = interval.upperDate
+                        } else if self._dataLowerDate == nil, let upperDate: DateInRegion = self._dataUpperDate {
+                            let interval = checkDateInterval(lowerDate: DateInRegion(), upperDate: upperDate)
+                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
+                            self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
+                            self._dataLowerDate             = interval.lowerDate
+                            self._dataUpperDate             = interval.upperDate
                         } else {
-                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: 0.00, upperValue: 0.35)
-                            self._dataTimeTextForSection[i] = "between today and 3 days ago"
-                            self._dataLowerDate             = self._dataDateNow
-                            self._dataUpperDate             = self._dataDateNow - 3.days
+                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: 0.00, upperValue: 1)
+                            self._dataTimeTextForSection[i] = "between today and all"
+                            // self._dataLowerDate             = self._dataDateNow
+                            // self._dataUpperDate             = self._dataDateNow - 3.days
                         }
                         
                         

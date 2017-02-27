@@ -165,6 +165,14 @@ class RangeSliderCell: UITableViewCell {
             upperValue = "yesterday"
         }
         
+        if rangeSlider.lowerValue < 0.1 && rangeSlider.upperValue > 0.9 {
+            self.rangeSlider?.trackHighlightTintColor   = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00)
+            self.rangeSlider?.thumbBorderColor          = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00)
+        } else {
+            self.rangeSlider?.trackHighlightTintColor   = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00) // Persian Green
+            self.rangeSlider?.thumbBorderColor          = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00) // Persian Green
+        }
+        
         self.textLabel!.setTextWhileKeepingAttributes(string: "between \(lowerValue) and \(upperValue)")
     }
     

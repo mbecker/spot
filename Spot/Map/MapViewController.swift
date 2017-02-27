@@ -48,6 +48,7 @@ class MapViewController: UIViewController {
             }
         }
     }
+    var isMapLoaded     = false
     var filterLoaded    = false
     var isLive          = false {
         didSet {
@@ -225,12 +226,11 @@ class MapViewController: UIViewController {
             style.setImage(imageFromAsset, forName: key.lowercased())
         }
         
-        // Add firebase observer
-        if let parkKey: String = self._realmPark?.key {
-            for section in self._realmParkSections {
-                self.createFirebaseObserver(parkKey: parkKey, section: section, checkTags: false)
-            }
-        }
+        /**
+         * Firebase observer
+         */
+        self.isMapLoaded = true
+        createFirebaseObserver()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -255,11 +255,7 @@ class MapViewController: UIViewController {
         /**
          * Firebase observer
          */
-        if self.filterLoaded, let parkKey: String = self._realmPark?.key {
-            for section in self._realmParkSections {
-                self.createFirebaseObserver(parkKey: parkKey, section: section, checkTags: true)
-            }
-        }
+        createFirebaseObserver()
         
     }
     
@@ -345,7 +341,7 @@ class MapViewController: UIViewController {
     /**
      * Firebase
      */
-    func createFirebaseObserver(parkKey: String, section: RealmParkSection, checkTags: Bool) {
+    func createFirebaseObserver() {
         
         func addItemToMap(item2: ParkItem2, tags: [String]){
             if let latitude: Double = item2.latitude, let longitude: Double = item2.longitude {
@@ -373,34 +369,61 @@ class MapViewController: UIViewController {
             }
         }
         
-        let sectionObserver = self._firebaseReference.child("park").child(parkKey).child(section.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
-            
-            if self.isLoading {
-                self.isLoading = false
+        func checkFilter(item2: ParkItem2, type: ItemType, checkTags: Bool){
+            // 1. Check timerange: Item should be in timerage
+            // 2.   Is Filer set? Then check that item has at least one tag of selected tags; is Filter not set then add item to map (first load of mapview)
+            //      (.community items are not checked because these items shoudl not have valid tags)
+            if let lowerDate: DateInRegion = self._lowerDate, let upperDate: DateInRegion = self._upperDate, item2.timestamp != nil, upperDate <= item2.timestamp!, item2.timestamp! <= lowerDate, checkTags && type != .community {
+                checkTagsForItem(item2: item2)
+            } else if let lowerDate: DateInRegion = self._lowerDate, self._upperDate == nil, item2.timestamp != nil, item2.timestamp! <= lowerDate, checkTags && type != .community {
+                checkTagsForItem(item2: item2)
+            } else if self._lowerDate == nil, let upperDate: DateInRegion = self._upperDate, item2.timestamp != nil, upperDate <= item2.timestamp!, checkTags && type != .community {
+                checkTagsForItem(item2: item2)
+            } else if self._lowerDate == nil, self._upperDate == nil, item2.timestamp != nil, checkTags, type != .community {
+                // Timerange is not set (in filter the lower date value = 0 && upper date value = 1
+                checkTagsForItem(item2: item2)
+            } else if let lowerDate: DateInRegion = self._lowerDate, let upperDate: DateInRegion = self._upperDate, item2.timestamp != nil, upperDate <= item2.timestamp!, item2.timestamp! <= lowerDate, !checkTags && type != .community {
+                addItemToMap(item2: item2, tags: item2.tags)
+            } else if type == .community {
+                addItemToMap(item2: item2, tags: item2.tags)
             }
-            
-            // Create ParkItem2 object from firebase snapshot, check that object is not yet in array
-            if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
+        }
+        
+        func createObserver(parkKey: String, section: RealmParkSection, checkTags: Bool) {
+            let sectionObserver = self._firebaseReference.child("park").child(parkKey).child(section.path).queryOrdered(byChild: "timestamp").observe(.value, with: { (snapshot) -> Void in
                 
+                if self.isLoading {
+                    self.isLoading = false
+                }
                 
-                // 1. Check timerange: Item should be in timerage
-                if let lowerDate: DateInRegion = self._lowerDate, let upperDate: DateInRegion = self._upperDate, item2.timestamp != nil, upperDate <= item2.timestamp!, item2.timestamp! <= lowerDate {
-                    // 2.   Is Filer set? Then check that item has at least one tag of selected tags; is Filter not set then add item to map (first load of mapview)
-                    //      (.community items are not checked because these items shoudl not have valid tags)
-                    if checkTags && section.getType() != .community {
-                        checkTagsForItem(item2: item2)
-                    } else {
-                        addItemToMap(item2: item2, tags: item2.tags)
+                for item in snapshot.children {
+                    let go = item as! FIRDataSnapshot
+                    if let snapshotValue = go.value as? NSDictionary, let item2: ParkItem2 = ParkItem2(key: go.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
+                        checkFilter(item2: item2, type: section.getType(), checkTags: checkTags)
                     }
                 }
                 
+                // Create ParkItem2 object from firebase snapshot, check that object is not yet in array
+                if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
+                    checkFilter(item2: item2, type: section.getType(), checkTags: checkTags)
+                }
+                
+            }) { (error) in
+                print(error.localizedDescription)
             }
             
-        }) { (error) in
-            print(error.localizedDescription)
+            self.observers[section.key] = sectionObserver
         }
         
-        self.observers[section.key] = sectionObserver
+        
+        
+        if let parkKey: String = self._realmPark?.key {
+            if self.isMapLoaded {
+                for section in self._realmParkSections {
+                    createObserver(parkKey: parkKey, section: section, checkTags: self.filterLoaded)
+                }
+            }
+        }
         
     }
     
@@ -534,6 +557,22 @@ class MapViewController: UIViewController {
         UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
         self.observers.removeAll()
         self._firebaseReference.removeAllObservers()
+        
+        // MapView: Remove all data from map
+        self.items2 = [ParkItem2]()
+        self.isLoading = true
+        
+        if let style = self.mapView!.style {
+            for symbol in self._symbols {
+                style.removeLayer(symbol)
+            }
+            self._symbols = [MGLSymbolStyleLayer]()
+            
+            for source in self._sources {
+                style.removeSource(source)
+            }
+            self._sources = [MGLShapeSource]()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -612,30 +651,10 @@ extension MapViewController: FilterProtocol {
     
     func dismiss() {
         
-        self.isLoading = true
-        
-        // 4. MapView: Remove all data from map
-        self.items2 = [ParkItem2]()
-        
-        if let style = self.mapView!.style {
-            for symbol in self._symbols {
-                style.removeLayer(symbol)
-            }
-            self._symbols = [MGLSymbolStyleLayer]()
-            
-            for source in self._sources {
-                style.removeSource(source)
-            }
-            self._sources = [MGLShapeSource]()
-        }
         /**
          * Firebase observer
          */
-        if !self.filterLoaded, let parkKey: String = self._realmPark?.key {
-            for section in self._realmParkSections {
-                self.createFirebaseObserver(parkKey: parkKey, section: section, checkTags: self.filterLoaded)
-            }
-        }
+        self.createFirebaseObserver()
         
         
         self.dismiss(animated: true, completion: nil)
@@ -643,7 +662,7 @@ extension MapViewController: FilterProtocol {
     
     func saveFiler(tags: [String]?, sections: [RealmParkSection : Bool]?, lowerDate: DateInRegion?, upperDate: DateInRegion?) {
         
-        self.isLoading = true
+        
         
         // 1. Tags
         self._selectedTags = tags != nil ? tags! : [String]()
@@ -666,37 +685,11 @@ extension MapViewController: FilterProtocol {
         self._lowerDate = lowerDate
         self._upperDate = upperDate
         
-        // 4. MapView: Remove all data from map
-        self.items2 = [ParkItem2]()
-        
-        if let style = self.mapView!.style {
-            for symbol in self._symbols {
-                style.removeLayer(symbol)
-            }
-            self._symbols = [MGLSymbolStyleLayer]()
-            
-            for source in self._sources {
-                style.removeSource(source)
-            }
-            self._sources = [MGLShapeSource]()
-        }
         
         self.filterLoaded = true
         
         self.dismiss(animated: true, completion: nil)
         
-        
-        
-        print("--- MAP ---")
-        print(tags)
-        print("---")
-        if sections != nil {
-            for (section, enabled) in sections! {
-                print("\(section.name) - \(enabled)")
-            }
-        }
-        print("---")
-        print("\(lowerDate) - \(upperDate)")
     }
 }
 
