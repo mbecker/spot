@@ -16,6 +16,67 @@ protocol FilterProtocol {
     func dismiss()
 }
 
+struct FilterDate {
+    var lowerDate:  DateInRegion?
+    var upperDate:  DateInRegion?
+    
+    func isSet() -> Bool {
+        if upperDate != nil || lowerDate != nil {
+            return false
+        } else {
+            return false
+        }
+    }
+}
+
+struct FilterTag {
+    var tag: String
+    var count: Int
+    
+    init(tag: String, count: Int) {
+        self.tag    = tag
+        self.count  = count
+    }
+    
+    mutating func increment(){
+        self.count = self.count + 1
+    }
+}
+struct FilterSection {
+    var tags: [FilterTag]?
+    var isEnabled: Bool
+    var realmSection: RealmParkSection
+    
+    init(realmSection: RealmParkSection, isEnabled: Bool){
+        self.realmSection   = realmSection
+        self.isEnabled      = isEnabled
+    }
+    
+    func getTags() -> [String]? {
+        var tagsAll = [String]()
+        if let tagsForSection = self.tags {
+            for tag in tagsForSection {
+                tagsAll.append(tag.tag)
+            }
+            return tagsAll
+        } else {
+            return nil
+        }
+    }
+}
+struct FilterStruct {
+    var isLive: Bool
+    var timerange: FilterDate
+    var realmParkSections: [FilterSection]
+    
+    init(realmParkSections: [FilterSection], timerange: FilterDate, isLive: Bool) {
+        self.realmParkSections  = realmParkSections
+        self.timerange          = timerange
+        self.isLive             = isLive
+    }
+    
+}
+
 class FilterViewController: UIViewController, ExpandingTransitionPresentingViewController {
     // Create a new DateInRegion which represent the current moment (Date()) in current device's local settings
     

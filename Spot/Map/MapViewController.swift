@@ -397,8 +397,8 @@ class MapViewController: UIViewController {
                 }
                 
                 for item in snapshot.children {
-                    let go = item as! FIRDataSnapshot
-                    if let snapshotValue = go.value as? NSDictionary, let item2: ParkItem2 = ParkItem2(key: go.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
+                    let snapshotChildren = item as! FIRDataSnapshot
+                    if let snapshotValue = snapshotChildren.value as? NSDictionary, let item2: ParkItem2 = ParkItem2(key: snapshotChildren.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
                         checkFilter(item2: item2, type: section.getType(), checkTags: checkTags)
                     }
                 }
