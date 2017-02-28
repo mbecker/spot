@@ -36,7 +36,6 @@ class TagsTableCell: UITableViewCell {
     }
     
     override func layoutSubviews() {
-        print(self.bounds)
         self.collectionView.frame = CGRect(x: 28, y: 8, width: self.bounds.width - 56, height: self.bounds.height - 8)
     }
 

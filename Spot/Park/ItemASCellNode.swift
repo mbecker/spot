@@ -21,7 +21,6 @@ class ItemASCellNode: ASCellNode {
     var _errorText          =   ASTextNode()
     var _loadingIndicator   =   BallPulse()
     
-    let _height: CGFloat        = 80 // 112
     let _imageHeight: CGFloat   = 140 // 96
     let _imageWidth: CGFloat    = 186 // 103.55417528 // 142
     
@@ -118,25 +117,6 @@ class ItemASCellNode: ASCellNode {
             self._loadingIndicator.removeFromSupernode()
             self.showError(text: "Error:\nNo image uploaded")
         }
-        
-        /*
-        if let imageURL: URL = self._parkItem.urlPublic as URL! {
-            self._image.url = imageURL
-        } else if let imageURL: String = self._parkItem.url as String!, imageURL.characters.count > 0 {
-            // cellData.url is resized image 3750x300
-            let imgRef = self.storage.reference(forURL: imageURL)
-            loadImageURL(imgRef: imgRef)
-        } else if let imageURL: String = self._parkItem.images?["original"], imageURL.characters.count > 0 {
-            // resized image doesn't exist -> Load "original" image
-            let imgRef = self.storage.reference(forURL: imageURL)
-            loadImageURL(imgRef: imgRef)
-        } else {
-            // Show error
-            // self._image.url = URL(string: "https://error.com")
-            self._loadingIndicator.removeFromSupernode()
-            self.showError(text: "Error:\nNo image uploaded")
-        }
-        */
         
     }
     

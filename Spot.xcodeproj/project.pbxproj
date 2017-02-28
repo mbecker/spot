@@ -74,6 +74,8 @@
 		D1AFD8821DCF8CBC0082A6EF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D1AFD8811DCF8CBC0082A6EF /* GoogleService-Info.plist */; };
 		D1AFD8841DCF8D6B0082A6EF /* ParkASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */; };
 		D1B7D5151E65CB9200D800BD /* FilterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B7D5141E65CB9200D800BD /* FilterButton.swift */; };
+		D1B7D5171E661D4900D800BD /* PresentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B7D5161E661D4900D800BD /* PresentView.swift */; };
+		D1B7D5191E66277C00D800BD /* PresentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B7D5181E66277C00D800BD /* PresentCell.swift */; };
 		D1C10B0C1E03EA70000CF2C7 /* CountryASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */; };
 		D1C10B0E1E041B48000CF2C7 /* SeparatorASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */; };
 		D1C757981DF0580F0029E882 /* DetailASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C757971DF0580F0029E882 /* DetailASViewController.swift */; };
@@ -457,6 +459,8 @@
 		D1AFD8811DCF8CBC0082A6EF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkASViewController.swift; sourceTree = "<group>"; };
 		D1B7D5141E65CB9200D800BD /* FilterButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterButton.swift; sourceTree = "<group>"; };
+		D1B7D5161E661D4900D800BD /* PresentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentView.swift; sourceTree = "<group>"; };
+		D1B7D5181E66277C00D800BD /* PresentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentCell.swift; sourceTree = "<group>"; };
 		D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryASCellNode.swift; sourceTree = "<group>"; };
 		D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeparatorASCellNode.swift; sourceTree = "<group>"; };
 		D1C757971DF0580F0029E882 /* DetailASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailASViewController.swift; sourceTree = "<group>"; };
@@ -978,6 +982,8 @@
 				D1FA19251E5F11D70000FB54 /* TagsViewController.swift */,
 				D1608D651E65911B000F621B /* LiveView.swift */,
 				D1B7D5141E65CB9200D800BD /* FilterButton.swift */,
+				D1B7D5161E661D4900D800BD /* PresentView.swift */,
+				D1B7D5181E66277C00D800BD /* PresentCell.swift */,
 			);
 			path = Forms;
 			sourceTree = "<group>";
@@ -1879,6 +1885,7 @@
 				D1FA19321E5F1D260000FB54 /* TagsTableCell.swift in Sources */,
 				D14D8D371DD25945009AC39B /* Park.swift in Sources */,
 				D13623E81E50C9A800F4BE5C /* EncyclopediaItemASViewController.swift in Sources */,
+				D1B7D5171E661D4900D800BD /* PresentView.swift in Sources */,
 				D152E4B21E62DF7600CE652B /* CustomCallout.swift in Sources */,
 				D1C9438F1DFB19600008C38F /* LoginViewController.swift in Sources */,
 				D1B7D5151E65CB9200D800BD /* FilterButton.swift in Sources */,
@@ -1910,6 +1917,7 @@
 				D19DEAF01E4CC427003F6E55 /* String.swift in Sources */,
 				D152E4AF1E61D79500CE652B /* UILabel.swift in Sources */,
 				D1ADC92D1E4FA50100E1C4DB /* SplashScreenViewController.swift in Sources */,
+				D1B7D5191E66277C00D800BD /* PresentCell.swift in Sources */,
 				D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */,
 				D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */,
 				D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */,

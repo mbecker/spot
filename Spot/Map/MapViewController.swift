@@ -53,6 +53,10 @@ class MapViewController: UIViewController {
     
     let liveIcon = LiveView(frame: CGRect.zero)
     
+    var presentView: PresentView?
+    
+    var countLabel = UILabel(frame: CGRect.zero)
+    
     /**
      * Tags
      */
@@ -82,29 +86,42 @@ class MapViewController: UIViewController {
         }
     }
     var isMapLoaded     = false
-//    var filterLoaded    = false
-//    var isLive          = false {
-//        didSet {
-//            if isLive {
-//                self.view.addSubview(self.liveIcon)
-//            } else {
-//                self.liveIcon.removeFromSuperview()
-//            }
-//        }
-//    }
-    let _tags           = Tags().getKeys()
-    let now = DateInRegion()
-//    var _weightedTags    = [ItemType : [String: Int]]()
-//    var _selectedTags    = [String]()
-//    var _lowerDate      : DateInRegion?
-//    var _upperDate      : DateInRegion?
     
     /**
      * Data
      */
-    var items2: [ParkItem2] = [ParkItem2]()
+    var items2: [ParkItem2] = [ParkItem2]() {
+        didSet {
+            self.countLabel.text = "\(self.items2.count)"
+        }
+    }
     var filteredItems2: [ParkItem2] = [ParkItem2]()
+    var _selectedItem2: ParkItem2?
+    var _showSelectedItem: Bool = false {
+        didSet {
+            if _showSelectedItem {
+                if self.presentView != nil {
+                    self.presentView!.removeFromSuperview()
+                }
+                self.presentView = PresentView(frame: CGRect.zero)
+                self.presentView!.frame = CGRect(x: -1, y: self.view.bounds.height - 184, width: self.view.bounds.width + 2, height: 184)
+                self.presentView!.item2 = self._selectedItem2
+                var items2ForPresentView = [ParkItem2]()
+                for item in self.items2 {
+                    if item.key != self._selectedItem2?.key {
+                        items2ForPresentView.append(item)
+                    }
+                }
+                self.presentView!.items2 = items2ForPresentView
+                self.view.addSubview(self.presentView!)
+            } else {
+                self.presentView!.removeFromSuperview()
+            }
+        }
+    }
     
+    let _tags           = Tags().getKeys()
+    let now = DateInRegion()
     
     override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: Bundle!) {
         self.mapView    = nil
@@ -145,18 +162,6 @@ class MapViewController: UIViewController {
         
         self._filterStruct = FilterStruct(filterSections: filterSections, isActive: false, timerange: filterDate, isLive: false)
         
-        
-        /**
-         * Data
-         */
-//        if let realmPark: RealmPark = self._realmPark {
-//            for section in realmPark.sections {
-//                self._realmParkSections.append(section)
-//            }
-//        }
-//        self._lowerDate = DateInRegion() - 4.days // Set default dates; ToDo: If user is logged in or user has subscription enable more days
-//        self._upperDate = DateInRegion() - 1.months
-        
         /**
          * Mapview
          */
@@ -193,8 +198,18 @@ class MapViewController: UIViewController {
         self.liveIcon.frame = CGRect(x: self.liveIcon.frame.minX, y: UIApplication.shared.statusBarFrame.height + 12, width: self.liveIcon.bounds.width, height: self.liveIcon.bounds.height)
         
         
+        countLabel.frame = CGRect(x: 8, y: UIApplication.shared.statusBarFrame.height + 12 + 16, width: 24, height: 24)
+        countLabel.backgroundColor = UIColor(red:0.97, green:0.78, blue:0.01, alpha:1.00)
+        countLabel.text = "\(self.items2.count)"
+        countLabel.textAlignment = .center
+        countLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightSemibold)
+        countLabel.textColor = UIColor.white
+        countLabel.cornerRadius = 24 / 2
+        
+        
         self.view.addSubview(mapView!)
         self.view.addSubview(buttonFilter)
+        self.view.addSubview(countLabel)
         
     }
     
@@ -538,6 +553,18 @@ class MapViewController: UIViewController {
         point.coordinate = feature.coordinate
         
         
+        if let key = feature.attributes["key"] as? String {
+            for item2 in self.items2 {
+                if item2.key == key {
+                    self._selectedItem2 = item2
+                    break
+                }
+            }
+        }
+        
+        let kamera = MGLMapCamera(lookingAtCenter: point.coordinate, fromEyeCoordinate: self.mapView!.centerCoordinate, eyeAltitude: self.mapView!.camera.altitude)
+        self.mapView!.setCamera(kamera, withDuration: 0.2, animationTimingFunction: CAMediaTimingFunction(name: kCAMediaTimingFunctionLinear))
+        
         // Selecting an feature that doesn’t already exist on the map will add a new annotation view.
         // We’ll need to use the map’s delegate methods to add an empty annotation view and remove it when we’re done selecting it.
         self.mapView!.selectAnnotation(point, animated: true)
@@ -599,57 +626,6 @@ class MapViewController: UIViewController {
     
 }
 
-extension MapViewController: FilterProtocol {
-    
-    func dismiss() {
-        
-        /**
-         * Firebase observer
-         */
-        //self.createFirebaseObserver()
-        
-        
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    func saveFilter(filterStruct: FilterStruct) {
-        self._filterStruct = filterStruct
-        self.dismiss()
-    }
-    
-    func saveFiler(tags: [String]?, sections: [RealmParkSection : Bool]?, lowerDate: DateInRegion?, upperDate: DateInRegion?) {
-        
-        
-        
-//        // 1. Tags
-//        self._selectedTags = tags != nil ? tags! : [String]()
-//        self._weightedTags = [ItemType : [String: Int]]()
-//        self.saveWeightedTags(tags: self._selectedTags, countTag: 0)
-//        
-//        // 2. Sections
-//        self._realmParkSections = [RealmParkSection]()
-//        if let sectionsEnabled: [RealmParkSection: Bool] = sections {
-//            for (section, enabled) in sectionsEnabled {
-//                if section.getType() == .live {
-//                    self.isLive = enabled
-//                } else if section.getType() != .live && enabled {
-//                    self._realmParkSections.append(section)
-//                }
-//            }
-//        }
-//        
-//        // 3. Date
-//        self._lowerDate = lowerDate
-//        self._upperDate = upperDate
-//        
-//        
-//        self.filterLoaded = true
-        
-        self.dismiss(animated: true, completion: nil)
-        
-    }
-}
-
 extension MapViewController: MGLMapViewDelegate {
     
     func mapView(_ mapView: MGLMapView, imageFor annotation: MGLAnnotation) -> MGLAnnotationImage? {
@@ -675,6 +651,7 @@ extension MapViewController: MGLMapViewDelegate {
     
     func mapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView? {
         // Create an empty view annotation. Set a frame to offset the callout.
+        self._showSelectedItem = true
         return MGLAnnotationView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
     }
     
@@ -689,6 +666,8 @@ extension MapViewController: MGLMapViewDelegate {
             self._annotations.remove(at: 0)
         }
         mapView.removeAnnotations([annotation])
+        // self._selectedItem2 = nil
+        self._showSelectedItem = false
     }
     
     func mapView(_ mapView: MGLMapView, tapOnCalloutFor annotation: MGLAnnotation) {
@@ -700,6 +679,19 @@ extension MapViewController: MGLMapViewDelegate {
             self._annotations.remove(at: 0)
         }
         mapView.deselectAnnotation(annotation, animated: true)
+        self._selectedItem2 = nil
     }
 }
 
+extension MapViewController: FilterProtocol {
+    
+    func dismiss() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func saveFilter(filterStruct: FilterStruct) {
+        self._filterStruct = filterStruct
+        self.dismiss()
+    }
+    
+}

@@ -13,7 +13,6 @@ import SwiftDate
 
 protocol FilterProtocol {
     func saveFilter(filterStruct: FilterStruct)
-    func saveFiler(tags: [String]?, sections: [RealmParkSection: Bool]?, lowerDate: DateInRegion?, upperDate: DateInRegion?)
     func dismiss()
 }
 
