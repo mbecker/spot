@@ -12,20 +12,60 @@ import DLRadioButton
 import SwiftDate
 
 protocol FilterProtocol {
+    func saveFilter(filterStruct: FilterStruct)
     func saveFiler(tags: [String]?, sections: [RealmParkSection: Bool]?, lowerDate: DateInRegion?, upperDate: DateInRegion?)
     func dismiss()
+}
+
+enum FilterDateAction {
+    case upperDate
+    case lowerDate
+    case both
+    case none
 }
 
 struct FilterDate {
     var lowerDate:  DateInRegion?
     var upperDate:  DateInRegion?
+    var describing: String = ""
+    
+    init(lowerDate: DateInRegion, upperDate: DateInRegion){
+        self.lowerDate = lowerDate
+        self.upperDate = upperDate
+    }
+    
+    mutating func setDescribing(lowerString: String, upperString: String){
+        self.describing = "between \(lowerString) and \(upperString)"
+    }
+    
+    mutating func setDate(lowerDate: DateInRegion?, upperDate: DateInRegion?){
+        self.lowerDate = lowerDate
+        self.upperDate = upperDate
+    }
     
     func isSet() -> Bool {
         if upperDate != nil || lowerDate != nil {
-            return false
+            return true
         } else {
             return false
         }
+    }
+    
+    func getAction() -> FilterDateAction {
+        if self.lowerDate == nil && self.upperDate == nil {
+            return .both
+        }
+        if self.lowerDate == nil {
+            return .lowerDate
+        }
+        if self.upperDate == nil {
+            return .upperDate
+        }
+        return .none
+    }
+    
+    func getValue() -> (lowerValue: Double, upperValue: Double){
+        return (0.00, 0.00)
     }
 }
 
@@ -43,34 +83,94 @@ struct FilterTag {
     }
 }
 struct FilterSection {
-    var tags: [FilterTag]?
+    var selectedTags: [FilterTag] = [FilterTag]()
+    var typeTags: [String]?
+    var tagImages: [String: String]?
     var isEnabled: Bool
-    var realmSection: RealmParkSection
+    var isShowTags = false
+    var realmParkSection: RealmParkSection
     
-    init(realmSection: RealmParkSection, isEnabled: Bool){
-        self.realmSection   = realmSection
-        self.isEnabled      = isEnabled
+    init(realmParkSection: RealmParkSection, isEnabled: Bool){
+        self.realmParkSection   = realmParkSection
+        self.isEnabled          = isEnabled
+        self.typeTags           = Tags().getKeys(type: realmParkSection.getType())
+        self.tagImages          = Tags().getTags(type: realmParkSection.getType())
     }
     
-    func getTags() -> [String]? {
+    mutating func setEnabled(isEnabled: Bool){
+        self.isEnabled = isEnabled
+    }
+    
+    func getSelectedTags() -> [String] {
         var tagsAll = [String]()
-        if let tagsForSection = self.tags {
-            for tag in tagsForSection {
-                tagsAll.append(tag.tag)
-            }
-            return tagsAll
-        } else {
-            return nil
+        for tag in self.selectedTags {
+            tagsAll.append(tag.tag)
         }
+        return tagsAll
+    }
+    
+    func isAllTagsSelected() -> Bool {
+        if self.selectedTags.count == 0 || self.typeTags == nil {
+            return false
+        }
+        if self.selectedTags.count == self.typeTags!.count {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func isParkItem2TagsInSelectedTags(item2: ParkItem2) -> Bool {
+        if let sectionSelectedTags: [String] = self.getSelectedTags() {
+            for tag in item2.tags {
+                if sectionSelectedTags.contains(tag) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    
+    mutating func addTag(tag: String, count: Int){
+        
+        var tagIsInSelectedTags = false
+        for (index, filterTag) in self.selectedTags.enumerated() {
+            if filterTag.tag == tag {
+                self.selectedTags[index].increment()
+                tagIsInSelectedTags = true
+            }
+        }
+        if !tagIsInSelectedTags {
+            let filterTag = FilterTag(tag: tag, count: count)
+            self.selectedTags.append(filterTag)
+        }
+        
+    }
+    
+    mutating func removeSelectedTag(tag: String){
+        var i = 0
+        for selectedTag in self.selectedTags {
+            if selectedTag.tag == tag {
+                self.selectedTags.remove(at: i)
+                return
+            }
+            i = i + 1
+        }
+    }
+    
+    mutating func toggleIsShowTags() {
+        self.isShowTags = !self.isShowTags
     }
 }
 struct FilterStruct {
+    var isActive: Bool
     var isLive: Bool
     var timerange: FilterDate
-    var realmParkSections: [FilterSection]
+    var filterSections: [FilterSection]
     
-    init(realmParkSections: [FilterSection], timerange: FilterDate, isLive: Bool) {
-        self.realmParkSections  = realmParkSections
+    init(filterSections: [FilterSection], isActive: Bool, timerange: FilterDate, isLive: Bool) {
+        self.filterSections  = filterSections
+        self.isActive           = isActive
         self.timerange          = timerange
         self.isLive             = isLive
     }
@@ -88,21 +188,22 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     
     // Data public
     // var _realmPark: RealmPark?
-    var _realmParkSections: [RealmParkSection]?
-    var _enabledSections: [String: Bool]?
-    var _weightedTags: [ItemType :[String: Int]]?
+    var _filterStruct: FilterStruct!
+//    var _realmParkSections: [RealmParkSection]?
+//    var _enabledSections: [String: Bool]?
+//    var _weightedTags: [ItemType :[String: Int]]?
     var delegate: FilterProtocol?
-    var _dataLowerDate: DateInRegion?
-    var _dataUpperDate: DateInRegion?
+//    var _dataLowerDate: DateInRegion?
+//    var _dataUpperDate: DateInRegion?
     
     // Data private
-    fileprivate let _dataAllTags                = Tags()
-    fileprivate var _dataAllTagsForSection      = [Int : [String]]()
-    fileprivate var _dataSelectedTagsForSection = [Int : [String]]()
-    fileprivate var _dataShowAllTagsForSection  = [Int: Bool]()
+//    fileprivate let _dataAllTags                = Tags()
+//    fileprivate var _dataAllTagsForSection      = [Int : [String]]()
+//    fileprivate var _dataSelectedTagsForSection = [Int : [String]]()
+//    fileprivate var _dataShowAllTagsForSection  = [Int: Bool]()
     fileprivate var _dataCheckboxes             = [Int: DLRadioButton]()
     fileprivate var _dataRangeSliders           = [Int: RangeSlider]()
-    fileprivate var _dataTimeTextForSection     = [Int : String]()
+//    fileprivate var _dataTimeTextForSection     = [Int : String]()
     fileprivate var _dataDateNow                = DateInRegion()
     
     
@@ -118,7 +219,7 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     
     
     
-    func createCheckbox(isSelected: Bool, indicatorColor: UIColor = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00)) -> DLRadioButton {
+    func createCheckbox(tag: Int, isSelected: Bool, indicatorColor: UIColor = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00)) -> DLRadioButton {
         let checkBox = DLRadioButton()
         checkBox.backgroundColor = UIColor.clear
         checkBox.iconStrokeWidth = 1.0
@@ -129,8 +230,22 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         checkBox.iconColor = UIColor.lightGray
         checkBox.indicatorColor = indicatorColor // Perian green
         checkBox.contentHorizontalAlignment = UIControlContentHorizontalAlignment.center
+        checkBox.tag = tag
+        checkBox.addTarget(self, action: #selector(selectCheckbox), for: UIControlEvents.touchUpInside);
         return checkBox
     }
+    
+    @objc private func selectCheckbox(checkBox : DLRadioButton) {
+        if checkBox.tag == 0 {
+            self._filterStruct.isLive = checkBox.isSelected
+        } else {
+            self._filterStruct.filterSections[checkBox.tag - 1].setEnabled(isEnabled: checkBox.isSelected)
+            print(self._filterStruct.filterSections[checkBox.tag - 1].isEnabled)
+            print("---")
+        }
+    }
+    
+    
     
     func createRangeSlider(lowerValue: Double, upperValue: Double) -> RangeSlider {
         let rangeSlider = RangeSlider(frame: CGRect.zero)
@@ -165,8 +280,8 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     }
     
     func rangeSliderValueChanged(_ rangeSlider: RangeSlider) {
-        var lowerDate: DateInRegion!
-        var upperDate: DateInRegion!
+        var lowerDate: DateInRegion?
+        var upperDate: DateInRegion?
         var lowerValue: String = "todays"
         var upperValue: String = ""
         
@@ -241,46 +356,48 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
             upperValue = "yesterday"
             upperDate = self._dataDateNow - 1.days
         }
-        self._dataLowerDate = lowerDate
-        self._dataUpperDate = upperDate
-        self._dataTimeTextForSection[rangeSlider.tag] = "between \(lowerValue) and \(upperValue)"
+        
+        self._filterStruct.timerange.setDate(lowerDate: lowerDate, upperDate: upperDate)
+        self._filterStruct.timerange.setDescribing(lowerString: lowerValue, upperString: upperValue)
     }
     
     func saveFilter() {
-        var tags: [String]?
-        
-        for (_, selectedTags) in self._dataSelectedTagsForSection {
-            for selectedTag in selectedTags {
-                if tags == nil {
-                    tags = [String]()
-                }
-                tags!.append(selectedTag)
-            }
-        }
-        
-        var sections =  [RealmParkSection: Bool]()
-        if let realmParkSection: [RealmParkSection] = self._realmParkSections {
-            var i = 0
-            for section in realmParkSection {
-                switch section.getType() {
-                case .live, .community:
-                    if let checkBox: DLRadioButton = self._dataCheckboxes[i] {
-                        if checkBox.isSelected {
-                            sections[section] = true
-                        } else {
-                            sections[section] = false
-                        }
-                        
-                    }
-                    
-                default:
-                    sections[section] = true
-                }
-                i = i + 1
-            }
-        }
-        
-        self.delegate?.saveFiler(tags: tags, sections: sections, lowerDate: self._dataLowerDate, upperDate: self._dataUpperDate)
+//        var tags: [String]?
+//        
+//        for (_, selectedTags) in self._dataSelectedTagsForSection {
+//            for selectedTag in selectedTags {
+//                if tags == nil {
+//                    tags = [String]()
+//                }
+//                tags!.append(selectedTag)
+//            }
+//        }
+//        
+//        var sections =  [RealmParkSection: Bool]()
+//        if let realmParkSection: [RealmParkSection] = self._realmParkSections {
+//            var i = 0
+//            for section in realmParkSection {
+//                switch section.getType() {
+//                case .live, .community:
+//                    if let checkBox: DLRadioButton = self._dataCheckboxes[i] {
+//                        if checkBox.isSelected {
+//                            sections[section] = true
+//                        } else {
+//                            sections[section] = false
+//                        }
+//                        
+//                    }
+//                    
+//                default:
+//                    sections[section] = true
+//                }
+//                i = i + 1
+//            }
+//        }
+//        
+//        self.delegate?.saveFiler(tags: tags, sections: sections, lowerDate: self._dataLowerDate, upperDate: self._dataUpperDate)
+        self._filterStruct.isActive = true
+        self.delegate?.saveFilter(filterStruct: self._filterStruct)
     }
     
     func checkDateInterval(lowerDate: DateInRegion, upperDate: DateInRegion) -> (lowerSlider: Double, lowerString: String, lowerDate: DateInRegion?, upperSlider: Double, upperString: String, upperDate: DateInRegion?) {
@@ -288,7 +405,6 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         let now = DateInRegion() // 2016-11-30 10:37:23 +0000
         let sepreat = (now - lowerDate).in([.day,.hour,.minute]) // -3.days (3 days in the past)
         
-        print(sepreat)
         var lowerDateNew: DateInRegion!
         var lowerString: String = "today"
         var lowerSlider: Double!
@@ -399,68 +515,95 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
         /**
          * Data model
          */
-        if let sections: [RealmParkSection] = self._realmParkSections {
-            for section in sections {
-                
-                if let i = sections.index(of: section) {
-                    switch section.getType() {
-                    case .live:
-                        
-                        
-                        
-                        if let lowerDate: DateInRegion = self._dataLowerDate, let upperDate: DateInRegion = self._dataUpperDate {
-                            let interval = checkDateInterval(lowerDate: lowerDate, upperDate: upperDate)
-                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
-                            self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
-                            self._dataLowerDate             = interval.lowerDate
-                            self._dataUpperDate             = interval.upperDate
-                        } else if let lowerDate: DateInRegion = self._dataLowerDate, self._dataUpperDate == nil {
-                            let interval = checkDateInterval(lowerDate: lowerDate, upperDate: DateInRegion()-11.years)
-                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
-                            self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
-                            self._dataLowerDate             = interval.lowerDate
-                            self._dataUpperDate             = interval.upperDate
-                        } else if self._dataLowerDate == nil, let upperDate: DateInRegion = self._dataUpperDate {
-                            let interval = checkDateInterval(lowerDate: DateInRegion(), upperDate: upperDate)
-                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
-                            self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
-                            self._dataLowerDate             = interval.lowerDate
-                            self._dataUpperDate             = interval.upperDate
-                        } else {
-                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: 0.00, upperValue: 1)
-                            self._dataTimeTextForSection[i] = "between today and all"
-                            // self._dataLowerDate             = self._dataDateNow
-                            // self._dataUpperDate             = self._dataDateNow - 3.days
-                        }
-                        
-                        
-                        if let sectionEnabled: Bool = self._enabledSections?[section.key] {
-                            self._dataCheckboxes[i]         = createCheckbox(isSelected: sectionEnabled, indicatorColor: UIColor.radicalRed)
-                        } else {
-                            self._dataCheckboxes[i]         = createCheckbox(isSelected: false, indicatorColor: UIColor.radicalRed)
-                        }
-                        
-                    case .community:
-                        if let sectionEnabled: Bool = self._enabledSections?[section.key] {
-                            self._dataCheckboxes[i]         = createCheckbox(isSelected: sectionEnabled)
-                        } else {
-                            self._dataCheckboxes[i]         = createCheckbox(isSelected: false)
-                        }
-                    default:
-                        self._dataShowAllTagsForSection[i]  = false
-                        self._dataAllTagsForSection[i]      = self._dataAllTags.getKeys(type: section.getType())
-                        self._dataSelectedTagsForSection[i] = [String]()
-                        if let weightedSelectedTags: [String: Int] = self._weightedTags?[section.getType()] {
-                            for (tag, _) in weightedSelectedTags {
-                                self._dataSelectedTagsForSection[i]?.append(tag)
-                            }
-                        }
-                    }
-                }
-                
+        var interval: (lowerSlider: Double, lowerString: String, lowerDate: DateInRegion?, upperSlider: Double, upperString: String, upperDate: DateInRegion?)!
+        switch self._filterStruct.timerange.getAction() {
+        case .upperDate:
+            interval = checkDateInterval(lowerDate: self._filterStruct.timerange.lowerDate!, upperDate: DateInRegion()-11.years)
+        case .lowerDate:
+            interval = checkDateInterval(lowerDate: DateInRegion(), upperDate: self._filterStruct.timerange.upperDate!)
+        case .both:
+            interval = checkDateInterval(lowerDate: DateInRegion(), upperDate: DateInRegion()-11.years)
+        default:
+            interval = checkDateInterval(lowerDate: self._filterStruct.timerange.lowerDate!, upperDate: self._filterStruct.timerange.upperDate!)
+        }
+        self._dataRangeSliders[0]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
+        self._filterStruct.timerange.setDescribing(lowerString: interval.lowerString, upperString: interval.upperString)
+        self._filterStruct.timerange.setDate(lowerDate: interval.lowerDate, upperDate: interval.upperDate)
+        self._dataCheckboxes[0]            = createCheckbox(tag: 0, isSelected: self._filterStruct.isLive, indicatorColor: UIColor.radicalRed)
+        
+        var i = 1
+        for filterSection: FilterSection in self._filterStruct.filterSections {
+            switch filterSection.realmParkSection.getType() {
+            case .community:
+                self._dataCheckboxes[i]         = createCheckbox(tag: i, isSelected: filterSection.isEnabled)
+            default:
+                break
             }
+            i = i + 1
         }
         
+//        if let sections: [RealmParkSection] = self._realmParkSections {
+//            for section in sections {
+//                
+//                if let i = sections.index(of: section) {
+//                    switch section.getType() {
+//                    case .live:
+//                        
+//                        
+//                        
+//                        if let lowerDate: DateInRegion = self._dataLowerDate, let upperDate: DateInRegion = self._dataUpperDate {
+//                            let interval = checkDateInterval(lowerDate: lowerDate, upperDate: upperDate)
+//                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
+//                            self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
+//                            self._dataLowerDate             = interval.lowerDate
+//                            self._dataUpperDate             = interval.upperDate
+//                        } else if let lowerDate: DateInRegion = self._dataLowerDate, self._dataUpperDate == nil {
+//                            let interval = checkDateInterval(lowerDate: lowerDate, upperDate: DateInRegion()-11.years)
+//                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
+//                            self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
+//                            self._dataLowerDate             = interval.lowerDate
+//                            self._dataUpperDate             = interval.upperDate
+//                        } else if self._dataLowerDate == nil, let upperDate: DateInRegion = self._dataUpperDate {
+//                            let interval = checkDateInterval(lowerDate: DateInRegion(), upperDate: upperDate)
+//                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: interval.lowerSlider, upperValue: interval.upperSlider)
+//                            self._dataTimeTextForSection[i] = "between \(interval.lowerString) and \(interval.upperString)"
+//                            self._dataLowerDate             = interval.lowerDate
+//                            self._dataUpperDate             = interval.upperDate
+//                        } else {
+//                            self._dataRangeSliders[i]       = createRangeSlider(lowerValue: 0.00, upperValue: 1)
+//                            self._dataTimeTextForSection[i] = "between today and all"
+//                            // self._dataLowerDate             = self._dataDateNow
+//                            // self._dataUpperDate             = self._dataDateNow - 3.days
+//                        }
+//                        
+//                        
+//                        if let sectionEnabled: Bool = self._enabledSections?[section.key] {
+//                            self._dataCheckboxes[i]         = createCheckbox(isSelected: sectionEnabled, indicatorColor: UIColor.radicalRed)
+//                        } else {
+//                            self._dataCheckboxes[i]         = createCheckbox(isSelected: false, indicatorColor: UIColor.radicalRed)
+//                        }
+//                        
+//                    case .community:
+//                        if let sectionEnabled: Bool = self._enabledSections?[section.key] {
+//                            self._dataCheckboxes[i]         = createCheckbox(isSelected: sectionEnabled)
+//                        } else {
+//                            self._dataCheckboxes[i]         = createCheckbox(isSelected: false)
+//                        }
+//                    default:
+//                        self._dataShowAllTagsForSection[i]  = false
+//                        self._dataAllTagsForSection[i]      = self._dataAllTags.getKeys(type: section.getType())
+//                        self._dataSelectedTagsForSection[i] = [String]()
+//                        if let weightedSelectedTags: [String: Int] = self._weightedTags?[section.getType()] {
+//                            for (tag, _) in weightedSelectedTags {
+//                                self._dataSelectedTagsForSection[i]?.append(tag)
+//                            }
+//                        }
+//                    }
+//                }
+//                
+//            }
+//        }
+//        
         
         
         
@@ -588,40 +731,44 @@ extension FilterViewController : AnimalFormCollectionDelegate {
 extension FilterViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        switch indexPath.row {
+        switch indexPath.section {
         case 0:
-            return 49 * 1.5
+            switch indexPath.row {
+            case 0:
+                return 49 * 1.5
+            default:
+                return 49 * 2.25
+            }
         default:
-            if let section: RealmParkSection = self._realmParkSections?[safe: indexPath.section], section.getType() != .community {
-                
-                switch section.getType() {
-                case .live:
-                    return 49 * 2.25
-                case .animals, .attractions:
+            switch indexPath.row {
+            case 0:
+                return 49 * 1.5
+            default:
+                if let filterSection: FilterSection = self._filterStruct.filterSections[safe: indexPath.section - 1], filterSection.realmParkSection.getType() != .community {
+                    
                     let showLines = 2
-                    let numberOfItems: Int = (self._dataAllTagsForSection[indexPath.section]?.count)!
+                    let numberOfItems: Int = filterSection.typeTags?.count != nil ? filterSection.typeTags!.count : 4
                     let sizeOfCollectionView = self.view.bounds.width - 28 * 2
                     let sizeOfItems = CGSize(width: 68 + 8, height: 68 + 8) // item size + minimumLineSpacing + minimumInteritemSpacing
                     var heightOfShowLines = CGFloat(showLines) * sizeOfItems.height
                     
-                    if let showAllTag: Bool = self._dataShowAllTagsForSection[indexPath.section], showAllTag == true {
+                    if filterSection.isShowTags {
                         let numberOfItemsPerLine: Int = Int(sizeOfCollectionView / sizeOfItems.width)
                         let numberOfLines: CGFloat = ceil(CGFloat(numberOfItems) / CGFloat(numberOfItemsPerLine))
                         heightOfShowLines = numberOfLines * sizeOfItems.height
                     }
                     return heightOfShowLines + 8 // the "8" is for the padding to the top; see TagsTableCell: The collectionView has an inset top of "8"
-                default:
-                    return 0
+                    
+                    
                 }
-                
-                
             }
-            return 0
         }
+        
+        return 0
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if let sections: [RealmParkSection] = self._realmParkSections, section == sections.count - 1 {
+        if section == self._filterStruct.filterSections.count - 1 {
             return 0
         }
         return 1
@@ -639,7 +786,7 @@ extension FilterViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if section == self._realmParkSections?.count {
+        if section == self._filterStruct.filterSections.count {
             let view = UIView()
             view.frame = CGRect.zero
             return view
@@ -654,175 +801,189 @@ extension FilterViewController: UITableViewDelegate {
 }
 extension FilterViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch indexPath.row {
-        case 0:
-            if let section: RealmParkSection = self._realmParkSections?[safe: indexPath.section] {
-                switch section.getType() {
-                case .live, .community:
+        
+        switch indexPath.section {
+        case 0: // "Live"
+            if let checkbox: DLRadioButton = self._dataCheckboxes[indexPath.section] {
+                checkbox.isSelected = !checkbox.isSelected
+                self._filterStruct.isLive = checkbox.isSelected
+            }
+        default: // .community, .attractions, .animals
+            if let filterSection: FilterSection = self._filterStruct.filterSections[safe: indexPath.section - 1] {
+                switch filterSection.realmParkSection.getType() {
+                case .community:
                     if let checkbox: DLRadioButton = self._dataCheckboxes[indexPath.section] {
                         checkbox.isSelected = !checkbox.isSelected
+                        self._filterStruct.filterSections[indexPath.section - 1].setEnabled(isEnabled: checkbox.isSelected)
+                        print(self._filterStruct.filterSections[indexPath.section - 1].isEnabled)
+                        print("---")
                     }
                 default:
-                    self._dataShowAllTagsForSection[indexPath.section] = !self._dataShowAllTagsForSection[indexPath.section]!
+                    self._filterStruct.filterSections[indexPath.section - 1].toggleIsShowTags()
                     self.tableView.reloadRows(at: [[indexPath.section, 0]], with: .none)
                     self.tableView.beginUpdates()
                     self.tableView.endUpdates()
-                    if self._dataShowAllTagsForSection[indexPath.section]! {
+                    if filterSection.isShowTags {
                         self.tableView.scrollToRow(at: [indexPath.section, 0], at: .top, animated: true)
                     }
-                    
                 }
             }
-        default:
-            return
         }
-        
-        // self.tableView.reloadRows(at: [[indexPath.section, 1]], with: .none)
-        
-//        if let section: RealmParkSection = self._realmParkSections[safe: indexPath.section] {
-//            self.selectedIndexPath = indexPath
-//            let selectedCells = [IndexPath]()
-//            let controller = AnimalFormCollections(title: "Select " + section.name.firstCharacterUpperCase(), type: section.getType(), selectedCells: selectedCells)
-//            controller.delegate = self
-//            controller.modalPresentationStyle = .custom
-//            controller.modalPresentationCapturesStatusBarAppearance = true
-//            self.navigationController?.pushViewController(controller, animated: true)
-//        }
         
     }
     func numberOfSections(in tableView: UITableView) -> Int {
-        if let count: Int = self._realmParkSections?.count {
-            return count
-        }
-        return 0
+        print(self._filterStruct.filterSections.count)
+        return self._filterStruct.filterSections.count + 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let section: RealmParkSection = self._realmParkSections?[safe: section] {
-            switch section.getType() {
-            case .community:
-                return 1
-            default:
-                return 2
+        
+        switch section {
+        case 0:
+            return 2
+        default:
+            if let filterSection: FilterSection = self._filterStruct.filterSections[safe: section - 1] {
+                switch filterSection.realmParkSection.getType() {
+                case .community:
+                    return 1
+                default:
+                    return 2
+                }
             }
         }
         return 0
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if let section: RealmParkSection = self._realmParkSections?[safe: indexPath.section] {
-            
+        switch indexPath.section {
+        case 0: // Live
             switch indexPath.row {
             case 0:
-                switch section.getType() {
-                case .live, .community:
-                    // Cell: .community (with checkbox)
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "checkboxCell", for: indexPath) as! CheckboxCell
-                    if let checkBox: DLRadioButton = self._dataCheckboxes[indexPath.section] {
-                        cell.checkbox = checkBox
-                    }
-                    let name = section.getType().rawValue.firstCharacterUpperCase()
-                    print(name)
+                let cell = tableView.dequeueReusableCell(withIdentifier: "checkboxCell", for: indexPath) as! CheckboxCell
+                if let checkBox: DLRadioButton = self._dataCheckboxes[0] {
+                    cell.checkbox = checkBox
+                }
+                let name = "Live"
+                cell.textLabel?.attributedText = NSAttributedString(
+                    string: name,
+                    attributes: [
+                        NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight),
+                        NSForegroundColorAttributeName: self.colorSectionHeadline,
+                        NSBackgroundColorAttributeName: UIColor.clear,
+                        NSKernAttributeName: 0.8,
+                        ])
+                
+                return cell
+                
+            default: // Timerange
+                if let rangeSlider: RangeSlider = self._dataRangeSliders[indexPath.section] {
+                    let cell = tableView.dequeueReusableCell(withIdentifier: "rangesliderCell", for: indexPath) as! RangeSliderCell
+                    cell.selectionStyle = .none
+                    // cell.contentView.frame = cell.bounds
+                    // rangeSlider.frame = CGRect(x: 28, y: cell.bounds.height - 31 - 8, width: cell.bounds.width - 28 * 2, height: 31)
+                    rangeSlider.tag = indexPath.section
+                    rangeSlider.addTarget(self, action: #selector(self.rangeSliderValueChanged(_:)), for: .editingDidEnd)
+                    
+                    cell.rangeSlider = rangeSlider
+                    
                     cell.textLabel?.attributedText = NSAttributedString(
-                        string: name,
+                        string: self._filterStruct.timerange.describing,
                         attributes: [
-                            NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight),
-                            NSForegroundColorAttributeName: self.colorSectionHeadline,
-                            NSBackgroundColorAttributeName: UIColor.clear,
+                            NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightLight),
+                            NSForegroundColorAttributeName: self.colorSectionSubHeadline,
+                            NSBackgroundColorAttributeName: UIColor.white,
                             NSKernAttributeName: 0.8,
                             ])
                     
                     return cell
-                default:
-                    // Cell: .animals & .attractions
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! FilterTableViewCell
-                    cell.backgroundColor = UIColor.white
-                    let selectedBackgroundView = UIView()
-                    selectedBackgroundView.backgroundColor = self.colorBackgroundView
-                    cell.selectedBackgroundView = selectedBackgroundView
-                    
-                    cell.textLabel?.attributedText = NSAttributedString(
-                        string: section.name,
-                        attributes: [
-                            NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight),
-                            NSForegroundColorAttributeName: self.colorSectionHeadline,
-                            NSBackgroundColorAttributeName: UIColor.clear,
-                            NSKernAttributeName: 0.8,
-                            ])
-                    
-                    // countLabel
-                    if let selectedTagsForSection: [String] = self._dataSelectedTagsForSection[indexPath.section] {
+                }
+
+            }
+            
+        default: // indexPath.Section
+            if let filterSection: FilterSection = self._filterStruct.filterSections[safe: indexPath.section - 1] {
+                switch filterSection.realmParkSection.getType() {
+                case .community:
+                    switch indexPath.row {
+                    case 0:
+                        let cell = tableView.dequeueReusableCell(withIdentifier: "checkboxCell", for: indexPath) as! CheckboxCell
+                        if let checkBox: DLRadioButton = self._dataCheckboxes[indexPath.section] {
+                            cell.checkbox = checkBox
+                        }
+                        let name = filterSection.realmParkSection.getType().rawValue.firstCharacterUpperCase()
+                        cell.textLabel?.attributedText = NSAttributedString(
+                            string: name,
+                            attributes: [
+                                NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight),
+                                NSForegroundColorAttributeName: self.colorSectionHeadline,
+                                NSBackgroundColorAttributeName: UIColor.clear,
+                                NSKernAttributeName: 0.8,
+                                ])
+                        
+                        return cell
+                    default: // No 2. row for .community
+                        break
+                    }
+                default: // .animals, .attractions
+                    switch indexPath.row {
+                    case 0:
+                        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! FilterTableViewCell
+                        cell.backgroundColor = UIColor.white
+                        let selectedBackgroundView = UIView()
+                        selectedBackgroundView.backgroundColor = self.colorBackgroundView
+                        cell.selectedBackgroundView = selectedBackgroundView
+                        
+                        cell.textLabel?.attributedText = NSAttributedString(
+                            string: filterSection.realmParkSection.getType().rawValue.firstCharacterUpperCase(),
+                            attributes: [
+                                NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight),
+                                NSForegroundColorAttributeName: self.colorSectionHeadline,
+                                NSBackgroundColorAttributeName: UIColor.clear,
+                                NSKernAttributeName: 0.8,
+                                ])
+                        
+                        // countLabel
                         let style = NSMutableParagraphStyle()
                         style.alignment = NSTextAlignment.center
                         cell.countLabel.attributedText = NSAttributedString(
-                            string: "\(selectedTagsForSection.count)",
+                            string: "\(filterSection.getSelectedTags().count)",
                             attributes: [
                                 NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
                                 NSForegroundColorAttributeName: UIColor.white,
                                 NSBackgroundColorAttributeName: self.colorSectionAccessoryLabel,
                                 NSKernAttributeName: 0.8,
                                 NSParagraphStyleAttributeName: style
-                                ])
-                        cell.countLabel.backgroundColor = self.colorSectionAccessoryLabel
-                    }
-                    
-                    
-                    var titleForShowOrHideAll = "Show All"
-                    if let sectionShowAllTags: Bool = self._dataShowAllTagsForSection[indexPath.section], sectionShowAllTags == true {
-                        titleForShowOrHideAll = "Hide All"
-                    }
-                    cell.accessoryLabel?.attributedText =  NSAttributedString(
-                        string: titleForShowOrHideAll,
-                        attributes: [
-                            NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight),
-                            NSForegroundColorAttributeName: self.colorSectionAccessoryLabel,
-                            NSBackgroundColorAttributeName: UIColor.clear,
-                            NSKernAttributeName: 0.8,
                             ])
-                    let size = NSAttributedString(
-                        string: titleForShowOrHideAll,
-                        attributes: [
-                            NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight),
-                            NSKernAttributeName: 0.8,
-                            ]).size()
-                    cell.accessoryLabel?.frame = CGRect(x: cell.bounds.width - size.width - 28, y: cell.bounds.height / 2 - size.height / 2, width: size.width, height: size.height)
-                    return cell
-                    
-                } // Swicth section.getType() for row == 1 (the title row)
-                
-            default: // indexPath.row == 2
-                switch section.getType() {
-                case .live:
-                    if let rangeSlider: RangeSlider = self._dataRangeSliders[indexPath.section] {
-                        let cell = tableView.dequeueReusableCell(withIdentifier: "rangesliderCell", for: indexPath) as! RangeSliderCell
-                        cell.selectionStyle = .none
-                        // cell.contentView.frame = cell.bounds
-                        // rangeSlider.frame = CGRect(x: 28, y: cell.bounds.height - 31 - 8, width: cell.bounds.width - 28 * 2, height: 31)
-                        rangeSlider.tag = indexPath.section
-                        rangeSlider.addTarget(self, action: #selector(self.rangeSliderValueChanged(_:)), for: .editingDidEnd)
+                        cell.countLabel.backgroundColor = self.colorSectionAccessoryLabel
                         
-                        cell.rangeSlider = rangeSlider
-                        
-                        cell.textLabel?.attributedText = NSAttributedString(
-                            string: self._dataTimeTextForSection[indexPath.section]!,
+                        // Accessory Labe: Show / hide all
+                        let titleForShowOrHideAll = filterSection.isShowTags ? "Hide all" : "Show all"
+                        cell.accessoryLabel?.attributedText =  NSAttributedString(
+                            string: titleForShowOrHideAll,
                             attributes: [
-                                NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightLight),
-                                NSForegroundColorAttributeName: self.colorSectionSubHeadline,
-                                NSBackgroundColorAttributeName: UIColor.white,
+                                NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight),
+                                NSForegroundColorAttributeName: self.colorSectionAccessoryLabel,
+                                NSBackgroundColorAttributeName: UIColor.clear,
                                 NSKernAttributeName: 0.8,
                                 ])
+                        let size = NSAttributedString(
+                            string: titleForShowOrHideAll,
+                            attributes: [
+                                NSFontAttributeName: UIFont.systemFont(ofSize: 24, weight: UIFontWeightLight),
+                                NSKernAttributeName: 0.8,
+                                ]).size()
+                        cell.accessoryLabel?.frame = CGRect(x: cell.bounds.width - size.width - 28, y: cell.bounds.height / 2 - size.height / 2, width: size.width, height: size.height)
+                        return cell
                         
+                    default: // indexPath.row
+                        // Cell: CollectionViewCell
+                        let cell = self.tableView.dequeueReusableCell(withIdentifier: "collectionViewCell", for: indexPath) as! TagsTableCell
+                        cell.selectionStyle = .none
                         return cell
                     }
-                default:
-                    // Cell: CollectionViewCell
-                    let cell = self.tableView.dequeueReusableCell(withIdentifier: "collectionViewCell", for: indexPath) as! TagsTableCell
-                    cell.selectionStyle = .none
-                    return cell
+                    
                 }
-                
             }
-       
-        } // if section exists for indexPath.section
+        }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell", for: indexPath)
         return cell
@@ -833,9 +994,11 @@ extension FilterViewController: UITableViewDataSource {
         guard let tagsTableCell = cell as? TagsTableCell else { return }
         tagsTableCell.setCollectionViewDataSourceDelegate(self, forRow: indexPath.section)
         tagsTableCell.collectionViewOffset = storedOffsets[indexPath.section] ?? 0
-        if let tagsForSection: [String] = self._dataAllTagsForSection[indexPath.section], let selectedTagsForSection: [String] = self._dataSelectedTagsForSection[indexPath.section] {
-            tagsTableCell.setSelectedRows(tags: tagsForSection, selectedTags: selectedTagsForSection)
+        
+        if let filterSection: FilterSection = self._filterStruct.filterSections[safe: indexPath.section - 1], let typeTags: [String] = filterSection.typeTags {
+            tagsTableCell.setSelectedRows(tags: typeTags, selectedTags: filterSection.getSelectedTags())
         }
+        
     }
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -855,17 +1018,18 @@ extension FilterViewController: UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if let tagsKey: [String] = self._dataAllTagsForSection[collectionView.tag] {
-            return tagsKey.count
+        
+        if let filterSection: FilterSection = self._filterStruct.filterSections[safe: collectionView.tag - 1], let typeTags: [String] = filterSection.typeTags {
+            return typeTags.count
         }
+        
         return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         
-        if let section: RealmParkSection = self._realmParkSections?[safe: collectionView.tag], let tagsKey: [String] = self._dataAllTagsForSection[collectionView.tag], let tag: String = tagsKey[safe: indexPath.row], let tagsForImage: [String: String] = self._dataAllTags.getTags(type: section.getType()), let imageString = tagsForImage[tag]  {
-            
+        if let filterSection: FilterSection = self._filterStruct.filterSections[safe: collectionView.tag - 1], let typeTags: [String] = filterSection.typeTags, let tag: String = typeTags[safe: indexPath.row], let tagsForImage: [String: String] = filterSection.tagImages, let imageString = tagsForImage[tag]  {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! TagCell
             DispatchQueue.global(qos: .userInitiated).async {
                 
@@ -901,33 +1065,29 @@ extension FilterViewController: UICollectionViewDelegate, UICollectionViewDataSo
                 
             }
             return cell
-
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! TagCell
             return cell
         }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("Collection view at row \(collectionView.tag) selected index path \(indexPath)")
-        if let tagsForSection: [String] = self._dataAllTagsForSection[collectionView.tag], let tag: String = tagsForSection[safe: indexPath.row], let selectedTags: [String] = self._dataSelectedTagsForSection[collectionView.tag] {
-            
-            if !selectedTags.contains(tag) {
-                self._dataSelectedTagsForSection[collectionView.tag]!.append(tag)
-                self.tableView.reloadRows(at: [[collectionView.tag, 0]], with: .none)
-            }
-            
+        
+        if let filterSection: FilterSection = self._filterStruct.filterSections[safe: collectionView.tag - 1], let typeTags: [String] = filterSection.typeTags, let tag: String = typeTags[safe: indexPath.row], !filterSection.getSelectedTags().contains(tag) {
+            self._filterStruct.filterSections[collectionView.tag - 1].addTag(tag: tag, count: 1)
+            self.tableView.reloadRows(at: [[collectionView.tag, 0]], with: .none)
         }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        if let tagsForSection: [String] = self._dataAllTagsForSection[collectionView.tag], let tag: String = tagsForSection[safe: indexPath.row], let selectedTags: [String] = self._dataSelectedTagsForSection[collectionView.tag] {
-            
-            if selectedTags.contains(tag) {
-                self._dataSelectedTagsForSection[collectionView.tag]! = self._dataSelectedTagsForSection[collectionView.tag]!.filter{$0 != tag}
-                self.tableView.reloadRows(at: [[collectionView.tag, 0]], with: .none)
-            }
-            
+        
+        if let filterSection: FilterSection = self._filterStruct.filterSections[safe: collectionView.tag - 1], let typeTags: [String] = filterSection.typeTags, let tag: String = typeTags[safe: indexPath.row], filterSection.getSelectedTags().contains(tag) {
+            self._filterStruct.filterSections[collectionView.tag - 1].removeSelectedTag(tag: tag)
+            self.tableView.reloadRows(at: [[collectionView.tag, 0]], with: .none)
         }
+        
     }
 }

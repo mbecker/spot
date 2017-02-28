@@ -722,6 +722,13 @@ struct Tags {
         }
     }
     
+    func getKeys() -> [String] {
+        var tags = [String]()
+        tags = Array(animals.keys).sorted { $0 < $1 }
+        tags.append(contentsOf: Array(attractions.keys).sorted { $0 < $1 })
+        return tags
+    }
+    
     func getKeys(type: ItemType) -> [String]? {
         switch type {
         case .animals:

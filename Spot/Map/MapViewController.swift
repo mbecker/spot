@@ -18,8 +18,28 @@ class MapViewController: UIViewController {
     var observers = [String: FIRDatabaseHandle]()
     
     
-    var _realmPark: RealmPark?
-    var _realmParkSections = [RealmParkSection]()
+    var _realmPark: RealmPark!
+//    var _realmParkSections = [RealmParkSection]()
+    var _filterStruct: FilterStruct! {
+        didSet {
+            if _filterStruct.isLive {
+                self.view.addSubview(self.liveIcon)
+                
+                let connectedRef = FIRDatabase.database().reference(withPath: ".info/connected")
+                connectedRef.observe(.value, with: { snapshot in
+                    if let connected = snapshot.value as? Bool, connected {
+                        self.liveIcon.showStrikethrough(show: false)
+                    } else {
+                        self.liveIcon.showStrikethrough(show: true)
+                    }
+                })
+                
+                
+            } else {
+                self.liveIcon.removeFromSuperview()
+            }
+        }
+    }
     
     /**
      * MapView
@@ -29,10 +49,9 @@ class MapViewController: UIViewController {
     var _sources = [MGLShapeSource]()
     var _symbols = [MGLSymbolStyleLayer]()
     var _annotations = [MGLAnnotation]()
-    let buttonFilter        = UIButton(type: .roundedRect)
-    let buttonFilterLabel   = UILabel()
+    let buttonFilter            = FilterButton(frame: CGRect.zero)
     
-    let liveIcon = UIView()
+    let liveIcon = LiveView(frame: CGRect.zero)
     
     /**
      * Tags
@@ -41,34 +60,50 @@ class MapViewController: UIViewController {
         willSet(newValue) {
             if newValue {
                 buttonFilter.loadingIndicator(true)
-                self.buttonShowText(false)
             } else {
-                buttonFilter.loadingIndicator(false)
-                self.buttonShowText(true)
+                var countFilter = 0
+                if self._filterStruct.timerange.isSet() {
+                    countFilter = countFilter + 1
+                }
+                for filterSection: FilterSection in self._filterStruct.filterSections {
+                    switch filterSection.realmParkSection.getType() {
+                    case .community:
+                        if filterSection.isEnabled {
+                            countFilter = countFilter + 1
+                        }
+                    default:
+                        if !filterSection.isAllTagsSelected() {
+                            countFilter = countFilter + 1
+                        }
+                    }
+                }
+                buttonFilter.setTitleAndCount(title: "Filter", count: countFilter)
             }
         }
     }
     var isMapLoaded     = false
-    var filterLoaded    = false
-    var isLive          = false {
-        didSet {
-            if isLive {
-                self.view.addSubview(self.liveIcon)
-            } else {
-                self.liveIcon.removeFromSuperview()
-            }
-        }
-    }
-    let _tags           = Tags()
-    var _weightedTags    = [ItemType : [String: Int]]()
-    var _selectedTags    = [String]()
-    var _lowerDate      : DateInRegion?
-    var _upperDate      : DateInRegion?
+//    var filterLoaded    = false
+//    var isLive          = false {
+//        didSet {
+//            if isLive {
+//                self.view.addSubview(self.liveIcon)
+//            } else {
+//                self.liveIcon.removeFromSuperview()
+//            }
+//        }
+//    }
+    let _tags           = Tags().getKeys()
+    let now = DateInRegion()
+//    var _weightedTags    = [ItemType : [String: Int]]()
+//    var _selectedTags    = [String]()
+//    var _lowerDate      : DateInRegion?
+//    var _upperDate      : DateInRegion?
     
     /**
      * Data
      */
     var items2: [ParkItem2] = [ParkItem2]()
+    var filteredItems2: [ParkItem2] = [ParkItem2]()
     
     
     override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: Bundle!) {
@@ -89,16 +124,38 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let filterDate = FilterDate(lowerDate: DateInRegion() - 2.days, upperDate: DateInRegion() - 6.days)
+        var filterSections = [FilterSection]()
+        
+        var sectionsPlaceHolder = [FilterSection]()
+        
+        for section in self._realmPark.sections {
+            let filterSection = FilterSection(realmParkSection: section, isEnabled: true)
+            print(section.getType().rawValue)
+            switch section.getType() {
+            case .community:
+                sectionsPlaceHolder.append(filterSection)
+            default:
+                filterSections.append(filterSection)
+            }
+        }
+        for section in sectionsPlaceHolder {
+            filterSections.insert(section, at: 0)
+        }
+        
+        self._filterStruct = FilterStruct(filterSections: filterSections, isActive: false, timerange: filterDate, isLive: false)
+        
+        
         /**
          * Data
          */
-        if let realmPark: RealmPark = self._realmPark {
-            for section in realmPark.sections {
-                self._realmParkSections.append(section)
-            }
-        }
-        self._lowerDate = DateInRegion() - 4.days // Set default dates; ToDo: If user is logged in or user has subscription enable more days
-        self._upperDate = DateInRegion() - 1.months
+//        if let realmPark: RealmPark = self._realmPark {
+//            for section in realmPark.sections {
+//                self._realmParkSections.append(section)
+//            }
+//        }
+//        self._lowerDate = DateInRegion() - 4.days // Set default dates; ToDo: If user is logged in or user has subscription enable more days
+//        self._upperDate = DateInRegion() - 1.months
         
         /**
          * Mapview
@@ -128,48 +185,13 @@ class MapViewController: UIViewController {
         /**
          * Button Filter
          */
-        buttonFilter.backgroundColor        = UIColor.white
-        buttonFilter.cornerRadius           = 16
-        // Shadow and Radius
-        buttonFilter.layer.shadowColor      = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
-        buttonFilter.layer.shadowOffset     = CGSize(width: 0.0, height: 2.0)
-        buttonFilter.layer.shadowOpacity    = 0.6
-        buttonFilter.layer.shadowRadius     = 1.0
-        buttonFilter.layer.masksToBounds    = false
         buttonFilter.addTarget(self, action: #selector(showFilter(sender:)), for: UIControlEvents.touchUpInside)
         
         /**
          * View "Live"
          */
-        let liveIconImage = UIImageView()
-        let scale: CGFloat = 0.5
-        liveIconImage.frame = CGRect(x: 0, y: 0, width: 18 * scale, height: 32 *  scale)
-        liveIconImage.image = StyleKitName.imageOfBolt
-        liveIconImage.tintColor = UIColor.radicalRed
-        liveIconImage.contentMode = .scaleAspectFit
+        self.liveIcon.frame = CGRect(x: self.liveIcon.frame.minX, y: UIApplication.shared.statusBarFrame.height + 12, width: self.liveIcon.bounds.width, height: self.liveIcon.bounds.height)
         
-        let liveIconLabel = UILabel()
-        liveIconLabel.attributedText = NSAttributedString(
-            string: "Live",
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
-                NSForegroundColorAttributeName: UIColor.radicalRed,
-                NSBackgroundColorAttributeName: UIColor.clear,
-                NSKernAttributeName: 0.6,
-                ])
-        let liveIconLabelSize = NSAttributedString(
-            string: "Live",
-            attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
-                NSKernAttributeName: 0.6,
-                ]).size()
-        
-        liveIcon.frame = CGRect(x: 8, y: UIApplication.shared.statusBarFrame.height + 8, width: liveIconImage.bounds.width + 8 + liveIconLabelSize.width, height: liveIconImage.bounds.height)
-        liveIconLabel.frame = CGRect(x: liveIconImage.bounds.width + 8, y: liveIcon.bounds.height / 2 - liveIconLabelSize.height / 2, width: liveIconLabelSize.width, height: liveIconLabelSize.height)
-        
-        
-        liveIcon.addSubview(liveIconImage)
-        liveIcon.addSubview(liveIconLabel)
         
         self.view.addSubview(mapView!)
         self.view.addSubview(buttonFilter)
@@ -180,49 +202,15 @@ class MapViewController: UIViewController {
         
     }
     
-    /**
-     * Weighted Tags
-     * tags: all tags which should added and weighted
-     * counTag: which value should be added to weight (the filter tells to save some tags which are not in the DB)
-     */
-    func saveWeightedTags(tags: [String], countTag: Int = 1){
-        
-        func addTagsToWeightedTags(itemType: ItemType, tag: String) {
-            if let weightedTag: [String: Int] = self._weightedTags[itemType] {
-                if let _: Int = weightedTag[tag] {
-                    self._weightedTags[itemType]![tag] = self._weightedTags[itemType]![tag]! + countTag
-                } else {
-                    self._weightedTags[itemType]![tag] = countTag
-                }
-            } else {
-                self._weightedTags[itemType] = [String: Int]()
-                self._weightedTags[itemType]![tag] = countTag
-            }
-        }
-        
-        // 1. Loop through all tags and look if tag is in App Tags
-        for tag in tags {
-            if let tagsForItemType: [String] = self._tags.getKeys(type: .animals), tagsForItemType.contains(tag) {
-                addTagsToWeightedTags(itemType: .animals, tag: tag)
-                //                addTagsToSelectedTags(tag: tag)
-            } else if let tagsForItemType: [String] = self._tags.getKeys(type: .attractions), tagsForItemType.contains(tag) {
-                addTagsToWeightedTags(itemType: .attractions, tag: tag)
-                //                addTagsToSelectedTags(tag: tag)
-            }
-        }
-        
-    }
     
     func mapViewDidFinishLoadingMap(_ mapView: MGLMapView) {
         
         // MGLMapView.style is optional, so you must guard against it not being set.
         guard let style = self.mapView!.style else { return }
         
-        // You can add custom UIImages to the map style.
-        // These can be referenced by an MGLSymbolStyleLayer’s iconImage property.
-        
-        for (key, value) in self._tags.getTags() {
-            let imageFromAsset = AssetManager.getImage(value)
+        // Add custom UIImage to the map style; these images can be referenced by an MGLSymbolStyleLayer’s iconImage property
+        for (key, value) in Tags().getTags() {
+            let imageFromAsset = AssetManager.getImage(value).withRenderingMode(.alwaysTemplate)
             style.setImage(imageFromAsset, forName: key.lowercased())
         }
         
@@ -249,8 +237,9 @@ class MapViewController: UIViewController {
         /**
          * View
          */
-        buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 82 / 2, y: self.view.bounds.height - 20 - 32, width: 82, height: 32)
+        buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 82 / 2, y: self.view.bounds.height - 20 - 32, width: 96, height: 32)
         self.isLoading = true
+        
         
         /**
          * Firebase observer
@@ -259,138 +248,120 @@ class MapViewController: UIViewController {
         
     }
     
-    func buttonShowText(_ show: Bool){
-        let tag = 91234
-        if let label = buttonFilter.viewWithTag(tag) as? UILabel {
-            label.removeFromSuperview()
-        }
-        
-        if show {
-            buttonFilter.loadingIndicator(false)
-            
-            
-            // Label
-            buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 96 / 2, y: self.view.bounds.height - 20 - 32, width: 96, height: 32)
-            buttonFilter.setAttributedTitle(NSAttributedString(
-                string: "Filter",
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
-                    NSForegroundColorAttributeName: UIColor.flatBlack,
-                    NSBackgroundColorAttributeName: UIColor.clear,
-                    NSKernAttributeName: 0.6,
-                    ]), for: .normal)
-            
-            // Count
-            var countFilter = 0
-            if self._lowerDate != nil && self._upperDate != nil {
-                countFilter = countFilter + 1
-            }
-            if self._selectedTags != nil {
-                countFilter = countFilter + 1
-            }
-            for section in self._realmParkSections {
-                switch section.getType() {
-                case .animals, .attractions, .live:
-                    break
-                default:
-                    countFilter = countFilter + 1
-                }
-            }
-            
-            buttonFilterLabel.backgroundColor   = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00) // Persian green
-            buttonFilterLabel.tag               = tag
-            let style       = NSMutableParagraphStyle()
-            style.alignment = NSTextAlignment.center
-            buttonFilterLabel.attributedText    = NSAttributedString(
-                string: "\(countFilter)",
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 10, weight: UIFontWeightBold),
-                    NSForegroundColorAttributeName: UIColor.white,
-                    NSBackgroundColorAttributeName: UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00),
-                    NSKernAttributeName: 0.6,
-                    NSParagraphStyleAttributeName: style
-                ])
-            let buttonFilterLabelSize           = NSAttributedString(
-                string: "\(countFilter)",
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 10, weight: UIFontWeightBold),
-                    NSForegroundColorAttributeName: UIColor.white,
-                    NSBackgroundColorAttributeName: UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00),
-                    NSKernAttributeName: 0.6,
-                    ]).size()
-            let buttonFilterLabelLongerSize     = buttonFilterLabelSize.width > buttonFilterLabelSize.height ? buttonFilterLabelSize.width : buttonFilterLabelSize.height // To have a rounded cirlce both width and heigt must be same
-            let buttonFilterLabelSizePadding    = 4 + buttonFilterLabelLongerSize
-            buttonFilterLabel.frame             = CGRect(x: buttonFilter.bounds.width - buttonFilterLabelSizePadding - 8, y: buttonFilter.bounds.height / 2 - buttonFilterLabelSizePadding / 2, width: buttonFilterLabelSizePadding, height: buttonFilterLabelSizePadding)
-            buttonFilterLabel.layer.cornerRadius = buttonFilterLabelSizePadding / 2
-            buttonFilterLabel.cornerRadius = buttonFilterLabelSizePadding / 2
-            buttonFilter.addSubview(buttonFilterLabel)
-        } else {
-            buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 82 / 2, y: self.view.bounds.height - 20 - 32, width: 82, height: 32)
-            buttonFilter.setAttributedTitle(NSAttributedString(
-                string: "",
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
-                    NSForegroundColorAttributeName: UIColor.clear,
-                    NSBackgroundColorAttributeName: UIColor.clear,
-                    NSKernAttributeName: 0.6,
-                    ]), for: .normal)
-        }
-        
-    }
     
     /**
      * Firebase
      */
     func createFirebaseObserver() {
         
-        func addItemToMap(item2: ParkItem2, tags: [String]){
-            if let latitude: Double = item2.latitude, let longitude: Double = item2.longitude {
-                self.items2.insert(item2, at: 0)
+        func addItemToMap(item2: ParkItem2, filterSectionIndex: Int?, isLive: Bool){
+            if var latitude: Double = item2.latitude, var longitude: Double = item2.longitude {
+                
+                // Check that no item2 is at the same location
+                for parkItem2 in self.items2 {
+                    if parkItem2.latitude == latitude, parkItem2.longitude == longitude {
+                        let random = Double(Int(arc4random_uniform(10)))
+                        latitude    = latitude  - 0.00015 * random
+                        longitude   = longitude - 0.00015 * random
+                    }
+                }
+                
+                
                 let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
                 let feature = MGLPointFeature()
                 feature.coordinate = coordinate
                 feature.title = item2.name
                 // A feature’s attributes can used by runtime styling for things like text labels.
                 feature.attributes = [
+                    "key": item2.key,
                     "name": item2.name
                 ]
-                self.addItemsToMap(key: item2.key, tag: item2.tags[0].lowercased(), type: item2.type, features: feature)
                 
-                self.saveWeightedTags(tags: tags)
+                self.addItemsToMap(key: item2.key, tag: item2.tags[0].lowercased(), type: item2.type, features: feature, isLive: isLive)
+                self.items2.insert(item2, at: 0)
+                
+                // If FilterSection is set then populate the selected tags (olny at the first load of the view)
+                if let index: Int = filterSectionIndex, let filterSection: FilterSection = self._filterStruct.filterSections[safe: index] {
+                    for tag in item2.tags {
+                        // Check that the given tag for an item is in the default tags for that section
+                        if let allTagsForSection: [String] = filterSection.typeTags, allTagsForSection.contains(tag) {
+                            self._filterStruct.filterSections[index].addTag(tag: tag, count: 1)
+                        }
+                    }
+                }
+                
             }
         }
         
-        func checkTagsForItem(item2: ParkItem2){
-            for tag in item2.tags {
-                if self._selectedTags.contains(tag) {
-                    addItemToMap(item2: item2, tags: [tag])
-                    break
+        
+        func checkFilter(filterSectionIndex: Int, item2: ParkItem2, isLive: Bool = false){
+            
+            guard let timestamp: DateInRegion = item2.timestamp else {
+                return
+            }
+            
+            /* Live: No filter for live tags */
+            if isLive {
+                return addItemToMap(item2: item2, filterSectionIndex: nil, isLive: isLive)
+            }
+                
+            /* Live Filter - Sort all items spotted within 6hours to have these items as live spots */
+            if timestamp >= self.now - 6.hours {
+                return
+            }
+            
+            switch self._filterStruct.timerange.getAction() {
+            case .lowerDate: // lowerDate is nil
+                if !(timestamp >= self._filterStruct.timerange.upperDate!) {
+                    self.filteredItems2.append(item2)
+                    return
+                }
+            case .upperDate: // upperDate is nil
+                if  !(timestamp <= self._filterStruct.timerange.lowerDate!) {
+                    self.filteredItems2.append(item2)
+                    return
+                }
+            case .none: // none of both dates are nil; that means both dates has a value
+                if !(self._filterStruct.timerange.upperDate! <= timestamp && timestamp <= self._filterStruct.timerange.lowerDate!) {
+                    self.filteredItems2.append(item2)
+                    return
+                }
+            default: // .both: Both values are nil; no timerange is set
+                break
+            }
+            
+            
+            // Is filter active? Yes: Filter item; No: Add item to map (for the first load of the map the filter is not active; only timerange should be checked!)
+            if self._filterStruct.isActive == false {
+                return addItemToMap(item2: item2, filterSectionIndex: filterSectionIndex, isLive: isLive)
+            }
+            
+            // .community
+            // All communiy items should be added without checking the tags
+            if let filterSection: FilterSection = self._filterStruct.filterSections[safe: filterSectionIndex], filterSection.realmParkSection.getType() == .community {
+                return addItemToMap(item2: item2, filterSectionIndex: nil, isLive: isLive)
+            }
+            
+            // Tags: .animals, .attractions
+            // - ItemType .community already filtered above; only .animals or .attractions
+            for filterSection: FilterSection in self._filterStruct.filterSections {
+                if filterSection.realmParkSection.getType() != .community {
+                    let selectedTags = filterSection.getSelectedTags()
+                    for tag in item2.tags {
+                        if selectedTags.contains(tag) {
+                            return addItemToMap(item2: item2, filterSectionIndex: nil, isLive: isLive)
+                        }
+                    }
                 }
             }
+            
+            return self.filteredItems2.append(item2)
+            
         }
         
-        func checkFilter(item2: ParkItem2, type: ItemType, checkTags: Bool){
-            // 1. Check timerange: Item should be in timerage
-            // 2.   Is Filer set? Then check that item has at least one tag of selected tags; is Filter not set then add item to map (first load of mapview)
-            //      (.community items are not checked because these items shoudl not have valid tags)
-            if let lowerDate: DateInRegion = self._lowerDate, let upperDate: DateInRegion = self._upperDate, item2.timestamp != nil, upperDate <= item2.timestamp!, item2.timestamp! <= lowerDate, checkTags && type != .community {
-                checkTagsForItem(item2: item2)
-            } else if let lowerDate: DateInRegion = self._lowerDate, self._upperDate == nil, item2.timestamp != nil, item2.timestamp! <= lowerDate, checkTags && type != .community {
-                checkTagsForItem(item2: item2)
-            } else if self._lowerDate == nil, let upperDate: DateInRegion = self._upperDate, item2.timestamp != nil, upperDate <= item2.timestamp!, checkTags && type != .community {
-                checkTagsForItem(item2: item2)
-            } else if self._lowerDate == nil, self._upperDate == nil, item2.timestamp != nil, checkTags, type != .community {
-                // Timerange is not set (in filter the lower date value = 0 && upper date value = 1
-                checkTagsForItem(item2: item2)
-            } else if let lowerDate: DateInRegion = self._lowerDate, let upperDate: DateInRegion = self._upperDate, item2.timestamp != nil, upperDate <= item2.timestamp!, item2.timestamp! <= lowerDate, !checkTags && type != .community {
-                addItemToMap(item2: item2, tags: item2.tags)
-            } else if type == .community {
-                addItemToMap(item2: item2, tags: item2.tags)
-            }
-        }
-        
-        func createObserver(parkKey: String, section: RealmParkSection, checkTags: Bool) {
-            let sectionObserver = self._firebaseReference.child("park").child(parkKey).child(section.path).queryOrdered(byChild: "timestamp").observe(.value, with: { (snapshot) -> Void in
+        func createObserver(parkKey: String, filterSection: FilterSection, filterSectionIndex: Int) {
+            
+            self._firebaseReference.child("park").child(parkKey).child(filterSection.realmParkSection.path).queryOrdered(byChild: "timestamp").observeSingleEvent(of: .value, with: { (snapshot) in
                 
                 if self.isLoading {
                     self.isLoading = false
@@ -398,36 +369,50 @@ class MapViewController: UIViewController {
                 
                 for item in snapshot.children {
                     let snapshotChildren = item as! FIRDataSnapshot
-                    if let snapshotValue = snapshotChildren.value as? NSDictionary, let item2: ParkItem2 = ParkItem2(key: snapshotChildren.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
-                        checkFilter(item2: item2, type: section.getType(), checkTags: checkTags)
+                    if let snapshotValue = snapshotChildren.value as? NSDictionary, let item2: ParkItem2 = ParkItem2(key: snapshotChildren.key, snapshotValue: snapshotValue, park: self._realmPark!, type: filterSection.realmParkSection.getType()), !self.items2.contains(item2) {
+                        checkFilter(filterSectionIndex: filterSectionIndex, item2: item2)
                     }
                 }
                 
-                // Create ParkItem2 object from firebase snapshot, check that object is not yet in array
-                if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject], let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: section.getType()), !self.items2.contains(item2) {
-                    checkFilter(item2: item2, type: section.getType(), checkTags: checkTags)
-                }
-                
             }) { (error) in
-                print(error.localizedDescription)
+                print(error)
             }
             
-            self.observers[section.key] = sectionObserver
+            /* isLive */
+            if self._filterStruct.isLive {
+                let sectionObserver = self._firebaseReference.child("park").child(parkKey).child(filterSection.realmParkSection.path).queryOrdered(byChild: "timestamp").observe(.childAdded, with: { (snapshot) -> Void in
+                    
+                    // Create ParkItem2 object from firebase snapshot, check that object is not yet in array
+                    if let snapshotValue: [String: AnyObject] = snapshot.value as? [String: AnyObject] {
+                        if let item2: ParkItem2 = ParkItem2(key: snapshot.key, snapshotValue: snapshotValue, park: self._realmPark!, type: filterSection.realmParkSection.getType()) {
+                            if !self.items2.contains(item2) {
+                                if !self.filteredItems2.contains(item2) {
+                                    checkFilter(filterSectionIndex: filterSectionIndex, item2: item2, isLive: true)
+                                }
+                            }
+                        }
+                    }
+                    
+                    
+                }) { (error) in
+                    print(error.localizedDescription)
+                }
+                
+                self.observers[filterSection.realmParkSection.key] = sectionObserver
+            }
+            
         }
         
         
-        
-        if let parkKey: String = self._realmPark?.key {
-            if self.isMapLoaded {
-                for section in self._realmParkSections {
-                    createObserver(parkKey: parkKey, section: section, checkTags: self.filterLoaded)
-                }
+        if self.isMapLoaded {
+            for (index, filterSection) in self._filterStruct.filterSections.enumerated() {
+                createObserver(parkKey: self._realmPark.key, filterSection: filterSection, filterSectionIndex: index)
             }
         }
         
     }
     
-    func addItemsToMap(key: String, tag: String, type: ItemType, features: MGLPointFeature) {
+    func addItemsToMap(key: String, tag: String, type: ItemType, features: MGLPointFeature, isLive: Bool = false) {
         // MGLMapView.style is optional, so you must guard against it not being set.
         guard let style = self.mapView!.style else { return }
         
@@ -471,7 +456,14 @@ class MapViewController: UIViewController {
         self.layerIdentifiers.insert(iconIdentifiers)
         let symbols             = MGLSymbolStyleLayer(identifier: iconIdentifiers, source: source)
         symbols.iconImageName   = MGLStyleValue(rawValue: NSString(string: tag))
-        symbols.iconColor       = MGLStyleValue(rawValue: UIColor.flatBlack)
+        if isLive {
+            symbols.iconColor       = MGLStyleValue(rawValue: UIColor.radicalRed)
+            symbols.iconHaloColor   = MGLStyleValue(rawValue: UIColor.radicalRed.withAlphaComponent(1.0))
+        } else {
+            symbols.iconColor       = MGLStyleValue(rawValue: UIColor.flatBlack)
+            symbols.iconHaloColor   = MGLStyleValue(rawValue: UIColor.flatBlack.withAlphaComponent(1.0))
+        }
+        
         
         symbols.iconScale       = MGLStyleValue(stops: [
             5.9: MGLStyleValue(rawValue: 0.2),
@@ -486,7 +478,7 @@ class MapViewController: UIViewController {
             7.9: MGLStyleValue(rawValue: 1),
             12: MGLStyleValue(rawValue: 1)
             ])
-        symbols.iconHaloColor   = MGLStyleValue(rawValue: UIColor.white.withAlphaComponent(0.5))
+        
         symbols.iconHaloWidth   = MGLStyleValue(rawValue: 1)
         
         //        symbols.text            = MGLStyleValue(rawValue: "{name}") // {name} references the "name" key in an MGLPointFeature’s attributes dictionary.
@@ -545,6 +537,7 @@ class MapViewController: UIViewController {
         point.title = feature.attributes["name"] as? String
         point.coordinate = feature.coordinate
         
+        
         // Selecting an feature that doesn’t already exist on the map will add a new annotation view.
         // We’ll need to use the map’s delegate methods to add an empty annotation view and remove it when we’re done selecting it.
         self.mapView!.selectAnnotation(point, animated: true)
@@ -553,14 +546,24 @@ class MapViewController: UIViewController {
     
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        super.viewWillDisappear(animated)
         UIApplication.shared.statusBarStyle = UIStatusBarStyle.default
         self.observers.removeAll()
         self._firebaseReference.removeAllObservers()
         
+        // MapView: Remove annotations from mapview
+        if self._annotations.count > 0 {
+            for annotation in self._annotations {
+                self.mapView?.deselectAnnotation(annotation, animated: true)
+                self.mapView?.removeAnnotation(annotation)
+            }
+            self._annotations = [MGLAnnotation]()
+        }
+        
         // MapView: Remove all data from map
-        self.items2 = [ParkItem2]()
-        self.isLoading = true
+        self.items2         = [ParkItem2]()
+        self.filteredItems2 = [ParkItem2]()
+        self.isLoading      = true
         
         if let style = self.mapView!.style {
             for symbol in self._symbols {
@@ -586,59 +589,8 @@ class MapViewController: UIViewController {
      * Show Filter
      */
     func showFilter(sender: UIButton){
-        
-        // Remove annotations from mapview
-        if self._annotations.count > 0 {
-            for annotation in self._annotations {
-                self.mapView?.deselectAnnotation(annotation, animated: true)
-                self.mapView?.removeAnnotation(annotation)
-            }
-            self._annotations = [MGLAnnotation]()
-        }
-        
-        
-        // Preperata data:section for Filter
-        var sections = [RealmParkSection]()
-        var sectionsEnabled = [String: Bool]()
-        if let realmPark: RealmPark = self._realmPark {
-            for section in realmPark.sections {
-                switch section.getType() {
-                case .community: // ToDo: Hack to show community at first position; mapviewcontroller should pass the correct sort of array
-                    sections.insert(section, at: 0)
-                    if self._realmParkSections.contains(section){
-                        sectionsEnabled[section.key] = true
-                    }
-                default:
-                    sections.append(section)
-                }
-            }
-        }
-        
-        // Remove not selected tags from weightedTags
-        if self.filterLoaded {
-            for (key, value) in self._weightedTags {
-                for (tag, _) in value {
-                    if !self._selectedTags.contains(tag) {
-                        self._weightedTags[key]?.removeValue(forKey: tag)
-                    }
-                }
-            }
-        }
-        
-        let liveSection     = RealmParkSection()
-        liveSection.key     = "live"
-        liveSection.name    = "Live"
-        liveSection.type    = ItemType.live.rawValue
-        sections.insert(liveSection, at: 0)
-        sectionsEnabled[liveSection.key] = self.isLive
-        
         let filterViewController = FilterViewController()
-        // filterViewController._realmPark = self._realmPark!
-        filterViewController._realmParkSections = sections
-        filterViewController._enabledSections = sectionsEnabled
-        filterViewController._weightedTags = self._weightedTags
-        filterViewController._dataLowerDate = self._lowerDate
-        filterViewController._dataUpperDate = self._upperDate
+        filterViewController._filterStruct = self._filterStruct
         filterViewController.delegate = self
         let formNavigationController = UINavigationController(rootViewController: filterViewController)
         self.navigationController?.present(formNavigationController, animated: true, completion: nil)
@@ -654,39 +606,44 @@ extension MapViewController: FilterProtocol {
         /**
          * Firebase observer
          */
-        self.createFirebaseObserver()
+        //self.createFirebaseObserver()
         
         
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    func saveFilter(filterStruct: FilterStruct) {
+        self._filterStruct = filterStruct
+        self.dismiss()
     }
     
     func saveFiler(tags: [String]?, sections: [RealmParkSection : Bool]?, lowerDate: DateInRegion?, upperDate: DateInRegion?) {
         
         
         
-        // 1. Tags
-        self._selectedTags = tags != nil ? tags! : [String]()
-        self._weightedTags = [ItemType : [String: Int]]()
-        self.saveWeightedTags(tags: self._selectedTags, countTag: 0)
-        
-        // 2. Sections
-        self._realmParkSections = [RealmParkSection]()
-        if let sectionsEnabled: [RealmParkSection: Bool] = sections {
-            for (section, enabled) in sectionsEnabled {
-                if section.getType() == .live {
-                    self.isLive = enabled
-                } else if section.getType() != .live && enabled {
-                    self._realmParkSections.append(section)
-                }
-            }
-        }
-        
-        // 3. Date
-        self._lowerDate = lowerDate
-        self._upperDate = upperDate
-        
-        
-        self.filterLoaded = true
+//        // 1. Tags
+//        self._selectedTags = tags != nil ? tags! : [String]()
+//        self._weightedTags = [ItemType : [String: Int]]()
+//        self.saveWeightedTags(tags: self._selectedTags, countTag: 0)
+//        
+//        // 2. Sections
+//        self._realmParkSections = [RealmParkSection]()
+//        if let sectionsEnabled: [RealmParkSection: Bool] = sections {
+//            for (section, enabled) in sectionsEnabled {
+//                if section.getType() == .live {
+//                    self.isLive = enabled
+//                } else if section.getType() != .live && enabled {
+//                    self._realmParkSections.append(section)
+//                }
+//            }
+//        }
+//        
+//        // 3. Date
+//        self._lowerDate = lowerDate
+//        self._upperDate = upperDate
+//        
+//        
+//        self.filterLoaded = true
         
         self.dismiss(animated: true, completion: nil)
         
@@ -724,6 +681,7 @@ extension MapViewController: MGLMapViewDelegate {
     func mapView(_ mapView: MGLMapView, didSelect annotation: MGLAnnotation) {
         self._annotations.append(annotation)
         print("didSelect: \(annotation)")
+        
     }
     
     func mapView(_ mapView: MGLMapView, didDeselect annotation: MGLAnnotation) {

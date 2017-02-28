@@ -65,7 +65,9 @@ class ListItemASCellNode: ASCellNode {
     }
     
     override func __setSelected(fromUIKit selected: Bool) {
-        if !selected {
+        if selected {
+            self.backgroundColor = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00) // very light grey
+        } else {
             self.backgroundColor = UIColor.clear
             self._title.attributedText = NSAttributedString(string: self._title.attributedText!.string, attributes: self._titleAttributes)
             self._detail.attributedText = NSAttributedString(string: self._detail.attributedText!.string, attributes: self._detailAttributes)
