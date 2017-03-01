@@ -19,13 +19,13 @@ class FilterButton: UIButton {
     }
     */
     
-    let buttonFilterCountLabel  = UILabel()
-    let countLabelBackgroundColor = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00)
-    let loadingIndicatorView    = NVActivityIndicatorView(frame: CGRect.zero, type: NVActivityIndicatorType.ballPulse, color: UIColor.radicalRed, padding: 0.0)
-    var labelSize: CGSize = CGSize.zero
-    var countSize: CGSize = CGSize.zero
-    let paddingLabelCount: CGFloat = 4
-    var spots: Int = 0
+    let buttonFilterCountLabel      = UILabel()
+    let countLabelBackgroundColor   = UIColor(red:0.03, green:0.71, blue:0.60, alpha:1.00)
+    let loadingIndicatorView        = NVActivityIndicatorView(frame: CGRect.zero, type: NVActivityIndicatorType.ballPulse, color: UIColor.radicalRed, padding: 0.0)
+    var labelSize: CGSize           = CGSize.zero
+    var countSize: CGSize           = CGSize.zero
+    let paddingLabelCount: CGFloat  = 4
+    var spots: Int                  = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -56,6 +56,23 @@ class FilterButton: UIButton {
                 self.buttonFilterCountLabel.backgroundColor = countLabelBackgroundColor
             }
         }
+    }
+    
+    func setSpots(spots: Int){
+        self.setAttributedTitle(NSAttributedString(
+            string: "\(spots) Spots - Filter",
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                NSForegroundColorAttributeName: UIColor.flatBlack,
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.6,
+                ]), for: .normal)
+        self.labelSize = NSAttributedString(
+            string: "\(spots) Spots - Filter",
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                NSKernAttributeName: 0.6,
+                ]).size()
     }
     
     func setTitleAndCount(spots: Int, count: Int){

@@ -22,7 +22,7 @@ class PresentView: UIView {
     var collectionView: UICollectionView!
     let layout = UICollectionViewFlowLayout()
     var items2: [ParkItem2]?
-    var item2: ParkItem2?
+    var item: Int?
     
     let _imageHeight: CGFloat   = 140 // 96
     let _imageWidth: CGFloat    = 186 // 103.55417528 // 142
@@ -54,7 +54,7 @@ class PresentView: UIView {
         
         self.swipeView.delegate = self
         self.swipeView.dataSource = self
-        self.swipeView.alignment = .center
+        // self.swipeView.alignment = .center
         self.swipeView.isPagingEnabled = true
         self.addSubview(swipeView)
     }
@@ -71,6 +71,9 @@ class PresentView: UIView {
 //        }
 //        self.collectionView.scrollToItem(at: [0, 0], at: .left, animated: false)
         self.swipeView.frame = CGRect(x: 12, y: self.bounds.height / 2 - (184 - 18) / 2, width: self.bounds.width - 24, height: 184 - 18)
+        if let i: Int = self.item {
+            self.swipeView.currentPage = i
+        }
     }
     
 }
@@ -78,11 +81,8 @@ class PresentView: UIView {
 extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
     
     func numberOfItems(in swipeView: SwipeView!) -> Int {
-        if self.item2 != nil && self.items2 != nil {
-            return 1 + self.items2!.count
-        }
-        if self.item2 != nil {
-            return 1
+        if self.items2 != nil {
+            return self.items2!.count
         }
         return 0
     }
@@ -90,7 +90,7 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
     func swipeView(_ swipeView: SwipeView!, viewForItemAt index: Int, reusing view: UIView!) -> UIView! {
         
         var label: UILabel! = nil
-        var imageView = UIImageView()
+        let imageView = UIImageView()
         
         //create new view if no view is available for recycling
         var newView = view
@@ -107,10 +107,10 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
             imageView.frame = CGRect(x: 0, y: 0, width: self.bounds.height, height: self.bounds.height  * 2 / 3)
             newView!.addSubview(imageView)
             
-            label = UILabel(frame: newView!.bounds)
+            label = UILabel(frame: CGRect(x: 0, y: self._imageHeight + 4, width: self._imageWidth, height: self.bounds.height - newView!.bounds.height))
             label.autoresizingMask = .flexibleWidth
             label.backgroundColor = UIColor.clear
-            label.textAlignment = NSTextAlignment.center
+            label.textAlignment = NSTextAlignment.left
             label.font = label.font.withSize(50)
             label.tag = 1
             newView!.addSubview(label)
@@ -120,62 +120,61 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
             //get a reference to the label in the recycled view
             label = newView!.viewWithTag(1) as! UILabel!
         }
-        var red:CGFloat = CGFloat(Float(arc4random()) / Float(INT_MAX))
-        var green:CGFloat = CGFloat(Float(arc4random()) / Float(INT_MAX))
-        var blue:CGFloat = CGFloat(Float(arc4random()) / Float(INT_MAX))
-        newView!.backgroundColor = UIColor(red: red, green: green, blue: blue, alpha: 1.0)
         
-        switch index {
-        case 0:
-            label.text = self.item2?.name
-        default:
-            var title: String!
-            if let name: String = items2?[index - 1].name {
-                title = name
-            } else {
-                title = "\(index)"
-            }
-            label.attributedText = NSAttributedString(
-                string: title,
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightMedium),
-                    NSForegroundColorAttributeName: UIColor.flatBlack,
-                    NSBackgroundColorAttributeName: UIColor.clear,
-                    NSKernAttributeName: 0.0,
-                    ])
-            
-            let labelSize = NSAttributedString(
-                string: title,
-                attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightMedium),
-                    NSKernAttributeName: 0.0,
-                    ]).size()
-            label.frame = CGRect(x: 0, y: self._imageHeight + 4, width: self._imageWidth, height: labelSize.height)
-            let url: URL!
-            if let imageURL: URL = items2?[index - 1].image?.resized["375x300"]?.publicURL {
-                url = imageURL
-            } else if let imageURL: URL = items2?[index - 1].image?.original?.publicURL {
-                url = imageURL
-            } else {
-                // ToDo: Show error
-                url = URL(fileURLWithPath: "https://test.com")
-            }
-            let processor = RoundCornerImageProcessor(cornerRadius: 10)
-            imageView.kf.indicatorType = .activity
-            imageView.kf.setImage(with: url, placeholder: nil, options: [.processor(processor)], progressBlock: nil, completionHandler: { (image, error, cacheType, imageURL) in
-                if error != nil {
-                    print(error)
-                } else {
-                    
-                }
-            })
+        newView!.backgroundColor = UIColor.white
+        
+        var title: String!
+        if let item2: ParkItem2 = self.items2?[safe: index] {
+            title = item2.name
+        } else {
+            title = "\(index)"
         }
+        var selectedColor: UIColor!
+        if index == self.item {
+            selectedColor = UIColor.radicalRed
+        } else {
+            selectedColor = UIColor.flatBlack
+        }
+        
+        label.attributedText = NSAttributedString(
+            string: title,
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightMedium),
+                NSForegroundColorAttributeName: selectedColor,
+                NSBackgroundColorAttributeName: UIColor.clear,
+                NSKernAttributeName: 0.0,
+                ])
+        
+        let labelSize = NSAttributedString(
+            string: title,
+            attributes: [
+                NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightMedium),
+                NSKernAttributeName: 0.0,
+                ]).size()
+        label.frame = CGRect(x: 0, y: self._imageHeight + 4, width: self._imageWidth, height: labelSize.height)
+        let url: URL!
+        if let item2 = self.items2?[safe: index], let imageURL: URL = item2.image?.resized["375x300"]?.publicURL {
+            url = imageURL
+        } else if let imageURL: URL = items2?[index - 1].image?.original?.publicURL {
+            url = imageURL
+        } else {
+            // ToDo: Show error
+            url = URL(fileURLWithPath: "https://test.com")
+        }
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, imageURL) in
+            if error != nil {
+                print(error!)
+            } else {
+                
+            }
+        })
         
         return newView
     }
     
     func swipeViewItemSize(_ swipeView: SwipeView!) -> CGSize {
-        return CGSize(width: self.bounds.height, height: self.bounds.height)
+        return CGSize(width: self.bounds.height + 24, height: self.bounds.height)
     }
 }
 
@@ -185,10 +184,10 @@ extension PresentView: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if self.item2 != nil && self.items2 != nil {
+        if self.items2 != nil && self.items2 != nil {
             return 1 + self.items2!.count
         }
-        if self.item2 != nil {
+        if self.items2 != nil {
             return 1
         }
         return 0
@@ -196,12 +195,7 @@ extension PresentView: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! PresentCell
-        switch indexPath.row {
-        case 0:
-            cell.item2 = self.item2
-        default:
-            cell.item2 = self.items2?[indexPath.row - 1]
-        }
+        cell.item2 = self.items2?[indexPath.row]
         return cell
     }
     
