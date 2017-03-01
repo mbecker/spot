@@ -25,6 +25,7 @@ class FilterButton: UIButton {
     var labelSize: CGSize = CGSize.zero
     var countSize: CGSize = CGSize.zero
     let paddingLabelCount: CGFloat = 4
+    var spots: Int = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,10 +58,10 @@ class FilterButton: UIButton {
         }
     }
     
-    func setTitleAndCount(title: String, count: Int){
+    func setTitleAndCount(spots: Int, count: Int){
         
         self.setAttributedTitle(NSAttributedString(
-            string: title,
+            string: "\(spots) Spots - Filter",
             attributes: [
                 NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
                 NSForegroundColorAttributeName: UIColor.flatBlack,
@@ -68,7 +69,7 @@ class FilterButton: UIButton {
                 NSKernAttributeName: 0.6,
                 ]), for: .normal)
         self.labelSize = NSAttributedString(
-            string: title,
+            string: "\(spots) Spots - Filter",
             attributes: [
                 NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
                 NSKernAttributeName: 0.6,

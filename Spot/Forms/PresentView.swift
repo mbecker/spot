@@ -104,7 +104,7 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
             newView!.autoresizingMask = .flexibleWidth
             
             
-            imageView.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: self._imageHeight)
+            imageView.frame = CGRect(x: 0, y: 0, width: self.bounds.height, height: self.bounds.height  * 2 / 3)
             newView!.addSubview(imageView)
             
             label = UILabel(frame: newView!.bounds)
@@ -150,7 +150,7 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
                     NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightMedium),
                     NSKernAttributeName: 0.0,
                     ]).size()
-            label.frame = CGRect(x: 0, y: self._imageHeight + 4, width: self.bounds.width, height: labelSize.height)
+            label.frame = CGRect(x: 0, y: self._imageHeight + 4, width: self._imageWidth, height: labelSize.height)
             let url: URL!
             if let imageURL: URL = items2?[index - 1].image?.resized["375x300"]?.publicURL {
                 url = imageURL
@@ -175,7 +175,7 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
     }
     
     func swipeViewItemSize(_ swipeView: SwipeView!) -> CGSize {
-        return self.swipeView.bounds.size
+        return CGSize(width: self.bounds.height, height: self.bounds.height)
     }
 }
 
