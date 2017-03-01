@@ -25,6 +25,7 @@
 		D113859B1E5EC69200E46F4E /* MoreButtonUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113859A1E5EC69200E46F4E /* MoreButtonUIButton.swift */; };
 		D11D05F11E54D21A00A6E907 /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11D05F01E54D21A00A6E907 /* NavigationBar.swift */; };
 		D11D05F31E54D3CB00A6E907 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11D05F21E54D3CB00A6E907 /* SettingsTableViewController.swift */; };
+		D121DCD01E66C97A00800371 /* SwipeView.m in Sources */ = {isa = PBXBuildFile; fileRef = D121DCCF1E66C97A00800371 /* SwipeView.m */; };
 		D12D64F51DEF44CA0096A847 /* ParkTableHeaderUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */; };
 		D12D64F71DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */; };
 		D12D64FB1DEF70500096A847 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12D64FA1DEF70500096A847 /* UIButton.swift */; };
@@ -405,6 +406,9 @@
 		D113859A1E5EC69200E46F4E /* MoreButtonUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreButtonUIButton.swift; sourceTree = "<group>"; };
 		D11D05F01E54D21A00A6E907 /* NavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
 		D11D05F21E54D3CB00A6E907 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
+		D121DCCD1E66C97900800371 /* Spot-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Spot-Bridging-Header.h"; sourceTree = "<group>"; };
+		D121DCCE1E66C97A00800371 /* SwipeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwipeView.h; sourceTree = "<group>"; };
+		D121DCCF1E66C97A00800371 /* SwipeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SwipeView.m; sourceTree = "<group>"; };
 		D12D64F41DEF44CA0096A847 /* ParkTableHeaderUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkTableHeaderUIView.swift; sourceTree = "<group>"; };
 		D12D64F61DEF5F7F0096A847 /* ParkTableHeaderMapUIImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkTableHeaderMapUIImageView.swift; sourceTree = "<group>"; };
 		D12D64FA1DEF70500096A847 /* UIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
@@ -789,6 +793,16 @@
 			path = Extras;
 			sourceTree = "<group>";
 		};
+		D121DCCC1E66C96900800371 /* SwipeView */ = {
+			isa = PBXGroup;
+			children = (
+				D121DCCE1E66C97A00800371 /* SwipeView.h */,
+				D121DCCF1E66C97A00800371 /* SwipeView.m */,
+				D121DCCD1E66C97900800371 /* Spot-Bridging-Header.h */,
+			);
+			name = SwipeView;
+			sourceTree = "<group>";
+		};
 		D14D8D321DD25420009AC39B /* Park */ = {
 			isa = PBXGroup;
 			children = (
@@ -936,6 +950,7 @@
 		D1AFD8851DCF90A90082A6EF /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				D121DCCC1E66C96900800371 /* SwipeView */,
 				D11385941E5CE7FE00E46F4E /* Collection.swift */,
 				D152E49F1E60818700CE652B /* ExpandingCellTransition.swift */,
 				D152E4A71E60E90C00CE652B /* Float.swift */,
@@ -1383,6 +1398,7 @@
 					D1AFD84C1DCF8B4C0082A6EF = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = ZQ2XB9365U;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -1928,6 +1944,7 @@
 				D152E4AA1E60EF1900CE652B /* CheckboxCell.swift in Sources */,
 				D152E4991E606EFA00CE652B /* FilterTableViewCell.swift in Sources */,
 				D1608D641E643FAA000F621B /* StyleKitName.swift in Sources */,
+				D121DCD01E66C97A00800371 /* SwipeView.m in Sources */,
 				D1079F061DD2A637007CCE07 /* KingfisherCache.swift in Sources */,
 				D11D05F11E54D21A00A6E907 /* NavigationBar.swift in Sources */,
 				D1FA19261E5F11D70000FB54 /* TagsViewController.swift in Sources */,
@@ -2081,6 +2098,7 @@
 			baseConfigurationReference = B47C30E572AAB91468E4563A /* Pods-Spot.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = SafariIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Spot/Spot.entitlements;
 				DEVELOPMENT_TEAM = ZQ2XB9365U;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2092,6 +2110,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = safari.digital.Spot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spot/Extension/Spot-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -2102,6 +2122,7 @@
 			baseConfigurationReference = 744550C5882D4DB26D8C2A33 /* Pods-Spot.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = SafariIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Spot/Spot.entitlements;
 				DEVELOPMENT_TEAM = ZQ2XB9365U;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2113,6 +2134,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = safari.digital.Spot;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Spot/Extension/Spot-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
