@@ -81,7 +81,7 @@ class MapViewController: UIViewController {
                         }
                     }
                 }
-                buttonFilter.setTitleAndCount(title: "Filter", count: countFilter)
+                buttonFilter.setTitleAndCount(spots: self.items2.count, count: countFilter)
             }
         }
     }
