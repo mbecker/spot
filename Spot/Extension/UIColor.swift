@@ -45,6 +45,10 @@ extension UIColor {
     public class var radicalRed: UIColor {
         return UIColor(red:1.00, green:0.18, blue:0.33, alpha:1.00) // selected cell background color
     }
+    
+    public class var cellHighlightColor: UIColor {
+        return UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00) // Filter Background View Color
+    }
 }
 
 extension UIColor {

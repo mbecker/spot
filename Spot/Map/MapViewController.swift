@@ -55,8 +55,6 @@ class MapViewController: UIViewController {
     
     var presentView: PresentView?
     
-    var countLabel = UILabel(frame: CGRect.zero)
-    
     /**
      * Tags
      */
@@ -81,7 +79,7 @@ class MapViewController: UIViewController {
                         }
                     }
                 }
-                buttonFilter.setTitleAndCount(title: "Filter", count: countFilter)
+                buttonFilter.setTitleAndCount(spots: self.items2.count, count: countFilter)
             }
         }
     }
@@ -92,11 +90,11 @@ class MapViewController: UIViewController {
      */
     var items2: [ParkItem2] = [ParkItem2]() {
         didSet {
-            self.countLabel.text = "\(self.items2.count)"
+            self.buttonFilter.setSpots(spots: self.items2.count)
         }
     }
     var filteredItems2: [ParkItem2] = [ParkItem2]()
-    var _selectedItem2: ParkItem2?
+    var _selectedItem2: Int?
     var _showSelectedItem: Bool = false {
         didSet {
             if _showSelectedItem {
@@ -104,18 +102,14 @@ class MapViewController: UIViewController {
                     self.presentView!.removeFromSuperview()
                 }
                 self.presentView = PresentView(frame: CGRect.zero)
-                self.presentView!.frame = CGRect(x: -1, y: self.view.bounds.height - 184, width: self.view.bounds.width + 2, height: 184)
-                self.presentView!.item2 = self._selectedItem2
-                var items2ForPresentView = [ParkItem2]()
-                for item in self.items2 {
-                    if item.key != self._selectedItem2?.key {
-                        items2ForPresentView.append(item)
-                    }
-                }
-                self.presentView!.items2 = items2ForPresentView
+                self.presentView!.frame = CGRect(x: self.view.bounds.width / 2 - (self.view.bounds.width - 12) / 2, y: self.view.bounds.height - 184 - 12, width: 184 * 1.5, height: 184)
+                self.presentView!.items2    = self.items2
+                self.presentView!.item      = self._selectedItem2
                 self.view.addSubview(self.presentView!)
             } else {
-                self.presentView!.removeFromSuperview()
+                if self.presentView != nil {
+                    self.presentView!.removeFromSuperview()
+                }
             }
         }
     }
@@ -166,7 +160,7 @@ class MapViewController: UIViewController {
          * Mapview
          */
         // Fill in the next line with your style URL from Mapbox Studio.
-        let styleURL = NSURL(string: "mapbox://styles/mbecker/ciw7woa4z00232pnqx8300j67")
+        // let styleURL = NSURL(string: "mapbox://styles/mbecker/ciw7woa4z00232pnqx8300j67")
         //mapView = MGLMapView(frame: view.bounds, styleURL: styleURL as URL?)
         mapView = MGLMapView(frame: view.bounds,
                              styleURL: MGLStyle.outdoorsStyleURL(withVersion: 9))
@@ -197,19 +191,8 @@ class MapViewController: UIViewController {
          */
         self.liveIcon.frame = CGRect(x: self.liveIcon.frame.minX, y: UIApplication.shared.statusBarFrame.height + 12, width: self.liveIcon.bounds.width, height: self.liveIcon.bounds.height)
         
-        
-        countLabel.frame = CGRect(x: 8, y: UIApplication.shared.statusBarFrame.height + 12 + 16, width: 24, height: 24)
-        countLabel.backgroundColor = UIColor(red:0.97, green:0.78, blue:0.01, alpha:1.00)
-        countLabel.text = "\(self.items2.count)"
-        countLabel.textAlignment = .center
-        countLabel.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightSemibold)
-        countLabel.textColor = UIColor.white
-        countLabel.cornerRadius = 24 / 2
-        
-        
         self.view.addSubview(mapView!)
         self.view.addSubview(buttonFilter)
-        self.view.addSubview(countLabel)
         
     }
     
@@ -252,7 +235,7 @@ class MapViewController: UIViewController {
         /**
          * View
          */
-        buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 82 / 2, y: self.view.bounds.height - 20 - 32, width: 96, height: 32)
+        buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 142 / 2, y: self.view.bounds.height - 20 - 32, width: 162, height: 32)
         self.isLoading = true
         
         
@@ -554,9 +537,9 @@ class MapViewController: UIViewController {
         
         
         if let key = feature.attributes["key"] as? String {
-            for item2 in self.items2 {
+            for (index, item2) in self.items2.enumerated() {
                 if item2.key == key {
-                    self._selectedItem2 = item2
+                    self._selectedItem2 = index
                     break
                 }
             }
@@ -651,7 +634,7 @@ extension MapViewController: MGLMapViewDelegate {
     
     func mapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView? {
         // Create an empty view annotation. Set a frame to offset the callout.
-        self._showSelectedItem = true
+        // self._showSelectedItem = true
         return MGLAnnotationView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
     }
     
@@ -679,6 +662,13 @@ extension MapViewController: MGLMapViewDelegate {
             self._annotations.remove(at: 0)
         }
         mapView.deselectAnnotation(annotation, animated: true)
+        
+        
+        if let i: Int = self._selectedItem2, let item2: ParkItem2 = self.items2[safe: i] {
+            let detailTableViewConroller = DetailASViewController(realmPark: self._realmPark, parkItem: item2)
+            self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
+        }
+        
         self._selectedItem2 = nil
     }
 }

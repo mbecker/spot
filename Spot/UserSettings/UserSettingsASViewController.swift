@@ -321,6 +321,8 @@ extension LogoutNode: LoginButtonDelegate {
                 print("displayname: \(user!.displayName)")
                 print("email: \(user!.email)")
                 print("image: \(user!.photoURL)")
+                print(grantedPermissions)
+                print(declinedPermissions)
                 // self.navigationController?.pushViewController(MainASTabBarController(), animated: true)
                 
             }
@@ -516,9 +518,6 @@ class UserSettingsASTextCellNode: ASTextCellNode {
     }
     
     override func didLoad() {
-        let modificationBlock = { (originalImage: UIImage) -> UIImage? in
-            return ASImageNodeTintColorModificationBlock(UIColor(red:0.78, green:0.78, blue:0.80, alpha:0.60))(originalImage)
-        }
         self.chevron.imageModificationBlock = ASImageNodeTintColorModificationBlock(self._imageColor)
         self.chevron.frame = CGRect(x: self.frame.width - 20 - 8.5, y: self.frame.height / 2 - 16 / 2, width: 8.5, height: 16)
         self.addSubnode(self.chevron)

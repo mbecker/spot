@@ -120,11 +120,9 @@ struct FilterSection {
     }
     
     func isParkItem2TagsInSelectedTags(item2: ParkItem2) -> Bool {
-        if let sectionSelectedTags: [String] = self.getSelectedTags() {
-            for tag in item2.tags {
-                if sectionSelectedTags.contains(tag) {
-                    return true
-                }
+        for tag in self.getSelectedTags() {
+            if self.getSelectedTags().contains(tag) {
+                return true
             }
         }
         return false
@@ -709,20 +707,7 @@ extension FilterViewController : UINavigationControllerDelegate {
     }
     
 }
-/**
- * AnimalFormCollectionDelegate
- */
-extension FilterViewController : AnimalFormCollectionDelegate {
-    
-    public func saveItems(index: [IndexPath], items: [String]) {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    public func dismiss() {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-}
+
 
 /**
  * TableView

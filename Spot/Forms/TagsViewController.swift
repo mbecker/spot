@@ -136,11 +136,7 @@ class TagsViewController: UIViewController {
     
     // Helpers
     func dismiss(sender: UITabBarItem){
-        if self.presentingViewController != nil{
-            self.dismiss(animated: true, completion: nil)
-        }else{
-            self.navigationController?.popViewController(animated: true)
-        }
+        self.dismiss(animated: true, completion: nil)
     }
 
 }

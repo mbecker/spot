@@ -282,6 +282,8 @@ extension FacebookView: LoginButtonDelegate {
                 print("displayname: \(user!.displayName)")
                 print("email: \(user!.email)")
                 print("image: \(user!.photoURL)")
+                print(grantedPermissions)
+                print(declinedPermissions)
                 // self.navigationController?.pushViewController(MainASTabBarController(), animated: true)
                 
             }

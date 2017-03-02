@@ -35,8 +35,7 @@ public class KingfisherSource: NSObject, InputSource {
     }
     
     @objc public func load(to imageView: UIImageView, with callback: @escaping (UIImage) -> ()) {
-        let i = BallPulseIndicator(frame: CGRect(x: UIScreen.main.bounds.width / 2 - 88 / 2, y: CGFloat(82 + 82 + 82) / 2 - CGFloat(44 / 2), width: CGFloat(88), height: CGFloat(44)))
-        imageView.kf.indicatorType = .custom(indicator: i)
+        imageView.kf.indicatorType = .custom(indicator: BallPulseIndicator(frame: CGRect(x: UIScreen.main.bounds.width / 2 - 88 / 2, y: CGFloat(82 + 82 + 82) / 2 - CGFloat(44 / 2), width: CGFloat(88), height: CGFloat(44))))
         imageView.kf.setImage(with: self.url, placeholder: self.placeholder, options: [.transition(.fade(0.2))], progressBlock: nil) { (image, _, _, _) in
             if let image = image {
                 callback(image)

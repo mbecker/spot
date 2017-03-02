@@ -337,7 +337,7 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
                 }
                 
                 imageOriginalUploadTask.observe(.failure) { error in
-                    print(error.error)
+                    print(error.error!)
                 }
                 
                 imageOriginalUploadTask.observe(.success) { snapshot in

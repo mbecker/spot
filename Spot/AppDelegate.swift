@@ -67,16 +67,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                object: nil)
         
         
-        
-        /**
-         * Facebook
-         */
-        
-        // let navController = UINavigationController(rootViewController: LoginViewController())
-        
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.backgroundColor = UIColor.white
-        //window.rootViewController = UINavigationController(rootViewController: MainViewController())
         window.rootViewController = MainASTabBarController()
         window.makeKeyAndVisible()
         self.window = window

@@ -532,21 +532,14 @@ class MapNode: UIView {
                 coordinate: CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!),
                 url: URL(string: "https://www.mapbox.com/help/img/screenshots/rocket.png")!
             )
-            let markerOverlay = Marker(
-                coordinate: CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!),
-                size: .medium,
-                iconName: "marker"
-            )
-            markerOverlay.color = UIColor(red:0.92, green:0.10, blue:0.22, alpha:1.00)
-            options.overlays = [markerOverlay]
+            options.overlays = [customMarker]
             let snapshot = Snapshot(
                 options: options,
                 accessToken: "pk.eyJ1IjoibWJlY2tlciIsImEiOiJjaWt2MDZxbDkwMDFzd3ptNXF3djVhYW42In0.9Lavn2fn_0tg-QVrPhwEzA")
             
             let imageURL = snapshot.url
             
-            let i = BallPulseIndicator(frame: CGRect(x: view.bounds.width / 2 - 88 / 2, y: view.bounds.height / 2 - CGFloat(44 / 2), width: CGFloat(88), height: CGFloat(44)))
-            view.kf.indicatorType = .custom(indicator: i)
+            view.kf.indicatorType = .custom(indicator: BallPulseIndicator(frame: CGRect(x: view.bounds.width / 2 - 88 / 2, y: view.bounds.height / 2 - CGFloat(44 / 2), width: CGFloat(88), height: CGFloat(44))))
             view.kf.setImage(with: imageURL)
         } else {
             let info = UILabel()

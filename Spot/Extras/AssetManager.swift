@@ -24,7 +24,7 @@ open class AssetManager {
     
     open static func getImage(_ name: String) -> UIImage {
         let traitCollection = UITraitCollection(displayScale: 3)
-        var bundle = Bundle(for: AssetManager.self)
+        let bundle = Bundle(for: AssetManager.self)
         
         return UIImage(named: name, in: bundle, compatibleWith: traitCollection) ?? UIImage()
     }
