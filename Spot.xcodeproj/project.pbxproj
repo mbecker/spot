@@ -74,7 +74,6 @@
 		D1AFD8841DCF8D6B0082A6EF /* ParkASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */; };
 		D1B7D5151E65CB9200D800BD /* FilterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B7D5141E65CB9200D800BD /* FilterButton.swift */; };
 		D1B7D5171E661D4900D800BD /* PresentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B7D5161E661D4900D800BD /* PresentView.swift */; };
-		D1B7D5191E66277C00D800BD /* PresentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B7D5181E66277C00D800BD /* PresentCell.swift */; };
 		D1C10B0C1E03EA70000CF2C7 /* CountryASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */; };
 		D1C10B0E1E041B48000CF2C7 /* SeparatorASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */; };
 		D1C757981DF0580F0029E882 /* DetailASViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C757971DF0580F0029E882 /* DetailASViewController.swift */; };
@@ -93,7 +92,6 @@
 		D1C943A51DFB1EFB0008C38F /* login4@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C9439A1DFB1EFB0008C38F /* login4@2x.jpg */; };
 		D1C943A61DFB1EFB0008C38F /* login4@3x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C9439B1DFB1EFB0008C38F /* login4@3x.jpg */; };
 		D1D7813D1DD3AA390024B2A9 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D7813C1DD3AA390024B2A9 /* UIViewExtension.swift */; };
-		D1DE0D821E68B51C00AAF6EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1DE0D811E68B51C00AAF6EC /* Assets.xcassets */; };
 		D1DE0D841E68B53000AAF6EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1DE0D831E68B53000AAF6EC /* Assets.xcassets */; };
 		D1E4E6461E0820F80084A229 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4E6451E0820F80084A229 /* Fonts.swift */; };
 		D1E4E64A1E0934E60084A229 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4E6491E0934E60084A229 /* UIColor.swift */; };
@@ -461,7 +459,6 @@
 		D1AFD8831DCF8D6B0082A6EF /* ParkASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkASViewController.swift; sourceTree = "<group>"; };
 		D1B7D5141E65CB9200D800BD /* FilterButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterButton.swift; sourceTree = "<group>"; };
 		D1B7D5161E661D4900D800BD /* PresentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentView.swift; sourceTree = "<group>"; };
-		D1B7D5181E66277C00D800BD /* PresentCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentCell.swift; sourceTree = "<group>"; };
 		D1C10B0B1E03EA70000CF2C7 /* CountryASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryASCellNode.swift; sourceTree = "<group>"; };
 		D1C10B0D1E041B48000CF2C7 /* SeparatorASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SeparatorASCellNode.swift; sourceTree = "<group>"; };
 		D1C757971DF0580F0029E882 /* DetailASViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailASViewController.swift; sourceTree = "<group>"; };
@@ -480,7 +477,6 @@
 		D1C9439A1DFB1EFB0008C38F /* login4@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "login4@2x.jpg"; sourceTree = "<group>"; };
 		D1C9439B1DFB1EFB0008C38F /* login4@3x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "login4@3x.jpg"; sourceTree = "<group>"; };
 		D1D7813C1DD3AA390024B2A9 /* UIViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
-		D1DE0D811E68B51C00AAF6EC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D1DE0D831E68B53000AAF6EC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D1E4E6451E0820F80084A229 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		D1E4E6491E0934E60084A229 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
@@ -847,7 +843,6 @@
 		D18DB6C21E37E5EC00D536BC /* UserSettings */ = {
 			isa = PBXGroup;
 			children = (
-				D1DE0D811E68B51C00AAF6EC /* Assets.xcassets */,
 				D1A1F9A61E550D6C00D55933 /* SettingsTableViewCell.swift */,
 				D11D05F21E54D3CB00A6E907 /* SettingsTableViewController.swift */,
 				D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */,
@@ -995,7 +990,6 @@
 				D1608D651E65911B000F621B /* LiveView.swift */,
 				D1B7D5141E65CB9200D800BD /* FilterButton.swift */,
 				D1B7D5161E661D4900D800BD /* PresentView.swift */,
-				D1B7D5181E66277C00D800BD /* PresentCell.swift */,
 			);
 			path = Forms;
 			sourceTree = "<group>";
@@ -1548,7 +1542,6 @@
 				D1FB22461DF2BB050023F0F2 /* Rhinoceros-66.png in Resources */,
 				D1FB27C51DF400CC0023F0F2 /* md.png in Resources */,
 				D1FB27941DF400CB0023F0F2 /* gd.png in Resources */,
-				D1DE0D821E68B51C00AAF6EC /* Assets.xcassets in Resources */,
 				D1FB27661DF400CB0023F0F2 /* bg.png in Resources */,
 				D1FB27991DF400CB0023F0F2 /* gq.png in Resources */,
 				D1C943A11DFB1EFB0008C38F /* login2@3x.jpg in Resources */,
@@ -1931,7 +1924,6 @@
 				D19DEAF01E4CC427003F6E55 /* String.swift in Sources */,
 				D152E4AF1E61D79500CE652B /* UILabel.swift in Sources */,
 				D1ADC92D1E4FA50100E1C4DB /* SplashScreenViewController.swift in Sources */,
-				D1B7D5191E66277C00D800BD /* PresentCell.swift in Sources */,
 				D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */,
 				D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */,
 				D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */,

@@ -62,7 +62,7 @@ class FilterButton: UIButton {
         self.setAttributedTitle(NSAttributedString(
             string: "\(spots) Spots - Filter",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightSemibold),
                 NSForegroundColorAttributeName: UIColor.flatBlack,
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.6,
@@ -70,7 +70,7 @@ class FilterButton: UIButton {
         self.labelSize = NSAttributedString(
             string: "\(spots) Spots - Filter",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightSemibold),
                 NSKernAttributeName: 0.6,
                 ]).size()
     }
@@ -80,7 +80,7 @@ class FilterButton: UIButton {
         self.setAttributedTitle(NSAttributedString(
             string: "\(spots) Spots - Filter",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightSemibold),
                 NSForegroundColorAttributeName: UIColor.flatBlack,
                 NSBackgroundColorAttributeName: UIColor.clear,
                 NSKernAttributeName: 0.6,
@@ -88,7 +88,7 @@ class FilterButton: UIButton {
         self.labelSize = NSAttributedString(
             string: "\(spots) Spots - Filter",
             attributes: [
-                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightBold),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightSemibold),
                 NSKernAttributeName: 0.6,
                 ]).size()
         

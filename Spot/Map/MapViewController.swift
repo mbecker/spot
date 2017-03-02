@@ -102,12 +102,14 @@ class MapViewController: UIViewController {
                     self.presentView!.removeFromSuperview()
                 }
                 self.presentView = PresentView(frame: CGRect.zero)
-                self.presentView!.frame = CGRect(x: -1, y: self.view.bounds.height - 184, width: self.view.bounds.width + 2, height: 184)
+                self.presentView!.frame = CGRect(x: self.view.bounds.width / 2 - (self.view.bounds.width - 12) / 2, y: self.view.bounds.height - 184 - 12, width: 184 * 1.5, height: 184)
                 self.presentView!.items2    = self.items2
                 self.presentView!.item      = self._selectedItem2
                 self.view.addSubview(self.presentView!)
             } else {
-                self.presentView!.removeFromSuperview()
+                if self.presentView != nil {
+                    self.presentView!.removeFromSuperview()
+                }
             }
         }
     }
@@ -233,7 +235,7 @@ class MapViewController: UIViewController {
         /**
          * View
          */
-        buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 142 / 2, y: self.view.bounds.height - 20 - 32, width: 142, height: 32)
+        buttonFilter.frame = CGRect(x: self.view.bounds.width / 2 - 142 / 2, y: self.view.bounds.height - 20 - 32, width: 162, height: 32)
         self.isLoading = true
         
         
@@ -632,7 +634,7 @@ extension MapViewController: MGLMapViewDelegate {
     
     func mapView(_ mapView: MGLMapView, viewFor annotation: MGLAnnotation) -> MGLAnnotationView? {
         // Create an empty view annotation. Set a frame to offset the callout.
-        self._showSelectedItem = true
+        // self._showSelectedItem = true
         return MGLAnnotationView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
     }
     
@@ -660,6 +662,13 @@ extension MapViewController: MGLMapViewDelegate {
             self._annotations.remove(at: 0)
         }
         mapView.deselectAnnotation(annotation, animated: true)
+        
+        
+        if let i: Int = self._selectedItem2, let item2: ParkItem2 = self.items2[safe: i] {
+            let detailTableViewConroller = DetailASViewController(realmPark: self._realmPark, parkItem: item2)
+            self.navigationController?.pushViewController(detailTableViewConroller, animated: true)
+        }
+        
         self._selectedItem2 = nil
     }
 }

@@ -29,33 +29,27 @@ class PresentView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor    = UIColor.white
-        self.borderColor        = UIColor(red:0.85, green:0.84, blue:0.81, alpha:1.00) // Timberwolf
-        self.borderWidth        = 1.0
+        self.backgroundColor    = UIColor.clear
+        // self.borderColor        = UIColor(red:0.85, green:0.84, blue:0.81, alpha:1.00) // Timberwolf
+        // self.borderWidth        = 1.0
         self.layer.shadowColor           = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25).cgColor
         self.layer.shadowOffset     = CGSize(width: 0.0, height: 2.0)
         self.layer.shadowOpacity    = 0.6
         self.layer.shadowRadius     = 1.0
         self.layer.masksToBounds    = false
+        self.cornerRadius = 16
+        self.layer.cornerRadius = 16
         
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: _imageWidth, height: 184 - 18)
         layout.minimumLineSpacing = 8.0
         layout.minimumInteritemSpacing = 8.0
         
-//        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-//        self.collectionView.backgroundColor = UIColor.white
-//        self.collectionView.allowsMultipleSelection = true
-//        self.collectionView.delegate    = self
-//        self.collectionView.dataSource  = self
-//        self.collectionView.allowsMultipleSelection = false
-//        self.collectionView.register(PresentCell.self, forCellWithReuseIdentifier: "collectionViewCell")
-//        self.addSubview(collectionView)
-        
         self.swipeView.delegate = self
         self.swipeView.dataSource = self
-        // self.swipeView.alignment = .center
+        self.swipeView.alignment = .center
         self.swipeView.isPagingEnabled = true
+        self.swipeView.backgroundColor = UIColor.clear
         self.addSubview(swipeView)
     }
     
@@ -64,12 +58,6 @@ class PresentView: UIView {
     }
     
     override func layoutSubviews() {
-//        self.collectionView.frame = CGRect(x: 12, y: self.bounds.height / 2 - (184 - 18) / 2, width: self.bounds.width - 24, height: 184 - 18)
-//        self.collectionView.reloadData()
-//        if self.item2 != nil {
-//            self.collectionView.selectItem(at: [0, 0], animated: false, scrollPosition: .left)
-//        }
-//        self.collectionView.scrollToItem(at: [0, 0], at: .left, animated: false)
         self.swipeView.frame = CGRect(x: 12, y: self.bounds.height / 2 - (184 - 18) / 2, width: self.bounds.width - 24, height: 184 - 18)
         if let i: Int = self.item {
             self.swipeView.currentPage = i
@@ -104,7 +92,8 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
             newView!.autoresizingMask = .flexibleWidth
             
             
-            imageView.frame = CGRect(x: 0, y: 0, width: self.bounds.height, height: self.bounds.height  * 2 / 3)
+            imageView.frame = CGRect(x: self.bounds.width / 2 - (self.bounds.width - 12) / 2, y: 0, width: 168, height: 168)
+            imageView.layer.cornerRadius = 168 / 2
             newView!.addSubview(imageView)
             
             label = UILabel(frame: CGRect(x: 0, y: self._imageHeight + 4, width: self._imageWidth, height: self.bounds.height - newView!.bounds.height))
@@ -121,7 +110,7 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
             label = newView!.viewWithTag(1) as! UILabel!
         }
         
-        newView!.backgroundColor = UIColor.white
+        newView!.backgroundColor = UIColor.clear
         
         var title: String!
         if let item2: ParkItem2 = self.items2?[safe: index] {
@@ -161,8 +150,9 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
             // ToDo: Show error
             url = URL(fileURLWithPath: "https://test.com")
         }
-        imageView.kf.indicatorType = .activity
-        imageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: nil, completionHandler: { (image, error, cacheType, imageURL) in
+        let processor = RoundCornerImageProcessor(cornerRadius: 168 / 2)
+        imageView.kf.indicatorType = .custom(indicator: BallPulseIndicator(frame: CGRect(x: view.bounds.width / 2 - 88 / 2, y: view.bounds.height / 2 - CGFloat(44 / 2), width: CGFloat(88), height: CGFloat(44))))
+        imageView.kf.setImage(with: url, placeholder: nil, options: [.processor(processor)], progressBlock: nil, completionHandler: { (image, error, cacheType, imageURL) in
             if error != nil {
                 print(error!)
             } else {
@@ -174,37 +164,6 @@ extension PresentView: SwipeViewDataSource, SwipeViewDelegate {
     }
     
     func swipeViewItemSize(_ swipeView: SwipeView!) -> CGSize {
-        return CGSize(width: self.bounds.height + 24, height: self.bounds.height)
-    }
-}
-
-extension PresentView: UICollectionViewDelegate, UICollectionViewDataSource {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if self.items2 != nil && self.items2 != nil {
-            return 1 + self.items2!.count
-        }
-        if self.items2 != nil {
-            return 1
-        }
-        return 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: "collectionViewCell", for: indexPath) as! PresentCell
-        cell.item2 = self.items2?[indexPath.row]
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Collection view at row \(collectionView.tag) selected index path \(indexPath)")
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        print("Collection view at row \(collectionView.tag) deselected index path \(indexPath)")
+        return CGSize(width: self.bounds.width, height: self.bounds.height)
     }
 }
