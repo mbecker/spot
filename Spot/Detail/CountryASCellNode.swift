@@ -1,4 +1,7 @@
 //
+//  Item Detail ASViewController -> Tableview -> Country
+//  * Show the Parknname, Country and Park-/Countryicon (if available)
+//
 //  CountryASCellNode.swift
 //  Spot
 //
@@ -138,21 +141,16 @@ class CountryASCellNode: ASCellNode {
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         
-        self._parkImageNode.style.width             = ASDimension(unit: .points, value: self._imageWidth)
-        self._parkImageNode.style.height            = ASDimension(unit: .points, value: self._imageHeight)
+        self._parkImageNode.style.width         = ASDimension(unit: .points, value: self._imageWidth)
+        self._parkImageNode.style.height        = ASDimension(unit: .points, value: self._imageHeight)
         
-        self._countryImageNode.style.width             = ASDimension(unit: .points, value: self._imageWidth)
-        self._countryImageNode.style.height            = ASDimension(unit: .points, value: self._imageHeight)
+        self._countryImageNode.style.width      = ASDimension(unit: .points, value: self._imageWidth)
+        self._countryImageNode.style.height     = ASDimension(unit: .points, value: self._imageHeight)
         
         
         let textVerticalStack               = ASStackLayoutSpec.vertical()
         textVerticalStack.style.flexGrow    = 1.0
         textVerticalStack.style.flexShrink  = 1.0
-        textVerticalStack.alignItems        = .stretch
-        textVerticalStack.sizeRange        = ASRelativeSizeRangeMake(
-            ASLayoutSize(width: ASDimension(unit: .points, value: constrainedSize.max.width), height: ASDimension(unit: .points, value: 0)), // min
-            ASLayoutSize(width: ASDimension(unit: .points, value: constrainedSize.max.width), height: ASDimension(unit: .points, value: constrainedSize.max.height)) // max
-        )
         
         if self._countryTextNode.attributedText != nil {
             textVerticalStack.children = [self._parkTextNode, self._countryTextNode]
@@ -183,14 +181,11 @@ class CountryASCellNode: ASCellNode {
                                                     justifyContent: .start,
                                                     alignItems: .center,
                                                     children: [textVerticalStack, imageAbsoluteSpec])
-        horizontalStackSpec.style.alignSelf = .start
         horizontalStackSpec.style.flexGrow = 1.0
         
         
         
-        // self._bottomSeparatorNode.style.flexGrow    = 1.0
         self._bottomSeparatorNode.style.height = ASDimension(unit: .points, value: 1.1)
-        // self._topSeparatorNode.style.flexGrow       = 1.0
         self._topSeparatorNode.style.height = ASDimension(unit: .points, value: 1.0)
         
         let verticalSpec = ASStackLayoutSpec.vertical()
