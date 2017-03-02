@@ -117,8 +117,8 @@ class User {
             let showConfigItem = ["/config/\(self.key)/\(UserDefaultTypes.showConfig.rawValue)": showConfig]
             self.ref.updateChildValues(showConfigItem)
             self.ref.updateChildValues(showConfigItem, withCompletionBlock: { (error, reference) in
-                if((error) != nil){
-                    print(error)
+                if let errorMessage = error {
+                    print(errorMessage)
                 } else {
                     print(":: USER CONFIG - SAVED showConfig to: \(showConfig)")
                 }
@@ -134,7 +134,7 @@ class User {
             let showNavBarItem = ["/config/\(self.key)/\(UserDefaultTypes.showNavBar.rawValue)": showNavBar]
             self.ref.updateChildValues(showNavBarItem, withCompletionBlock: { (error, reference) in
                 if((error) != nil){
-                    print(error)
+                    print(error!)
                 } else {
                     print(":: USER CONFIG - SAVED showNavBarItem to: \(showNavBar)")
                 }
@@ -154,7 +154,7 @@ class User {
             let item = ["/config/\(self.key)/\(configItem.rawValue)": set]
             self.ref.updateChildValues(item, withCompletionBlock: { (error, reference) in
                 if((error) != nil){
-                    print(error)
+                    print(error!)
                 } else {
                     print(":: USER CONFIG - SAVED \(configItem.rawValue) to: \(set)")
                 }

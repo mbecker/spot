@@ -20,7 +20,6 @@
 		D10A1FCD1E476EE100E2B7AA /* RealmTransactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCC1E476EE100E2B7AA /* RealmTransactions.swift */; };
 		D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */; };
 		D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */; };
-		D113858F1E5CB84C00E46F4E /* FormFilterTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113858E1E5CB84C00E46F4E /* FormFilterTableViewController.swift */; };
 		D11385951E5CE7FE00E46F4E /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11385941E5CE7FE00E46F4E /* Collection.swift */; };
 		D113859B1E5EC69200E46F4E /* MoreButtonUIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113859A1E5EC69200E46F4E /* MoreButtonUIButton.swift */; };
 		D11D05F11E54D21A00A6E907 /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D11D05F01E54D21A00A6E907 /* NavigationBar.swift */; };
@@ -38,7 +37,6 @@
 		D152E4A01E60818700CE652B /* ExpandingCellTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E49F1E60818700CE652B /* ExpandingCellTransition.swift */; };
 		D152E4A41E6081EA00CE652B /* TagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A11E6081EA00CE652B /* TagCell.swift */; };
 		D152E4A51E6081EA00CE652B /* AnimalCellHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A21E6081EA00CE652B /* AnimalCellHeader.swift */; };
-		D152E4A61E6081EA00CE652B /* AnimalFormCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A31E6081EA00CE652B /* AnimalFormCollections.swift */; };
 		D152E4A81E60E90C00CE652B /* Float.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A71E60E90C00CE652B /* Float.swift */; };
 		D152E4AA1E60EF1900CE652B /* CheckboxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4A91E60EF1900CE652B /* CheckboxCell.swift */; };
 		D152E4AC1E619D3000CE652B /* RangeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D152E4AB1E619D3000CE652B /* RangeSlider.swift */; };
@@ -95,7 +93,8 @@
 		D1C943A51DFB1EFB0008C38F /* login4@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C9439A1DFB1EFB0008C38F /* login4@2x.jpg */; };
 		D1C943A61DFB1EFB0008C38F /* login4@3x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = D1C9439B1DFB1EFB0008C38F /* login4@3x.jpg */; };
 		D1D7813D1DD3AA390024B2A9 /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D7813C1DD3AA390024B2A9 /* UIViewExtension.swift */; };
-		D1E329A41E36B63800227B5C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1E329A31E36B63800227B5C /* Assets.xcassets */; };
+		D1DE0D821E68B51C00AAF6EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1DE0D811E68B51C00AAF6EC /* Assets.xcassets */; };
+		D1DE0D841E68B53000AAF6EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1DE0D831E68B53000AAF6EC /* Assets.xcassets */; };
 		D1E4E6461E0820F80084A229 /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4E6451E0820F80084A229 /* Fonts.swift */; };
 		D1E4E64A1E0934E60084A229 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4E6491E0934E60084A229 /* UIColor.swift */; };
 		D1E4E64C1E0977D90084A229 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E4E64B1E0977D90084A229 /* UIImage.swift */; };
@@ -401,7 +400,6 @@
 		D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkDetailViewController.swift; sourceTree = "<group>"; };
 		D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemASCellNode.swift; sourceTree = "<group>"; };
 		D10A7F7E1DD282C100741BF0 /* Spot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spot.entitlements; sourceTree = "<group>"; };
-		D113858E1E5CB84C00E46F4E /* FormFilterTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormFilterTableViewController.swift; sourceTree = "<group>"; };
 		D11385941E5CE7FE00E46F4E /* Collection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
 		D113859A1E5EC69200E46F4E /* MoreButtonUIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoreButtonUIButton.swift; sourceTree = "<group>"; };
 		D11D05F01E54D21A00A6E907 /* NavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
@@ -421,7 +419,6 @@
 		D152E49F1E60818700CE652B /* ExpandingCellTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingCellTransition.swift; sourceTree = "<group>"; };
 		D152E4A11E6081EA00CE652B /* TagCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TagCell.swift; sourceTree = "<group>"; };
 		D152E4A21E6081EA00CE652B /* AnimalCellHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimalCellHeader.swift; sourceTree = "<group>"; };
-		D152E4A31E6081EA00CE652B /* AnimalFormCollections.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimalFormCollections.swift; sourceTree = "<group>"; };
 		D152E4A71E60E90C00CE652B /* Float.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Float.swift; sourceTree = "<group>"; };
 		D152E4A91E60EF1900CE652B /* CheckboxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CheckboxCell.swift; sourceTree = "<group>"; };
 		D152E4AB1E619D3000CE652B /* RangeSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangeSlider.swift; sourceTree = "<group>"; };
@@ -483,7 +480,8 @@
 		D1C9439A1DFB1EFB0008C38F /* login4@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "login4@2x.jpg"; sourceTree = "<group>"; };
 		D1C9439B1DFB1EFB0008C38F /* login4@3x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "login4@3x.jpg"; sourceTree = "<group>"; };
 		D1D7813C1DD3AA390024B2A9 /* UIViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
-		D1E329A31E36B63800227B5C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D1DE0D811E68B51C00AAF6EC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D1DE0D831E68B53000AAF6EC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D1E4E6451E0820F80084A229 /* Fonts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		D1E4E6491E0934E60084A229 /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		D1E4E64B1E0977D90084A229 /* UIImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
@@ -849,6 +847,7 @@
 		D18DB6C21E37E5EC00D536BC /* UserSettings */ = {
 			isa = PBXGroup;
 			children = (
+				D1DE0D811E68B51C00AAF6EC /* Assets.xcassets */,
 				D1A1F9A61E550D6C00D55933 /* SettingsTableViewCell.swift */,
 				D11D05F21E54D3CB00A6E907 /* SettingsTableViewController.swift */,
 				D18DB6C31E37E60A00D536BC /* UserSettingsASViewController.swift */,
@@ -916,8 +915,8 @@
 				D14D8D321DD25420009AC39B /* Park */,
 				D18DB6C21E37E5EC00D536BC /* UserSettings */,
 				D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */,
-				D1E329A31E36B63800227B5C /* Assets.xcassets */,
 				D1AFD8811DCF8CBC0082A6EF /* GoogleService-Info.plist */,
+				D1DE0D831E68B53000AAF6EC /* Assets.xcassets */,
 				D1AFD85F1DCF8B4C0082A6EF /* Info.plist */,
 				D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */,
 				D15405A91DF8745600EAE971 /* MainASTabBarController.swift */,
@@ -986,12 +985,10 @@
 			isa = PBXGroup;
 			children = (
 				D152E4A21E6081EA00CE652B /* AnimalCellHeader.swift */,
-				D152E4A31E6081EA00CE652B /* AnimalFormCollections.swift */,
 				D152E4A91E60EF1900CE652B /* CheckboxCell.swift */,
 				D152E4981E606EFA00CE652B /* FilterTableViewCell.swift */,
 				D1FA19381E5F81450000FB54 /* FilterViewController.swift */,
 				D1C83AB71E452EE0002030A5 /* FormCountriesTableViewController.swift */,
-				D113858E1E5CB84C00E46F4E /* FormFilterTableViewController.swift */,
 				D152E4A11E6081EA00CE652B /* TagCell.swift */,
 				D1FA19311E5F1D260000FB54 /* TagsTableCell.swift */,
 				D1FA19251E5F11D70000FB54 /* TagsViewController.swift */,
@@ -1392,7 +1389,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0800;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = safari.digital;
 				TargetAttributes = {
 					D1AFD84C1DCF8B4C0082A6EF = {
@@ -1518,7 +1515,6 @@
 				D1FB27D11DF400CC0023F0F2 /* mw.png in Resources */,
 				D1FB27EF1DF400CC0023F0F2 /* sc.png in Resources */,
 				D1FB279D1DF400CB0023F0F2 /* gy.png in Resources */,
-				D1E329A41E36B63800227B5C /* Assets.xcassets in Resources */,
 				D1FB22001DF2BA1F0023F0F2 /* bicycle-parking.png in Resources */,
 				D1FB278D1DF400CB0023F0F2 /* et.png in Resources */,
 				D1FB27FD1DF400CC0023F0F2 /* sz.png in Resources */,
@@ -1552,6 +1548,7 @@
 				D1FB22461DF2BB050023F0F2 /* Rhinoceros-66.png in Resources */,
 				D1FB27C51DF400CC0023F0F2 /* md.png in Resources */,
 				D1FB27941DF400CB0023F0F2 /* gd.png in Resources */,
+				D1DE0D821E68B51C00AAF6EC /* Assets.xcassets in Resources */,
 				D1FB27661DF400CB0023F0F2 /* bg.png in Resources */,
 				D1FB27991DF400CB0023F0F2 /* gq.png in Resources */,
 				D1C943A11DFB1EFB0008C38F /* login2@3x.jpg in Resources */,
@@ -1624,6 +1621,7 @@
 				D1FB27AD1DF400CC0023F0F2 /* ke.png in Resources */,
 				D1FB223D1DF2BB050023F0F2 /* Giraffe-66.png in Resources */,
 				D1FB278B1DF400CB0023F0F2 /* er.png in Resources */,
+				D1DE0D841E68B53000AAF6EC /* Assets.xcassets in Resources */,
 				D1FB27A41DF400CC0023F0F2 /* il.png in Resources */,
 				D1FB27771DF400CB0023F0F2 /* ci.png in Resources */,
 				D1FB27BB1DF400CC0023F0F2 /* li.png in Resources */,
@@ -1937,7 +1935,6 @@
 				D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */,
 				D19DEAEC1E4C7B04003F6E55 /* ParkInfoASTextCellNode.swift in Sources */,
 				D1C83AB81E452EE0002030A5 /* FormCountriesTableViewController.swift in Sources */,
-				D152E4A61E6081EA00CE652B /* AnimalFormCollections.swift in Sources */,
 				D1ADC9321E50ADE300E1C4DB /* EncycnlopediaItemASCellNode.swift in Sources */,
 				D1C7579A1DF05D4E0029E882 /* DetailTableHeaderUIView.swift in Sources */,
 				D1FB21EE1DF2B95D0023F0F2 /* AssetManager.swift in Sources */,
@@ -1952,7 +1949,6 @@
 				D1A1F9A71E550D6C00D55933 /* SettingsTableViewCell.swift in Sources */,
 				D15405A61DF8054200EAE971 /* ListASPagerNode.swift in Sources */,
 				D1C757981DF0580F0029E882 /* DetailASViewController.swift in Sources */,
-				D113858F1E5CB84C00E46F4E /* FormFilterTableViewController.swift in Sources */,
 				D152E49E1E607F6100CE652B /* SaveCancelButton.swift in Sources */,
 				D12D64FD1DEF72D60096A847 /* DB.swift in Sources */,
 			);
@@ -2020,6 +2016,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2069,6 +2066,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;

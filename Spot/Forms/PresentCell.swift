@@ -68,7 +68,7 @@ class PresentCell: UICollectionViewCell {
                 self.imageView.kf.indicatorType = .activity
                 self.imageView.kf.setImage(with: url, placeholder: nil, options: [.processor(processor)], progressBlock: nil, completionHandler: { (image, error, cacheType, imageURL) in
                     if error != nil {
-                        print(error)
+                        print(error!)
                     } else {
                         
                     }

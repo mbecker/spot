@@ -156,7 +156,7 @@ class ExpandingCellTransition: NSObject, UIViewControllerAnimatedTransitioning, 
     // get target view
     var targetViewController = backgroundViewController
     if let navController = targetViewController as? UINavigationController {
-      // targetViewController = navController.topViewController!
+      targetViewController = navController.topViewController!
     }
     let targetViewMaybe = (targetViewController as? ExpandingTransitionPresentingViewController)?.expandingTransitionTargetViewForTransition(transition: self)
     

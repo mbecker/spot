@@ -126,10 +126,8 @@ class ParkDetailViewController: UIViewController {
                 case .FirebaseError:
                     self.showMessage(message: "We couldn't fetch any data from the database.")
                     break;
-                case .MarkdownError:
+                default: // .MarkdownError
                     self.showMessage(message: "We had problems to load the park informtion.")
-                    break;
-                default:
                     break;
                 }
                 print(error)

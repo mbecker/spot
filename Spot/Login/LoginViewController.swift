@@ -123,7 +123,7 @@ class LoginViewController: UIViewController {
         }
         
         let spotCircle = UIImageView()
-        spotCircle.image = #imageLiteral(resourceName: "login1")
+        // spotCircle.image = #imageLiteral(resourceName: "login1")
         spotCircle.contentMode = .scaleAspectFill
         spotCircle.clipsToBounds = true
         spotCircle.layer.masksToBounds = true
@@ -150,10 +150,10 @@ class LoginViewController: UIViewController {
         slideShow.pageControl.pageIndicatorTintColor = UIColor.linkWater
         slideShow.contentScaleMode = UIViewContentMode.scaleAspectFill
         slideShow.setImageInputs([
-            ImageSource(image: #imageLiteral(resourceName: "login1")),
-            ImageSource(image: #imageLiteral(resourceName: "login2")),
-            ImageSource(image: #imageLiteral(resourceName: "login4")),
-            ImageSource(image: #imageLiteral(resourceName: "login3")),
+//            ImageSource(image: #imageLiteral(resourceName: "login1")),
+//            ImageSource(image: #imageLiteral(resourceName: "login2")),
+//            ImageSource(image: #imageLiteral(resourceName: "login4")),
+//            ImageSource(image: #imageLiteral(resourceName: "login3")),
             ])
         self.view.addSubview(slideShow)
         
@@ -195,6 +195,8 @@ extension LoginViewController: LoginButtonDelegate {
                 print("displayname: \(user!.displayName)")
                 print("email: \(user!.email)")
                 print("image: \(user!.photoURL)")
+                print(grantedPermissions)
+                print(declinedPermissions)
                 // self.navigationController?.pushViewController(MainASTabBarController(), animated: true)
                 
             }
