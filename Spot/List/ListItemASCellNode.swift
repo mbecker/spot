@@ -22,25 +22,25 @@ class ListItemASCellNode: ASCellNode {
     var _loadingIndicator   =   BallPulse()
     
     let _titleAttributes:[String: Any] = [
-        NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+        NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
         NSForegroundColorAttributeName: UIColor.black, // UIColor(red:0.18, green:0.18, blue:0.18, alpha:1.00), // Bunker
         NSBackgroundColorAttributeName: UIColor.clear,
         NSKernAttributeName: 0.0,
     ]
     let _titleAttributesSelected:[String: Any] = [
-        NSFontAttributeName: UIFont.systemFont(ofSize: 16, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
+        NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
         NSForegroundColorAttributeName: UIColor.white,
         NSBackgroundColorAttributeName: UIColor.clear,
         NSKernAttributeName: 0.0,
         ]
     let _detailAttributes:[String: Any] = [
-        NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
+        NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
         NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
         NSBackgroundColorAttributeName: UIColor.clear,
         NSKernAttributeName: 0.0,
     ]
     let _detailAttributesSelected:[String: Any] = [
-        NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
+        NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
         NSForegroundColorAttributeName: UIColor.white,
         NSBackgroundColorAttributeName: UIColor.clear,
         NSKernAttributeName: 0.0,
