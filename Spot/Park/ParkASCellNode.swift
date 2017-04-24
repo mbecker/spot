@@ -292,11 +292,12 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
             node._title.attributedText = NSAttributedString(
                 string: self.items2[indexPath.row].name,
                 attributes: [
-                    NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightLight), // UIFont(name: "Avenir-Heavy", size: 12)!,
+                    NSFontAttributeName: UIFont.systemFont(ofSize: 14, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
                     NSForegroundColorAttributeName: UIColor.black,
                     NSBackgroundColorAttributeName: UIColor.clear,
                     NSKernAttributeName: 0.0,
                     ])
+            /*
             node._detail.attributedText = NSAttributedString(
                 string: "Latitude: \(self.items2[indexPath.row].latitude) - Longitude \(self.items2[indexPath.row].longitude)",
                 attributes: [
@@ -305,6 +306,18 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
                     NSBackgroundColorAttributeName: UIColor.clear,
                     NSKernAttributeName: 0.0,
                     ])
+            */
+            if self.items2[indexPath.row].timestamp != nil {
+                node._detail.attributedText = NSAttributedString(
+                    string: "\(self.items2[indexPath.row].timestamp!.absoluteDate)",
+                    attributes: [
+                        NSFontAttributeName: UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight), // UIFont(name: "Avenir-Book", size: 12)!,
+                        NSForegroundColorAttributeName: UIColor(red:0.53, green:0.53, blue:0.53, alpha:1.00), // grey
+                        NSBackgroundColorAttributeName: UIColor.clear,
+                        NSKernAttributeName: 0.0,
+                        ])
+            }
+            
             self.nodes.append(node)
             return node
         }

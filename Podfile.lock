@@ -95,9 +95,9 @@ PODS:
   - ImageSlideshow (1.0.0-beta.1):
     - ImageSlideshow/Core (= 1.0.0-beta.1)
   - ImageSlideshow/Core (1.0.0-beta.1)
-  - Kingfisher (3.2.0)
-  - MapboxStatic.swift (0.6.1)
-  - NVActivityIndicatorView (3.0)
+  - Kingfisher (3.6.2)
+  - MapboxStatic.swift (0.8.0)
+  - NVActivityIndicatorView (3.6.1)
   - PINCache (3.0.1-beta.2):
     - PINCache/Arc-exception-safe (= 3.0.1-beta.2)
     - PINCache/Core (= 3.0.1-beta.2)
@@ -111,7 +111,7 @@ PODS:
     - PINCache (= 3.0.1-beta.2)
     - PINRemoteImage/Core
   - SMSegmentView (0.0.2)
-  - SwiftDate (4.0.13)
+  - SwiftDate (4.1.1)
   - SwiftMessages (3.1.4)
   - SwiftyJSON (3.1.4)
   - TOCropViewController (2.0.11)
@@ -130,11 +130,11 @@ DEPENDENCIES:
   - Firebase/Storage
   - ImagePicker
   - ImageSlideshow (~> 1.0.0-beta.1)
-  - Kingfisher (~> 3.0)
-  - MapboxStatic.swift (from `https://github.com/mapbox/MapboxStatic.swift.git`, branch `swift-3`)
-  - NVActivityIndicatorView
+  - Kingfisher (~> 3.6.2)
+  - MapboxStatic.swift (~> 0.8)
+  - NVActivityIndicatorView (~> 3.6.1)
   - SMSegmentView (from `https://github.com/sima-11/SMSegmentView.git`)
-  - SwiftDate (~> 4.0)
+  - SwiftDate (~> 4.1.1)
   - SwiftMessages
   - SwiftyJSON
   - TOCropViewController (~> 2.0)
@@ -142,9 +142,6 @@ DEPENDENCIES:
 EXTERNAL SOURCES:
   AsyncDisplayKit:
     :git: https://github.com/facebook/AsyncDisplayKit
-  MapboxStatic.swift:
-    :branch: swift-3
-    :git: https://github.com/mapbox/MapboxStatic.swift.git
   SMSegmentView:
     :git: https://github.com/sima-11/SMSegmentView.git
 
@@ -152,9 +149,6 @@ CHECKOUT OPTIONS:
   AsyncDisplayKit:
     :commit: ec59c3161adb37d4b5b908019250dddce1c27d84
     :git: https://github.com/facebook/AsyncDisplayKit
-  MapboxStatic.swift:
-    :commit: 05025a85ecab42f4816fe8bf2881eebe7905bddb
-    :git: https://github.com/mapbox/MapboxStatic.swift.git
   SMSegmentView:
     :commit: 3d0ed978ef10e802e2352ed9d0ff34d74e1b7fdf
     :git: https://github.com/sima-11/SMSegmentView.git
@@ -184,17 +178,17 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
   ImagePicker: 81175d36c2852cb543cb4f5d6c19e28f3e8d90eb
   ImageSlideshow: adf31cd12d65c1e78c15d024b9227d56fc46208c
-  Kingfisher: 50407d1d5dbc34965009d425a286342ff36a84ea
-  MapboxStatic.swift: a3ad6eb4a535718e354ee1928158d921ae59cb1f
-  NVActivityIndicatorView: 81953b5e65093ba79edf4fe7268e002039ca5268
+  Kingfisher: 2c94e72c6830622c71d06adf4ea024c37d316830
+  MapboxStatic.swift: f6da04efd79007490514de6ac266752dcc82c5f0
+  NVActivityIndicatorView: 9f52a7f84bf5c6a798722c450fe3c198e01c56ed
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
   PINRemoteImage: ff63baf185088530db6cfa41cb665e2b5126b5c3
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
-  SwiftDate: 8ec416bb1b5129d1f35e8efaed720421f41d42df
+  SwiftDate: ae615078806a322183e5f64e02e80ca8d939bf48
   SwiftMessages: 08386e74abe1b32fa8ac2075edb4043c56db709d
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TOCropViewController: fe91aaab9e95d72ac38654d1174c8c8339585ee5
 
-PODFILE CHECKSUM: 24ec62d7744aee47609686e15ce3951d09e9702d
+PODFILE CHECKSUM: e33f5bef416ffdbe246deac447d104ccc9e9f0de
 
-COCOAPODS: 1.2.0.beta.1
+COCOAPODS: 1.2.1

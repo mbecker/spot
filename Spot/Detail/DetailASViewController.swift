@@ -523,18 +523,21 @@ class MapNode: UIView {
             view.backgroundColor = UIColor.white
             addSubview(view)
             
-            let options = SnapshotOptions(
-                mapIdentifiers: ["mapbox.streets"],
-                centerCoordinate: CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!),
-                zoomLevel: 9,
+            
+            let snapshotCamera = SnapshotCamera(
+                lookingAtCenter: CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!),
+                zoomLevel: 9)
+            let snapshotOptions = SnapshotOptions(
+                styleURL: URL(string: "mapbox://styles/mapbox/streets-v9")!,
+                camera: snapshotCamera,
                 size: view.bounds.size)
             let customMarker = CustomMarker(
                 coordinate: CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!),
-                url: URL(string: "https://www.mapbox.com/help/img/screenshots/rocket.png")!
+                url: URL(string: "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/Elephant_64.png")!
             )
-            options.overlays = [customMarker]
+            snapshotOptions.overlays = [customMarker]
             let snapshot = Snapshot(
-                options: options,
+                options: snapshotOptions,
                 accessToken: "pk.eyJ1IjoibWJlY2tlciIsImEiOiJjaWt2MDZxbDkwMDFzd3ptNXF3djVhYW42In0.9Lavn2fn_0tg-QVrPhwEzA")
             
             let imageURL = snapshot.url

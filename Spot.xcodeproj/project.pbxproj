@@ -10,13 +10,13 @@
 		28F4702ADC50BC6E0BA84954 /* Pods_SpotTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EFE6AC580ABC3BDB36D5FA1 /* Pods_SpotTests.framework */; };
 		3FC6BFE43A7EFEA4EDDFBB53 /* Pods_Spot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D9B94D45B8F5276C01DEA28 /* Pods_Spot.framework */; };
 		68F7505CAD00059C815E1A07 /* Pods_SpotUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7932AC7FAB0E4D4A016EF0BF /* Pods_SpotUITests.framework */; };
+		D10357B61EAE95600060620B /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10357B41EAE95600060620B /* Realm.framework */; };
+		D10357B71EAE95600060620B /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D10357B41EAE95600060620B /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D10357B81EAE95600060620B /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10357B51EAE95600060620B /* RealmSwift.framework */; };
+		D10357B91EAE95600060620B /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D10357B51EAE95600060620B /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D1079F061DD2A637007CCE07 /* KingfisherCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1079F051DD2A637007CCE07 /* KingfisherCache.swift */; };
 		D1079F091DD2A754007CCE07 /* ActivityIndicatorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1079F081DD2A754007CCE07 /* ActivityIndicatorNode.swift */; };
 		D10A1FAE1E45D22000E2B7AA /* RealmObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FAD1E45D22000E2B7AA /* RealmObjects.swift */; };
-		D10A1FB11E45D8C500E2B7AA /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FAF1E45D8C500E2B7AA /* Realm.framework */; };
-		D10A1FB21E45D8C500E2B7AA /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FAF1E45D8C500E2B7AA /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D10A1FB31E45D8C500E2B7AA /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */; };
-		D10A1FB41E45D8C500E2B7AA /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D10A1FCD1E476EE100E2B7AA /* RealmTransactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCC1E476EE100E2B7AA /* RealmTransactions.swift */; };
 		D10A1FCF1E47726A00E2B7AA /* ParkDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */; };
 		D10A7F7D1DD279C200741BF0 /* ItemASCellNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */; };
@@ -372,9 +372,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D10A1FB21E45D8C500E2B7AA /* Realm.framework in Embed Frameworks */,
-				D10A1FB41E45D8C500E2B7AA /* RealmSwift.framework in Embed Frameworks */,
+				D10357B71EAE95600060620B /* Realm.framework in Embed Frameworks */,
 				D1A1F9AD1E57BBB100D55933 /* Mapbox.framework in Embed Frameworks */,
+				D10357B91EAE95600060620B /* RealmSwift.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,11 +391,11 @@
 		7D9B94D45B8F5276C01DEA28 /* Pods_Spot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Spot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACF4558DAF74D45964183273 /* Pods-SpotTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SpotTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SpotTests/Pods-SpotTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B47C30E572AAB91468E4563A /* Pods-Spot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Spot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Spot/Pods-Spot.debug.xcconfig"; sourceTree = "<group>"; };
+		D10357B41EAE95600060620B /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
+		D10357B51EAE95600060620B /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
 		D1079F051DD2A637007CCE07 /* KingfisherCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KingfisherCache.swift; sourceTree = "<group>"; };
 		D1079F081DD2A754007CCE07 /* ActivityIndicatorNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorNode.swift; sourceTree = "<group>"; };
 		D10A1FAD1E45D22000E2B7AA /* RealmObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmObjects.swift; sourceTree = "<group>"; };
-		D10A1FAF1E45D8C500E2B7AA /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
-		D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = "<group>"; };
 		D10A1FCC1E476EE100E2B7AA /* RealmTransactions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmTransactions.swift; sourceTree = "<group>"; };
 		D10A1FCE1E47726A00E2B7AA /* ParkDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParkDetailViewController.swift; sourceTree = "<group>"; };
 		D10A7F7C1DD279C200741BF0 /* ItemASCellNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemASCellNode.swift; sourceTree = "<group>"; };
@@ -740,9 +740,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D10A1FB11E45D8C500E2B7AA /* Realm.framework in Frameworks */,
+				D10357B61EAE95600060620B /* Realm.framework in Frameworks */,
 				3FC6BFE43A7EFEA4EDDFBB53 /* Pods_Spot.framework in Frameworks */,
-				D10A1FB31E45D8C500E2B7AA /* RealmSwift.framework in Frameworks */,
+				D10357B81EAE95600060620B /* RealmSwift.framework in Frameworks */,
 				D1A1F9AC1E57BBB100D55933 /* Mapbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -877,6 +877,8 @@
 		D1AFD8441DCF8B4C0082A6EF = {
 			isa = PBXGroup;
 			children = (
+				D10357B41EAE95600060620B /* Realm.framework */,
+				D10357B51EAE95600060620B /* RealmSwift.framework */,
 				DDA65F846428B1631ABE11B3 /* Frameworks */,
 				460F9C23519C54D102A8F871 /* Pods */,
 				D1AFD84E1DCF8B4C0082A6EF /* Products */,
@@ -884,8 +886,6 @@
 				D1AFD8671DCF8B4C0082A6EF /* SpotTests */,
 				D1AFD8721DCF8B4C0082A6EF /* SpotUITests */,
 				D1A1F9AB1E57BBB100D55933 /* Mapbox.framework */,
-				D10A1FAF1E45D8C500E2B7AA /* Realm.framework */,
-				D10A1FB01E45D8C500E2B7AA /* RealmSwift.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1743,7 +1743,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		4A7E933D24FFF7783ED99705 /* [CP] Check Pods Manifest.lock */ = {
@@ -1758,7 +1758,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		523C1F949ADDD6A0430F978E /* [CP] Copy Pods Resources */ = {
@@ -1876,7 +1876,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

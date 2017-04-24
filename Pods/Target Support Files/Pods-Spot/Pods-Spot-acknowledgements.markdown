@@ -752,7 +752,7 @@ THE SOFTWARE.
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Wei Wang
+Copyright (c) 2017 Wei Wang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -776,7 +776,7 @@ SOFTWARE.
 
 ## MapboxStatic.swift
 
-MapboxStatic copyright (c) 2014, Mapbox. All rights reserved.
+MapboxStatic copyright © 2014–2017, Mapbox. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -806,7 +806,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The MIT License (MIT)
 
-Copyright (c) 2016 Nguyen Vinh
+Copyright (c) 2016 Vinh Nguyen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
