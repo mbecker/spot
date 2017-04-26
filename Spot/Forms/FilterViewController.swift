@@ -399,9 +399,10 @@ class FilterViewController: UIViewController, ExpandingTransitionPresentingViewC
     
     func checkDateInterval(lowerDate: DateInRegion, upperDate: DateInRegion) -> (lowerSlider: Double, lowerString: String, lowerDate: DateInRegion?, upperSlider: Double, upperString: String, upperDate: DateInRegion?) {
         
-        let now = DateInRegion() // 2016-11-30 10:37:23 +0000
-        let sepreat = (now - lowerDate).in([.day,.hour,.minute]) // -3.days (3 days in the past)
-        
+        let now = DateInRegion(absoluteDate: Date()) // 2016-11-30 10:37:23 +0000
+        print(now.absoluteDate)
+        let sepreat = (now.absoluteDate - lowerDate.absoluteDate).in([.day,.hour,.minute]) // -3.days (3 days in the past)
+        print(sepreat)
         var lowerDateNew: DateInRegion!
         var lowerString: String = "today"
         var lowerSlider: Double!
