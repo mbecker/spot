@@ -9,6 +9,7 @@
 import UIKit
 import AsyncDisplayKit
 import FirebaseStorage
+import SwiftDate
 
 class ListItemASCellNode: ASCellNode {
     
@@ -103,6 +104,19 @@ class ListItemASCellNode: ASCellNode {
         
         self._image.delegate            = self
         
+        // Text nodes
+        self._title.attributedText          = NSAttributedString(string: self._parkItem.name, attributes: self._titleAttributes)
+        
+        let formatter = DateInRegionFormatter()
+        formatter.allowedComponents = [.year, .month, .day, .hour, .minute]
+        do {
+            let result = try formatter.colloquial(from: self._parkItem.timestamp!, to: DateInRegion(absoluteDate: Date()))
+            self._detail.attributedText         = NSAttributedString(string: "\(result.colloquial) \(result.time!)", attributes: self._detailAttributes)
+        } catch {
+            debugPrint(error.localizedDescription, error)
+        }
+        
+        
         self.addSubnode(self._image)
         self.addSubnode(self._errorText)
         self.addSubnode(self._detail)
@@ -159,12 +173,12 @@ class ListItemASCellNode: ASCellNode {
         
         let loadingIndicatorOverlaySpec     = ASOverlayLayoutSpec(child: errorTextOverlaySpec, overlay: loadingIndicatorInsetSpec)
         
-        self._title.attributedText          = NSAttributedString(string: self._parkItem.name, attributes: self._titleAttributes)
+        
         
         //self._title.style.height            = ASDimension(unit: .points, value: (constrainedSize.max.height - 16) / 2)
         self._title.style.width             = ASDimension(unit: .points, value: constrainedSize.max.width - 16 - imageWidth - 16 - 16)
         
-        self._detail.attributedText         = NSAttributedString(string: "12mins ago • 5.1km away", attributes: self._detailAttributes)
+        
         // self._detail.style.height            = ASDimension(unit: .points, value: constrainedSize.max.height / 2)
         self._detail.style.width            = ASDimension(unit: .points, value: constrainedSize.max.width - 16 - imageWidth - 16 - 16)
         

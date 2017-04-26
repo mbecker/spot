@@ -314,11 +314,10 @@ extension ParkASCellNode : ASCollectionDelegate, ASCollectionDataSource {
                 // let date = self.items2[indexPath.row].timestamp!.toRegion(region).string(format: .custom("HH:mm dd.MM.yyyy"))
                 // Format the date to get the string "%d days ago"
                 let formatter = DateInRegionFormatter()
-                formatter.allowedComponents = [.day, .year, .month, .hour]
+                formatter.allowedComponents = [.year, .month, .day, .hour, .minute]
                 
                 do {
                     let result = try formatter.colloquial(from: self.items2[indexPath.row].timestamp!, to: DateInRegion(absoluteDate: Date()))
-                    debugPrint(result.colloquial, result.time)
                     node._detail.attributedText = NSAttributedString(
                         string: "\(result.colloquial) \(result.time!)",
                         attributes: [
