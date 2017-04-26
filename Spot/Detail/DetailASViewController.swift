@@ -54,6 +54,11 @@ class DetailASViewController: ASViewController<ASDisplayNode> {
         //Status bar style and visibility
         UIApplication.shared.isStatusBarHidden = false
         UIApplication.shared.statusBarStyle = .default
+        // Status bar transparent
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        if statusBar.responds(to: #selector(setter: UIView.backgroundColor)) {
+            statusBar.backgroundColor = UIColor.clear
+        }
         // Navigationbar
         self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.navigationBar.backgroundColor = UIColor.white
