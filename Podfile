@@ -31,7 +31,7 @@ target 'Spot' do
   # pod 'EasyAnimation'
   pod 'SwiftyJSON'
   pod 'DLRadioButton', '~> 1.4'
-  pod 'SwiftDate', '~> 4.1.1'
+  pod 'SwiftDate', '4.1.0'
 
   target 'SpotTests' do
     inherit! :search_paths

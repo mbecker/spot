@@ -111,7 +111,7 @@ class ListItemASCellNode: ASCellNode {
         formatter.allowedComponents = [.year, .month, .day, .hour, .minute]
         do {
             let result = try formatter.colloquial(from: self._parkItem.timestamp!, to: DateInRegion(absoluteDate: Date()))
-            self._detail.attributedText         = NSAttributedString(string: "\(result.colloquial) \(result.time!)", attributes: self._detailAttributes)
+            self._detail.attributedText = NSAttributedString(string: "\(result.colloquial) \(result.time ?? "")", attributes: self._detailAttributes)
         } catch {
             debugPrint(error.localizedDescription, error)
         }

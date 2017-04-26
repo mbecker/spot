@@ -108,10 +108,10 @@ internal enum Weekday: Int {
 public class ISO8601Parser {
 	
 	/// Some typealias to make the code cleaner
-	public typealias ISOString		= String.UnicodeScalarView
-	public typealias ISOIndex		= String.UnicodeScalarView.Index
-	public typealias ISOChar		= UnicodeScalar
-	public typealias ISOParsedDate	= (date: Date?, timezone: TimeZone?)
+	public typealias ISOString	= String.UnicodeScalarView
+	public typealias ISOIndex	= String.UnicodeScalarView.Index
+	public typealias ISOChar	= UnicodeScalar
+	
 	
 	/// This represent the internal parser status representation
 	public struct ParsedDate {
@@ -196,17 +196,6 @@ public class ISO8601Parser {
 	/// Parsed date
 	private(set) var parsedDate: Date?
 	
-	/// Parsed timezone
-	private(set) var parsedTimeZone: TimeZone?
-	
-	/// Date adjusted at parsed timezone
-	private var dateInTimezone: Date? {
-		get {
-			self.cfg.calendar.timeZone = date.timezone ?? TimeZone(identifier: "UTC")!
-			return self.cfg.calendar.date(from: self.date_components!)
-		}
-	}
-	
 	/// Formatter used to transform a date to a valid ISO8601 string
 	private(set) var formatter: DateFormatter = DateFormatter()
 	
@@ -218,10 +207,10 @@ public class ISO8601Parser {
 	///   - src: source ISO8601 string
 	///   - config: configuration used for parsing
 	/// - Throws: throw an `ISO8601Error` if parsing operation fails
-	public init?(_ src: String, config: ISO8601Configuration = ISO8601Configuration()) {
+	public init(_ src: String, config: ISO8601Configuration = ISO8601Configuration()) throws {
 		let src_trimmed = src.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 		guard src_trimmed.characters.count > 0 else {
-			return nil
+			throw ISO8601ParserError.invalid
 		}
 		self.string = src_trimmed.unicodeScalars
 		self.length = src_trimmed.characters.count
@@ -237,11 +226,7 @@ public class ISO8601Parser {
 			idx = string.index(after: idx)
 		}
 		
-		do {
-			try self.parse()
-		} catch {
-			return nil
-		}
+		try self.parse()
 	}
 	
 	
@@ -249,11 +234,12 @@ public class ISO8601Parser {
 	///
 	/// - Parameter string: source string
 	/// - Returns: a valid `Date` object or `nil` if date cannot be parsed
-	public static func date(from string: String) -> ISOParsedDate? {
-		guard let parser = ISO8601Parser(string) else {
+	public static func date(from string: String) -> Date? {
+		do {
+			return try ISO8601Parser(string).parsedDate
+		} catch {
 			return nil
 		}
-		return (parser.parsedDate,parser.parsedTimeZone)
 	}
 	
 	//MARK: - Internal Parser
@@ -261,8 +247,7 @@ public class ISO8601Parser {
 	/// Private parsing function
 	///
 	/// - Throws: throw an `ISO8601Error` if parsing operation fails
-	@discardableResult
-	private func parse() throws -> ISOParsedDate {
+	private func parse() throws {
 		
 		// PARSE DATE
 		
@@ -421,17 +406,10 @@ public class ISO8601Parser {
 			
 		}
 		
-		//self.cfg.calendar.timeZone = date.timezone ?? TimeZone(identifier: "UTC")!
-		//self.parsedDate = self.cfg.calendar.date(from: self.date_components!)
-		
-		let tz = date.timezone ?? TimeZone(identifier: "UTC")!
-		self.parsedTimeZone = tz
-		self.cfg.calendar.timeZone = tz
+		self.cfg.calendar.timeZone = date.timezone ?? TimeZone(identifier: "UTC")!
 		self.parsedDate = self.cfg.calendar.date(from: self.date_components!)
-
-		return (self.parsedDate,self.parsedTimeZone)
+		
 	}
-	
 	
 	private func parse_digits_3(_ num_digits: Int, _ segment: inout Int) throws {
 		//Technically, the standard only allows one hyphen. But it says that two hyphens is the logical implementation, and one was dropped for brevity. So I have chosen to allow the missing hyphen.
@@ -472,8 +450,6 @@ public class ISO8601Parser {
 			if current() == "-" {
 				next()
 				date.day = try read_int(2).value
-			} else {
-				date.day = 1
 			}
 		}
 		
@@ -504,12 +480,6 @@ public class ISO8601Parser {
 						date.weekday = weekday
 					} else {
 						date.day = try read_int().value
-						if date.day == 0 {
-							date.day = 1
-						}
-						if date.month_or_week == 0 {
-							date.month_or_week = 1
-						}
 					}
 				} else {
 					date.day = 1
@@ -711,29 +681,10 @@ public class ISO8601Parser {
 			try parseDayAfterWeek()
 		} else if hyphens == 1 {
 			date.year = now_cmps.year!
-			if current() == "W" {
-				next()
-				date.month_or_week = try read_int(2).value
-				date.type = .week
-				try parseWeekday()
-			} else {
-				try parseDayAfterWeek()
-			}
+			try parseDayAfterWeek()
 		} else {
 			throw ISO8601ParserError.invalid
 		}
-	}
-	
-	private func parseWeekday() throws {
-		if current() == "-" {
-			next()
-		}
-		let weekday = try read_int().value
-		if weekday > 7 {
-			throw ISO8601ParserError.invalid
-		}
-		date.type = .week
-		date.weekday = weekday
 	}
 	
 	private func parseWeekAndDay() throws {
@@ -747,7 +698,16 @@ public class ISO8601Parser {
 			date.day = 1
 		} else {
 			date.month_or_week = try read_int(2).value
-			try parseWeekday()
+			if current() == "-" {
+				next()
+			}
+			let weekday = try read_int().value
+			if weekday > 7 {
+				throw ISO8601ParserError.invalid
+			}
+			date.type = .week
+			date.weekday = weekday
+			//		try parseDayAfterWeek()
 		}
 	}
 	

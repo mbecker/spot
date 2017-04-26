@@ -230,7 +230,11 @@ public class ISO8601DateTimeFormatter {
 	///   - config: configuration to use. `nil` uses default configuration
 	/// - Returns: a valid `Date` object or `nil` if parse fails
 	public class func date(from string: String, config: ISO8601Configuration = ISO8601Configuration()) -> Date? {
-		return ISO8601Parser(string, config: config)?.parsedDate
+		do {
+			return try ISO8601Parser(string, config: config).parsedDate
+		} catch {
+			return nil
+		}
 	}
 	
 	/// Creates and returns an ISO 8601 formatted string representation of the specified date.
@@ -239,12 +243,9 @@ public class ISO8601DateTimeFormatter {
 	///   - date: The date to be represented.
 	///   - options: Formastting style
 	/// - Returns: a string description of the date
-	public func string(from date: Date, tz: TimeZone, options: ISO8601DateTimeFormatter.Options = [.withInternetDateTime]) -> String {
+	public func string(from date: Date, options: ISO8601DateTimeFormatter.Options = [.withInternetDateTime]) -> String {
 		self.formatter.dateFormat = options.formatterString
-		formatter.locale = LocaleName.englishUnitedStatesComputer.locale // fix for 12/24h
-		formatter.timeZone = tz
-		let string = self.formatter.string(from: date)
-		return string
+		return self.formatter.string(from: date)
 	}
 	
 	/// Creates a representation of the specified date with a given time zone and format options.
@@ -256,7 +257,7 @@ public class ISO8601DateTimeFormatter {
 	/// - returns: A user-readable string representing the date.
 	@available(*, deprecated: 4.1.0, message: "Use ISO8601DateTimeFormatter class func string(from:options:) instead")
 	public class func string(from date: Date, timeZone: TimeZone, formatOptions: ISO8601DateTimeFormatter.Options = []) -> String {
-		return ISO8601DateTimeFormatter.string(from: date, tz: timeZone, options: formatOptions)
+		return ISO8601DateTimeFormatter.string(from: date, options: formatOptions)
 	}
 	
 	
@@ -264,12 +265,11 @@ public class ISO8601DateTimeFormatter {
 	///
 	/// - Parameters:
 	///   - date: The date to be represented.
-	///	  - tz: Destination timezone
 	///   - options: The options used. For possible values, see ISO8601DateTimeFormatter.Options.
 	/// - returns: A user-readable string representing the date.
-	public class func string(from date: Date, tz: TimeZone, options: ISO8601DateTimeFormatter.Options = []) -> String {
+	public class func string(from date: Date, options: ISO8601DateTimeFormatter.Options = []) -> String {
 		let formatter = ISO8601DateTimeFormatter()
 		formatter.locale = LocaleName.englishUnitedStatesComputer.locale // fix for 12/24h
-		return formatter.string(from: date, tz: tz, options: options)
+		return formatter.string(from: date, options: options)
 	}
 }

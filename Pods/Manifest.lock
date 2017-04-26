@@ -91,7 +91,7 @@ PODS:
     - GoogleToolboxForMac/NSString+URLArguments (= 2.1.0)
   - GoogleToolboxForMac/NSString+URLArguments (2.1.0)
   - GTMSessionFetcher/Core (1.1.7)
-  - ImagePicker (2.0.0)
+  - ImagePicker (2.1.1)
   - ImageSlideshow (1.0.0-beta.1):
     - ImageSlideshow/Core (= 1.0.0-beta.1)
   - ImageSlideshow/Core (1.0.0-beta.1)
@@ -111,7 +111,7 @@ PODS:
     - PINCache (= 3.0.1-beta.2)
     - PINRemoteImage/Core
   - SMSegmentView (0.0.2)
-  - SwiftDate (4.1.1)
+  - SwiftDate (4.1.0)
   - SwiftMessages (3.1.4)
   - SwiftyJSON (3.1.4)
   - TOCropViewController (2.0.11)
@@ -134,7 +134,7 @@ DEPENDENCIES:
   - MapboxStatic.swift (~> 0.8)
   - NVActivityIndicatorView (~> 3.6.1)
   - SMSegmentView (from `https://github.com/sima-11/SMSegmentView.git`)
-  - SwiftDate (~> 4.1.1)
+  - SwiftDate (= 4.1.0)
   - SwiftMessages
   - SwiftyJSON
   - TOCropViewController (~> 2.0)
@@ -176,7 +176,7 @@ SPEC CHECKSUMS:
   GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
   GoogleToolboxForMac: 2b2596cbb7186865e98cadf2b1e262d851c2b168
   GTMSessionFetcher: a1f8ed39e4fe21c68957daed472c7afbcdf29166
-  ImagePicker: 81175d36c2852cb543cb4f5d6c19e28f3e8d90eb
+  ImagePicker: fe4c699abb56ff03994fa98d8b02e3883ee118be
   ImageSlideshow: adf31cd12d65c1e78c15d024b9227d56fc46208c
   Kingfisher: 2c94e72c6830622c71d06adf4ea024c37d316830
   MapboxStatic.swift: f6da04efd79007490514de6ac266752dcc82c5f0
@@ -184,11 +184,11 @@ SPEC CHECKSUMS:
   PINCache: 6d273a6e0754bd26e3f12a38a90dde73cc6a42b2
   PINRemoteImage: ff63baf185088530db6cfa41cb665e2b5126b5c3
   SMSegmentView: 021507cbbdaa33986fab44b5aa23c1a983a47380
-  SwiftDate: ae615078806a322183e5f64e02e80ca8d939bf48
+  SwiftDate: 1cb9a0a930a1f0fff392806829fed0ee370ff94f
   SwiftMessages: 08386e74abe1b32fa8ac2075edb4043c56db709d
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
   TOCropViewController: fe91aaab9e95d72ac38654d1174c8c8339585ee5
 
-PODFILE CHECKSUM: e33f5bef416ffdbe246deac447d104ccc9e9f0de
+PODFILE CHECKSUM: 6c693135a987143430b0b2a0b9a7592a0fb78b87
 
 COCOAPODS: 1.2.1
