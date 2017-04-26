@@ -212,11 +212,6 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>505A6E3C28CDD43B1C952A08ED17CFCF</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>593E9479C06FB200807D11AB29EB50BD</key>
 		<dict>
 			<key>primary</key>
@@ -243,6 +238,11 @@
 			<true/>
 		</dict>
 		<key>8D78085459C376FBE59CF8B85B3574BA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A7F4DB65C129181E8FA24F30F3543438</key>
 		<dict>
 			<key>primary</key>
 			<true/>

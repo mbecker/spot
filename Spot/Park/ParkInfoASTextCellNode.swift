@@ -66,16 +66,16 @@ class ParkInfoASTextCellNode: ASTextCellNode {
     }
     
     let _titleAttributes:[String: Any] = [
-        NSFontAttributeName: UIFont.systemFont(ofSize: 18, weight: UIFontWeightLight), // UIFont(name: "Avenir-Heavy", size: 12)!,
+        NSFontAttributeName: UIFont.systemFont(ofSize: 18, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
         NSForegroundColorAttributeName: UIColor.scarlet,
         NSBackgroundColorAttributeName: UIColor.clear,
-        NSKernAttributeName: 0.0,
+        NSKernAttributeName: 0.6,
         ]
     let _titleAttributesSelected:[String: Any] = [
-        NSFontAttributeName: UIFont.systemFont(ofSize: 18, weight: UIFontWeightLight), // UIFont(name: "Avenir-Heavy", size: 12)!,
+        NSFontAttributeName: UIFont.systemFont(ofSize: 18, weight: UIFontWeightRegular), // UIFont(name: "Avenir-Heavy", size: 12)!,
         NSForegroundColorAttributeName: UIColor.white,
         NSBackgroundColorAttributeName: UIColor.clear,
-        NSKernAttributeName: 0.0,
+        NSKernAttributeName: 0.6,
         ]
     
     

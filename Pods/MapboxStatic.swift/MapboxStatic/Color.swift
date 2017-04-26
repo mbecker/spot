@@ -40,7 +40,7 @@ internal extension Color {
         var g: CGFloat = 0
         var b: CGFloat = 0
         
-        if hexString.lengthOfBytes(using: String.Encoding.utf8) == 6 {
+        if hexString.characters.count == 6 {
             var hexInt: UInt32 = 0
 
             if Scanner(string: hexString).scanHexInt32(&hexInt) {

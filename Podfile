@@ -4,6 +4,7 @@
 target 'Spot' do
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!
+  platform :ios, '10.0'
 
   # Pods for Spot
   pod 'AsyncDisplayKit', :git => 'https://github.com/facebook/AsyncDisplayKit'
@@ -15,10 +16,11 @@ target 'Spot' do
   pod 'FacebookCore'
   pod 'FacebookLogin'
   pod 'FacebookShare'
-  pod 'Kingfisher', '~> 3.0'
-  pod 'NVActivityIndicatorView'
+  pod 'Kingfisher', '~> 3.6.2'
+  pod 'NVActivityIndicatorView', '~> 3.6.1'
   pod 'ImageSlideshow', '~> 1.0.0-beta.1'
-  pod 'MapboxStatic.swift', :git => 'https://github.com/mapbox/MapboxStatic.swift.git', :branch => 'swift-3'
+  # pod 'MapboxStatic.swift', :git => 'https://github.com/mapbox/MapboxStatic.swift.git', :branch => 'swift-3'
+  pod 'MapboxStatic.swift', '~> 0.8'
   pod 'SMSegmentView', :git => 'https://github.com/sima-11/SMSegmentView.git'
   # pod 'EZAlertController', '3.2'
   pod 'ImagePicker'
@@ -29,7 +31,7 @@ target 'Spot' do
   # pod 'EasyAnimation'
   pod 'SwiftyJSON'
   pod 'DLRadioButton', '~> 1.4'
-  pod 'SwiftDate', '~> 4.0'
+  pod 'SwiftDate', '~> 4.1.1'
 
   target 'SpotTests' do
     inherit! :search_paths
@@ -45,7 +47,7 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['SWIFT_VERSION'] = '3.0'
+      config.build_settings['SWIFT_VERSION'] = '3.1'
     end
   end
 end
