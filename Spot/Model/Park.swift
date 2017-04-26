@@ -220,6 +220,7 @@ class ParkItem2 : Equatable {
     var spottedBy   =   [[String: String]]()
     var timestamp   :   DateInRegion?
     
+    
     /**
      * Park information
      */
@@ -236,6 +237,7 @@ class ParkItem2 : Equatable {
         self.park         = park
         self.type   = type
         
+        // Date.setDefaultRegion(Region(tz: TimeZoneName.europeBerlin, cal: CalendarName.gregorian, loc: LocaleName.current))
         
         if let name: String = snapshotValue["name"] as? String {
             self.name = name
