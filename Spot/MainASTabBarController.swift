@@ -366,74 +366,25 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
             return
         }
         
+        // Hide statusbar for camera and imagecropper
         UIApplication.shared.isStatusBarHidden = true
-        
-//        let imagePicker = ImagePickerController()
-//        imagePicker.imageLimit = 1
-        
-//        let spotTag = SpotPicker(picker: imagePicker, spotConfigurator: { image in
-//            let spotViewController = CameraSpotViewController(image: image)
-//            return spotViewController
-//        })
-        
-        
-//        spotTag.show(from: self, completion: { result in
-//            if case let .success(images) = result, let image = images.first {
-//                let imageView = UIImageView(frame: CGRect(x: self.view.frame.width / 2 - image.size.width / 2, y: self.view.frame.height / 2 - image.size.height / 2, width: image.size.width, height: image.size.height))
-//                imageView.image = image
-//                self.view.addSubview(imageView)
-//            }
-//        })
-        
-//        let pickerCropper = ImagePickerCropper(picker: imagePicker, cropperConfigurator: { image in
-//            let cropController = TOCropViewController(image: image)
-//            cropController.aspectRatioLockEnabled = true
-//            cropController.resetAspectRatioEnabled = false
-//            cropController.rotateButtonsHidden = false
-//            cropController.customAspectRatio = CGSize(width: 3, height: 2)
-//            cropController.modalTransitionStyle = .crossDissolve
-//            
-//            return cropController
-//        })
-//        
-        
-//        spotTag.show(from: self) { result in
-//            if case let .success(images) = result, let image = images.first {
-//                
-//                
-//                
-//                
-//            }
-//            
-//            if case let .cancelled(error) = result {
-//                print("--- SpotPicker - CameraSpotViewController -- cancelled")
-//                print(error)
-//                spotTag.dismiss(from: self)
-//            }
-//        }
-        // End spotTag.show
         
         let imagePicker = ImagePickerController()
         imagePicker.imageLimit = 1
         
         let pickerCropper = ImagePickerCropper(picker: imagePicker, cropperConfigurator: { image in
-            
-            //Status bar style and visibility
-            
             let cropController = TOCropViewController(image: image)
-            cropController.aspectRatioLockEnabled = true // Ratio is locked
-            cropController.resetAspectRatioEnabled = false
-            cropController.aspectRatioPickerButtonHidden = true // Show button for ratios
-            cropController.rotateButtonsHidden = false
-            cropController.customAspectRatio = CGSize(width: 375, height: 246)
-            cropController.modalTransitionStyle = .crossDissolve
-            
+            cropController.aspectRatioLockEnabled           = true // Ratio is locked
+            cropController.resetAspectRatioEnabled          = false
+            cropController.aspectRatioPickerButtonHidden    = true // Show button for ratios
+            cropController.rotateButtonsHidden              = false
+            cropController.customAspectRatio                = CGSize(width: 375, height: 246)
+            cropController.modalTransitionStyle             = .crossDissolve
             return cropController
         })
         
         pickerCropper.show(from: self) { result in
             if case let .success(images) = result, let image = images.first {
-                
                 // Upload image to firebase
                 self.uploadImage(image: image)
                 
@@ -452,16 +403,15 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
                 
                 // Present your controller.
                 self.present(controller, animated: true, completion: nil)
+            } else if case let .cancelled(error) = result {
+                print("--- pickerCropper - cancelled")
+                print(error)
             }
         }
         
     }
     
-    
     // MARK: - Helpers
-    
-    // MARK: - Helpers
-    
     func showAlert(title: String, showOK: Bool = true) {
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
         

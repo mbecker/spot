@@ -438,7 +438,7 @@
 		D1A1F9A91E551C7300D55933 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		D1A1F9AB1E57BBB100D55933 /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mapbox.framework; sourceTree = "<group>"; };
 		D1A1F9AE1E57BCE700D55933 /* earthquakes.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = earthquakes.geojson; sourceTree = "<group>"; };
-		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImagePickerCropper.swift; path = ../Extras/ImagePickerCropper.swift; sourceTree = "<group>"; };
+		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImagePickerCropper.swift; path = ImagePickerCropper.swift; sourceTree = "<group>"; };
 		D1A5FE541E4DF4FD007DBC1C /* parks.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = parks.json; sourceTree = "<group>"; };
 		D1A5FE561E4E8282007DBC1C /* parksmarkdown.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = parksmarkdown.json; sourceTree = "<group>"; };
 		D1ADC92C1E4FA50100E1C4DB /* SplashScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreenViewController.swift; sourceTree = "<group>"; };
@@ -789,11 +789,12 @@
 		D121DCCC1E66C96900800371 /* SwipeView */ = {
 			isa = PBXGroup;
 			children = (
+				D121DCCD1E66C97900800371 /* Spot-Bridging-Header.h */,
 				D121DCCE1E66C97A00800371 /* SwipeView.h */,
 				D121DCCF1E66C97A00800371 /* SwipeView.m */,
-				D121DCCD1E66C97900800371 /* Spot-Bridging-Header.h */,
 			);
 			name = SwipeView;
+			path = SwipeView;
 			sourceTree = "<group>";
 		};
 		D14D8D321DD25420009AC39B /* Park */ = {
@@ -834,8 +835,8 @@
 		D176F8121E3FD4DF00F34F41 /* Camera */ = {
 			isa = PBXGroup;
 			children = (
-				D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */,
 				D176F8151E3FD54000F34F41 /* CameraSpotViewController.swift */,
+				D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -872,8 +873,6 @@
 		D1AFD8441DCF8B4C0082A6EF = {
 			isa = PBXGroup;
 			children = (
-				D10357B41EAE95600060620B /* Realm.framework */,
-				D10357B51EAE95600060620B /* RealmSwift.framework */,
 				DDA65F846428B1631ABE11B3 /* Frameworks */,
 				460F9C23519C54D102A8F871 /* Pods */,
 				D1AFD84E1DCF8B4C0082A6EF /* Products */,
@@ -881,6 +880,8 @@
 				D1AFD8671DCF8B4C0082A6EF /* SpotTests */,
 				D1AFD8721DCF8B4C0082A6EF /* SpotUITests */,
 				D1A1F9AB1E57BBB100D55933 /* Mapbox.framework */,
+				D10357B41EAE95600060620B /* Realm.framework */,
+				D10357B51EAE95600060620B /* RealmSwift.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -910,8 +911,8 @@
 				D14D8D321DD25420009AC39B /* Park */,
 				D18DB6C21E37E5EC00D536BC /* UserSettings */,
 				D1AFD8501DCF8B4C0082A6EF /* AppDelegate.swift */,
-				D1AFD8811DCF8CBC0082A6EF /* GoogleService-Info.plist */,
 				D1DE0D831E68B53000AAF6EC /* Assets.xcassets */,
+				D1AFD8811DCF8CBC0082A6EF /* GoogleService-Info.plist */,
 				D1AFD85F1DCF8B4C0082A6EF /* Info.plist */,
 				D1AFD85C1DCF8B4C0082A6EF /* LaunchScreen.storyboard */,
 				D15405A91DF8745600EAE971 /* MainASTabBarController.swift */,
@@ -981,15 +982,15 @@
 			children = (
 				D152E4A21E6081EA00CE652B /* AnimalCellHeader.swift */,
 				D152E4A91E60EF1900CE652B /* CheckboxCell.swift */,
+				D1B7D5141E65CB9200D800BD /* FilterButton.swift */,
 				D152E4981E606EFA00CE652B /* FilterTableViewCell.swift */,
 				D1FA19381E5F81450000FB54 /* FilterViewController.swift */,
 				D1C83AB71E452EE0002030A5 /* FormCountriesTableViewController.swift */,
+				D1608D651E65911B000F621B /* LiveView.swift */,
+				D1B7D5161E661D4900D800BD /* PresentView.swift */,
 				D152E4A11E6081EA00CE652B /* TagCell.swift */,
 				D1FA19311E5F1D260000FB54 /* TagsTableCell.swift */,
 				D1FA19251E5F11D70000FB54 /* TagsViewController.swift */,
-				D1608D651E65911B000F621B /* LiveView.swift */,
-				D1B7D5141E65CB9200D800BD /* FilterButton.swift */,
-				D1B7D5161E661D4900D800BD /* PresentView.swift */,
 			);
 			path = Forms;
 			sourceTree = "<group>";
