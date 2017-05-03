@@ -32,6 +32,7 @@ target 'Spot' do
   pod 'SwiftyJSON'
   pod 'DLRadioButton', '~> 1.4'
   pod 'SwiftDate', '4.1.0'
+  pod 'Lightbox'
 
   target 'SpotTests' do
     inherit! :search_paths

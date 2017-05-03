@@ -438,7 +438,7 @@
 		D1A1F9A91E551C7300D55933 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		D1A1F9AB1E57BBB100D55933 /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mapbox.framework; sourceTree = "<group>"; };
 		D1A1F9AE1E57BCE700D55933 /* earthquakes.geojson */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = earthquakes.geojson; sourceTree = "<group>"; };
-		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerCropper.swift; sourceTree = "<group>"; };
+		D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImagePickerCropper.swift; path = ../Extras/ImagePickerCropper.swift; sourceTree = "<group>"; };
 		D1A5FE541E4DF4FD007DBC1C /* parks.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = parks.json; sourceTree = "<group>"; };
 		D1A5FE561E4E8282007DBC1C /* parksmarkdown.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = parksmarkdown.json; sourceTree = "<group>"; };
 		D1ADC92C1E4FA50100E1C4DB /* SplashScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashScreenViewController.swift; sourceTree = "<group>"; };
@@ -781,7 +781,6 @@
 				D1079F081DD2A754007CCE07 /* ActivityIndicatorNode.swift */,
 				D1FB21ED1DF2B95D0023F0F2 /* AssetManager.swift */,
 				D12D64FC1DEF72D60096A847 /* DB.swift */,
-				D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */,
 				D1FB21E91DF1B1E50023F0F2 /* KingfisherSource.swift */,
 			);
 			path = Extras;
@@ -835,6 +834,7 @@
 		D176F8121E3FD4DF00F34F41 /* Camera */ = {
 			isa = PBXGroup;
 			children = (
+				D1A3E9611E314BB600E0C591 /* ImagePickerCropper.swift */,
 				D176F8151E3FD54000F34F41 /* CameraSpotViewController.swift */,
 			);
 			path = Camera;

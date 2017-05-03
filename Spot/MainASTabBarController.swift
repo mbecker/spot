@@ -18,6 +18,7 @@ import SwiftyJSON
 import CoreLocation
 import ImagePicker
 import TOCropViewController
+import Lightbox
 
 class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
     
@@ -41,21 +42,6 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
     var _firebaseUser: FIRUser?
     
     var _loadedRandom = false
-    
-//    init(realmPark: RealmPark, loadedRandom: Bool = false) {
-//        self._realmPark = realmPark
-//        self.parkController     = ParkASViewController(realmPark: realmPark)
-//        self.listController     = ListASPagerNode(realmPark: realmPark)
-//
-//        super.init(nibName: nil, bundle: nil)
-//        self.delegate = self // UITabBarControllerDelegate to identify CameraDummyView: tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController)
-//        self.parkController.delegate    = self // SelectParkDelegate
-//
-//        initTabBar(rootParkNavgationController: self.parkController, rootListNavigationController: self.listController)
-//        
-//        self._loadedRandom = loadedRandom
-//        
-//    }
     
     
     init(){
@@ -263,6 +249,116 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
         
     }
     
+    func uploadImage(image: UIImage) -> Void {
+        // Add Progressview to tabbar
+        self.tabBar.addSubview(self.progressView)
+        
+        // Get data from JPEG
+        let imageData = UIImageJPEGRepresentation(image, 1.0)
+        
+        let ref: FIRDatabaseReference = FIRDatabase.database().reference()
+        let storage = FIRStorage.storage()
+        let storageRef = storage.reference()
+        
+        // Park unique string key and park full name
+        // ToDo: Get park string key from photo / camera tags
+        let parkKey         = self._realmPark!.key
+        let parkFullName    = self._realmPark!.name
+        let itemType        = ItemType.community.rawValue
+        
+        // Key for firebase push
+        let itemKey = ref.child("items/\(parkKey)/\(itemType)").childByAutoId().key
+        // Ref for storage
+        let imageOriginalRef = storageRef.child("\(itemType)/\(itemKey).jpg")
+        // Create metadata
+        let metadataForImages = FIRStorageMetadata()
+        metadataForImages.contentType = "image/jpeg"
+        
+        // Create upload task
+        let imageOriginalUploadTask = imageOriginalRef.put(imageData!, metadata: metadataForImages)
+        imageOriginalUploadTask.observe(.progress) { snapshot in
+            // Upload reported progress
+            if let progress = snapshot.progress {
+                let percentComplete: Float = 90 * Float(progress.completedUnitCount) / Float(progress.totalUnitCount)
+                print(":: Upload image - \(percentComplete)")
+                // Progress: 90%
+                self.progressView.setProgress(percentComplete / 100, animated: true)
+            }
+        }
+        
+        imageOriginalUploadTask.observe(.failure) { error in
+            print(error.error!)
+        }
+        
+        imageOriginalUploadTask.observe(.success) { snapshot in
+            // Progress: 95%
+            self.progressView.setProgress(0.95, animated: true)
+            
+            // Firebase data
+            let item = [
+                "name": itemKey,
+                "timestamp": FIRServerValue.timestamp(),
+                "location": [
+                    "latitude": -23.88065,
+                    "longitude": 31.969589,
+                    "parkName": parkFullName
+                ],
+                "spottedby": [
+                    "123": [
+                        "name": "Michi",
+                        "profile": "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego6.jpg"
+                    ]
+                ],
+                "tags": [
+                    "Elephant": "Elephant"
+                ],
+                "images": [
+                    "public": "https://storage.cloud.google.com/safaridigitalapp.appspot.com/\(itemType)/\(itemKey).jpg"
+                ]
+                ] as [String : Any]
+            
+            let childUpdates = ["/items/\(parkKey)/\(itemType)/\(itemKey)": item]
+            ref.updateChildValues(childUpdates, withCompletionBlock: { (error, reference) in
+                if (error != nil) {
+                    // Progress: 100%
+                    self.progressView.setProgress(1, animated: true)
+                    print(":: ERROR - SAVING ITEM TO FIREBASE ::")
+                    print(error!)
+                } else {
+                    // Progress: 95%
+                    self.progressView.setProgress(1, animated: true)
+                    
+                    // Create queue task
+                    let queueRef = FIRDatabase.database().reference(withPath: "queue/tasks")
+                    let queueKey = queueRef.childByAutoId().key;
+                    let queueData = [
+                        queueKey:
+                            [
+                                "ref": "/items/\(parkKey)/\(itemType)/\(itemKey)/images"
+                        ]
+                    ]
+                    queueRef.setValue(queueData) { (error, ref) -> Void in
+                        if(error != nil){
+                            // Progress: 100%
+                            self.progressView.setProgress(1, animated: true)
+                            print(":: ERROR - CREATING TASK IN QUEUE ::")
+                            print(error!)
+                        } else {
+                            // Progress: 100%
+                            self.progressView.setProgress(1, animated: true)
+                            Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { (timer) in
+                                self.progressView.removeFromSuperview()
+                                self.progressView.setProgress(0.00, animated: false)
+                            })
+                        }
+                    }
+                }
+            }) // End ref.updateChildValues
+            
+            
+        }
+    }
+    
     func showCameraAndUpload(){
         
         guard self._firebaseUser != nil else {
@@ -270,13 +366,16 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
             return
         }
         
-        let imagePicker = ImagePickerController()
-        imagePicker.imageLimit = 1
+        UIApplication.shared.isStatusBarHidden = true
         
-        let spotTag = SpotPicker(picker: imagePicker, spotConfigurator: { image in
-            let spotViewController = CameraSpotViewController(image: image)
-            return spotViewController
-        })
+//        let imagePicker = ImagePickerController()
+//        imagePicker.imageLimit = 1
+        
+//        let spotTag = SpotPicker(picker: imagePicker, spotConfigurator: { image in
+//            let spotViewController = CameraSpotViewController(image: image)
+//            return spotViewController
+//        })
+        
         
 //        spotTag.show(from: self, completion: { result in
 //            if case let .success(images) = result, let image = images.first {
@@ -297,122 +396,64 @@ class MainASTabBarController: UITabBarController, NVActivityIndicatorViewable {
 //            return cropController
 //        })
 //        
-        spotTag.show(from: self) { result in
-            if case let .success(images) = result, let image = images.first {
-                
-                // Add Progressview to tabbar
-                self.tabBar.addSubview(self.progressView)
-                
-                // Get data from JPEG
-                let imageData = UIImageJPEGRepresentation(image, 1.0)
-                
-                let ref: FIRDatabaseReference = FIRDatabase.database().reference()
-                let storage = FIRStorage.storage()
-                let storageRef = storage.reference()
-                
-                // Park unique string key and park full name
-                // ToDo: Get park string key from photo / camera tags
-                let parkKey         = self._realmPark!.key
-                let parkFullName    = self._realmPark!.name
-                let itemType        = ItemType.community.rawValue
-                
-                // Key for firebase push
-                let itemKey = ref.child("items/\(parkKey)/\(itemType)").childByAutoId().key
-                // Ref for storage
-                let imageOriginalRef = storageRef.child("\(itemType)/\(itemKey).jpg")
-                // Create metadata
-                let metadataForImages = FIRStorageMetadata()
-                metadataForImages.contentType = "image/jpeg"
-                
-                // Create upload task
-                let imageOriginalUploadTask = imageOriginalRef.put(imageData!, metadata: metadataForImages)
-                imageOriginalUploadTask.observe(.progress) { snapshot in
-                    // Upload reported progress
-                    if let progress = snapshot.progress {
-                        let percentComplete: Float = 90 * Float(progress.completedUnitCount) / Float(progress.totalUnitCount)
-                        print(":: Upload image - \(percentComplete)")
-                        // Progress: 90%
-                        self.progressView.setProgress(percentComplete / 100, animated: true)
-                    }
-                }
-                
-                imageOriginalUploadTask.observe(.failure) { error in
-                    print(error.error!)
-                }
-                
-                imageOriginalUploadTask.observe(.success) { snapshot in
-                    // Progress: 95%
-                    self.progressView.setProgress(0.95, animated: true)
-                    
-                    // Firebase data
-                    let item = [
-                        "name": itemKey,
-                        "timestamp": FIRServerValue.timestamp(),
-                        "location": [
-                            "latitude": -23.88065,
-                            "longitude": 31.969589,
-                            "parkName": parkFullName
-                        ],
-                        "spottedby": [
-                            "123": [
-                                "name": "Michi",
-                                "profile": "https://storage.googleapis.com/safaridigitalapp.appspot.com/icons/lego6.jpg"
-                            ]
-                        ],
-                        "tags": [
-                            "Elephant": "Elephant"
-                        ],
-                        "images": [
-                            "public": "https://storage.cloud.google.com/safaridigitalapp.appspot.com/\(itemType)/\(itemKey).jpg"
-                        ]
-                    ] as [String : Any]
-                    
-                    let childUpdates = ["/items/\(parkKey)/\(itemType)/\(itemKey)": item]
-                    ref.updateChildValues(childUpdates, withCompletionBlock: { (error, reference) in
-                        if (error != nil) {
-                            // Progress: 100%
-                            self.progressView.setProgress(1, animated: true)
-                            print(":: ERROR - SAVING ITEM TO FIREBASE ::")
-                            print(error!)
-                        } else {
-                            // Progress: 95%
-                            self.progressView.setProgress(1, animated: true)
-                            
-                            // Create queue task
-                            let queueRef = FIRDatabase.database().reference(withPath: "queue/tasks")
-                            let queueKey = queueRef.childByAutoId().key;
-                            let queueData = [
-                                queueKey:
-                                    [
-                                        "ref": "/items/\(parkKey)/\(itemType)/\(itemKey)/images"
-                                ]
-                            ]
-                            queueRef.setValue(queueData) { (error, ref) -> Void in
-                                if(error != nil){
-                                    // Progress: 100%
-                                    self.progressView.setProgress(1, animated: true)
-                                    print(":: ERROR - CREATING TASK IN QUEUE ::")
-                                    print(error!)
-                                } else {
-                                    // Progress: 100%
-                                    self.progressView.setProgress(1, animated: true)
-                                    Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { (timer) in
-                                        self.progressView.removeFromSuperview()
-                                        self.progressView.setProgress(0.00, animated: false)
-                                    })
-                                }
-                            }
-                        }
-                    }) // End ref.updateChildValues
-                    
-                    
-                }
-                
-                
-            }
-        }
+        
+//        spotTag.show(from: self) { result in
+//            if case let .success(images) = result, let image = images.first {
+//                
+//                
+//                
+//                
+//            }
+//            
+//            if case let .cancelled(error) = result {
+//                print("--- SpotPicker - CameraSpotViewController -- cancelled")
+//                print(error)
+//                spotTag.dismiss(from: self)
+//            }
+//        }
         // End spotTag.show
         
+        let imagePicker = ImagePickerController()
+        imagePicker.imageLimit = 1
+        
+        let pickerCropper = ImagePickerCropper(picker: imagePicker, cropperConfigurator: { image in
+            
+            //Status bar style and visibility
+            
+            let cropController = TOCropViewController(image: image)
+            cropController.aspectRatioLockEnabled = true // Ratio is locked
+            cropController.resetAspectRatioEnabled = false
+            cropController.aspectRatioPickerButtonHidden = true // Show button for ratios
+            cropController.rotateButtonsHidden = false
+            cropController.customAspectRatio = CGSize(width: 375, height: 246)
+            cropController.modalTransitionStyle = .crossDissolve
+            
+            return cropController
+        })
+        
+        pickerCropper.show(from: self) { result in
+            if case let .success(images) = result, let image = images.first {
+                
+                // Upload image to firebase
+                self.uploadImage(image: image)
+                
+                let images = [
+                    LightboxImage(
+                        image: image,
+                        text: ""
+                    )
+                ]
+                let controller = LightboxController(images: images)
+                
+                // Set delegates.
+                
+                // Use dynamic background.
+                controller.dynamicBackground = true
+                
+                // Present your controller.
+                self.present(controller, animated: true, completion: nil)
+            }
+        }
         
     }
     

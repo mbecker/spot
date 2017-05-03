@@ -157,6 +157,10 @@ typedef NS_ENUM(NSInteger, TOCropViewOverlayEdge) {
     return [self initWithCroppingStyle:TOCropViewCroppingStyleDefault image:image];
 }
 
+-(BOOL)prefersStatusBarHidden{
+    return YES;
+}
+
 - (void)setup
 {
     __weak typeof(self) weakSelf = self;

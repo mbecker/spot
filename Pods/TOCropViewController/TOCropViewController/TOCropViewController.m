@@ -98,6 +98,7 @@
     return [self initWithCroppingStyle:TOCropViewCroppingStyleDefault image:image];
 }
 
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -203,6 +204,7 @@
 
 - (BOOL)prefersStatusBarHidden
 {
+    
     //If we belong to a UINavigationController, defer to its own status bar style
     if (self.navigationController) {
         return self.navigationController.prefersStatusBarHidden;
